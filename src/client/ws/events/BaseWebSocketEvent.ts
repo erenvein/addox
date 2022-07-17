@@ -1,4 +1,4 @@
-import type { WebSocketEvents, WebSocketManager } from '../../';
+import type { WebSocketEvents, WebSocketManager } from '../../..';
 
 export class BaseWebSocketEvent {
     public name: WebSocketEvents;

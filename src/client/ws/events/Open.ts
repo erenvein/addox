@@ -1,4 +1,4 @@
-import { BaseWebSocketEvent } from '../../';
+import { BaseWebSocketEvent } from '../../..';
 
 export default class WebSocketOpenEvent extends BaseWebSocketEvent {
     public constructor() {

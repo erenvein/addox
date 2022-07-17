@@ -5,6 +5,7 @@ export interface ClientOptions {
 
 export interface WebSocketOptions {
     largeThreshold?: number;
+    autoReconnect?: boolean;
 }
 
 export type WebSocketEvents = 'open' | 'message' | 'error' | 'close';

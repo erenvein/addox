@@ -16,7 +16,7 @@ export class Client extends BaseClient {
         this.ws = new WebSocketManager(ws);
     }
 
-    public async login(token: string) {
+    public async connect(token: string) {
         this.token = token;
 
         await this.ws.connect(this);

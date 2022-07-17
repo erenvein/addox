@@ -8,4 +8,4 @@ const client = new Client({
     intents: Object.values(GatewayIntentBits).reduce((p, c) => (p as any) + c, 0),
 });
 
-client.login(process.env.TOKEN as string);
+client.connect(process.env.TOKEN as string);

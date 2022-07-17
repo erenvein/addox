@@ -3,8 +3,11 @@ export { BaseClient } from './client/BaseClient';
 export { Client } from './client/Client';
 
 // WS
-export { WebSocketManager } from './ws/WebSocketManager';
-export { BaseWebSocketEvent } from './ws/events/BaseWebSocketEvent';
+export { WebSocketManager } from './client/ws/WebSocketManager';
+export { BaseWebSocketEvent } from './client/ws/events/BaseWebSocketEvent';
+
+// REST
+///////////////
 
 // STRUCTURES
 export { BitField } from './structures/BitField';
