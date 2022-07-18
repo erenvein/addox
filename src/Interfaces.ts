@@ -50,3 +50,9 @@ export interface RateLimitData {
     retry?: number;
     route?: `/${string}`;
 }
+
+export interface ImageOptions {
+    format?: 'png' | 'jpg' | 'webp' | 'gif';
+    size?: 16 | 32 | 64 | 128 | 256 | 512 | 1024 | 2048 | 4096 | 8192;
+    dynamic?: boolean;
+}

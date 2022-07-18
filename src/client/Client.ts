@@ -5,6 +5,7 @@ import {
     BaseClient,
     GatewayIntentBits,
     RequestManager,
+    ClientUser,
     DISCORD_API_URL,
     DISCORD_API_VERSION,
 } from '../';
@@ -12,7 +13,7 @@ import {
 export class Client extends BaseClient {
     public intents: number;
     public token: string | null;
-    public user: any | null;
+    public user: ClientUser | null;
     public ws!: WebSocketManager;
     public rest: RequestManager;
     public shardCount: number | 'auto' = 'auto';

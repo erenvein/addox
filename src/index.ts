@@ -17,6 +17,13 @@ export { RateLimitError } from './client/rest/errors/RateLimitError';
 // STRUCTURES
 export { BitField } from './structures/BitField';
 export { Collection } from './structures/Collection';
+export { User } from './structures/User';
+export { ClientUser } from './structures/ClientUser';
+export { UserFlagsBitField } from './structures/UserFlagsBitField';
+export { UserPremiumTypeBitField } from './structures/UserPremiumTypeBitField';
+
+// SNOWFLAKE UTIL
+export { DiscordSnowflake as SnowflakeUtil } from '@sapphire/snowflake';
 
 // TYPES
 export * from './Constants';

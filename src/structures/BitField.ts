@@ -1,5 +1,10 @@
 export class BitField {
-    public bitset: number = 0;
+    public bitset: number;
+    public Flags: Object = {};
+
+    public constructor(defaultBitset: number = 0) {
+        this.bitset = defaultBitset;
+    }
 
     public set(bits: number | number[]) {
         if (Array.isArray(bits)) {

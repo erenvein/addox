@@ -71,7 +71,9 @@ export class WebSocketManager {
             }
         }
 
-        if (this.client.shardCount === 'auto') {
+        //request handler rate limit test :)
+
+        /*if (this.client.shardCount === 'auto') {
             for (let i = 0; i < 6; i++) {
                 const bot = await this.getGatewayBot();
 
@@ -79,7 +81,7 @@ export class WebSocketManager {
                     console.log(bot.shards);
                 }
             }
-        }
+        }*/
     }
 
     public disconnect() {}

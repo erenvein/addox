@@ -1,4 +1,4 @@
-import { BaseWebSocketHandler } from './BaseWebSocketHandler';
+import { BaseWebSocketHandler, ClientUser } from '../../../';
 
 export default class ReadyHandler extends BaseWebSocketHandler {
     public constructor() {
@@ -6,7 +6,7 @@ export default class ReadyHandler extends BaseWebSocketHandler {
     }
 
     public handle(data: any) {
-        this.client.user = data.user;
+        this.client.user = new ClientUser(this.client, data.user);
 
         this.client.emit('Ready', this.client);
     }

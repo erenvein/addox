@@ -12,6 +12,6 @@ const client = new Client({
 
 client.connect(process.env.TOKEN as string);
 
-client.on('Ready', (c) => {
+client.on('Ready', () => {
     console.log('Connected to Discord API!');
 });
