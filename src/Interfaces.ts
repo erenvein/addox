@@ -42,11 +42,11 @@ export interface PartialRESTOptions {
 }
 
 export interface RateLimitData {
+    limited: boolean;
     scope?: 'user' | 'shared' | 'global';
     limit?: number;
     remaining?: number;
     reset?: number;
     retry?: number;
-    limited: boolean;
-    route?: string;
+    route?: `/${string}`;
 }

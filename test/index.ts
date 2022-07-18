@@ -7,7 +7,7 @@ config({ path: resolve(__dirname, '.env') });
 const client = new Client({
     intents: Object.values(GatewayIntentBits)
         .filter((bit) => typeof bit === 'number')
-        .reduce((accumulator, bit) => accumulator + (bit as number), 0),
+        .reduce((accumulator, bit) => accumulator | (bit as number), 0),
 });
 
 client.connect(process.env.TOKEN as string);

@@ -30,26 +30,12 @@ export class RequestManager {
         return this.#rateLimitData;
     }
 
-    public get timeToReset() {
-        return (this.#rateLimitData.reset ?? -1) + this.offset - Date.now();
+    public get timeToReset(): number {
+        return (this.#rateLimitData.reset || -1) + this.offset - Date.now();
     }
 
-    public async request(route: `/${string}`, options: RequestInit = {}) {
+    public async request(route: `/${string}`, options: RequestInit = {}): Promise<any> {
         await this.queue.wait();
-
-        do {
-            await new Promise((resolve) => setTimeout(resolve, this.timeToReset));
-            this.#rateLimitData = { limited: false };
-        } while (this.rateLimitData.limited && this.rateLimitData.scope === 'global');
-
-        do {
-            await new Promise((resolve) => setTimeout(resolve, this.timeToReset));
-            this.#rateLimitData = { limited: false };
-        } while (
-            this.rateLimitData.limited &&
-            this.rateLimitData.scope !== 'global' &&
-            this.rateLimitData.route! === route
-        );
 
         if (this.token) {
             //@ts-ignore
@@ -62,6 +48,27 @@ export class RequestManager {
         options.method ||= 'GET';
 
         const fullRoute = this.baseURL + route;
+
+        while (
+            this.rateLimitData.limited &&
+            !this.rejectOnRateLimit &&
+            this.rateLimitData.scope === 'global' &&
+            this.#rateLimitData.retry! > 0
+        ) {
+            await new Promise((resolve) => setTimeout(resolve, this.#rateLimitData.retry! + 500));
+            this.#rateLimitData = { limited: false };
+        }
+
+        while (
+            this.rateLimitData.limited &&
+            !this.rejectOnRateLimit &&
+            this.rateLimitData.scope !== 'global' &&
+            this.rateLimitData.route! === route &&
+            this.#rateLimitData.retry! > 0
+        ) {
+            await new Promise((resolve) => setTimeout(resolve, this.#rateLimitData.retry! + 500));
+            this.#rateLimitData = { limited: false };
+        }
 
         const response = await fetch(fullRoute, options);
 
@@ -84,8 +91,6 @@ export class RequestManager {
             } else if (status === 405) {
                 throw new HTTPError(status, options.method, fullRoute, 'Method Not Allowed');
             } else if (status === 429) {
-                console.log('\n\n');
-
                 const scope = response.headers.get('x-ratelimit-scope');
                 const limit = response.headers.get('x-ratelimit-limit');
                 const remaining = response.headers.get('x-ratelimit-remaining');
@@ -109,7 +114,7 @@ export class RequestManager {
                 }
 
                 this.#rateLimitData = {
-                    scope: scope! as any,
+                    scope: (scope as any) || 'user',
                     limit: limit ? +limit : Infinity,
                     remaining: remaining ? +remaining : 1,
                     reset: reset ? Date.now() + +reset * 1000 + this.offset : Date.now(),

@@ -10,6 +10,7 @@
   "devDependencies": {
     "@types/node": "^18.0.6",
     "@types/ws": "^8.5.3",
+    "@typescript-eslint/eslint-plugin": "^5.30.6",
     "dotenv": "^16.0.1",
     "erlpack": "^0.1.4",
     "eslint": "^8.20.0",
