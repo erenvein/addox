@@ -53,8 +53,16 @@ export class WebSocketManager {
         }
     }
 
+    public async getGatewayBot() {
+        return await this.client?.rest.get(`/gateway/bot`);
+    }
+
     public async connect(client: Client) {
         this.client = client;
+
+        if (this.client.shardCount === 'auto') {
+            const { shards } = await this.getGatewayBot();
+        }
 
         for (const file of readdirSync(resolve(__dirname, 'events'))) {
             const mod = await import(`./events/${file}`).then((mod) => mod.default);
@@ -73,6 +81,10 @@ export class WebSocketManager {
     public reconnect() {}
 
     public heartbeat(ms: number) {
+        if (this.heartbeatInterval) {
+            clearInterval(this.heartbeatInterval);
+        }
+
         this.heartbeatInterval = setInterval(() => {
             this.lastPing = Date.now();
             this.socket.send(this.pack({ op: GatewayOpcodes.Heartbeat, d: this.sequence }));

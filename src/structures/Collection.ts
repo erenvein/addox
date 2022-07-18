@@ -127,4 +127,9 @@ export class Collection<K, V> extends Map<K, V> {
     public keyArray() {
         return [...this.keys()];
     }
+
+    public _add(key: K, value: V) {
+        this.set(key, value);
+        return value;
+    }
 }

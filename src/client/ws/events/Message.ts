@@ -55,7 +55,7 @@ export default class WebSocketMessageEvent extends BaseWebSocketEvent {
 
                     handler.handle(d);
                 } catch (e) {
-                    console.log(e);
+                    //console.log(e);
                 }
                 break;
         }

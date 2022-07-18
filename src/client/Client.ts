@@ -6,6 +6,8 @@ import {
     GatewayIntentBits,
     GatewayDispatchEvents,
     RequestManager,
+    DISCORD_API_URL,
+    DISCORD_API_VERSION,
 } from '../';
 
 export class Client extends BaseClient {
@@ -13,9 +15,9 @@ export class Client extends BaseClient {
     public token: string | null;
     public user: any | null;
     public ws!: WebSocketManager;
-    public rest = new RequestManager();
+    public rest: RequestManager;
     public shardCount: number | 'auto' = 'auto';
-    public constructor({ intents, ws, shardCount }: ClientOptions) {
+    public constructor({ intents, ws, shardCount, rest }: ClientOptions) {
         super();
 
         this.token = null;
@@ -31,11 +33,16 @@ export class Client extends BaseClient {
         this.shardCount = shardCount ?? 'auto';
 
         this.ws = new WebSocketManager(ws);
+        this.rest = new RequestManager({
+            ...rest,
+            baseURL: `${DISCORD_API_URL}/v${DISCORD_API_VERSION}`,
+        });
     }
 
     public async connect(token: string) {
         this.token = token;
 
+        this.rest.setToken(token);
         await this.ws.connect(this);
     }
 

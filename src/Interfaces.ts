@@ -2,8 +2,9 @@ import type { GatewayIntentBits, Colors, PermissionFlagsBits } from './';
 
 export interface ClientOptions {
     intents: GatewayIntentBitsResolvable;
-    ws?: WebSocketOptions;
     shardCount?: number | 'auto';
+    ws?: WebSocketOptions;
+    rest?: PartialRESTOptions;
 }
 
 export interface WebSocketOptions {
@@ -26,3 +27,16 @@ export type PermissionFlagsBitsResolvable =
 export type ColorResolvable = number | keyof typeof Colors;
 
 export type WebSocketEvents = 'open' | 'message' | 'error' | 'close';
+
+export interface RESTOptions {
+    offset?: number;
+    rejectOnRateLimit?: boolean;
+    baseURL: string;
+    authPrefix?: 'Bot' | 'Bearer';
+}
+
+export interface PartialRESTOptions {
+    offset?: number;
+    rejectOnRateLimit?: boolean;
+    authPrefix?: 'Bot' | 'Bearer';
+}
