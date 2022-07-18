@@ -61,7 +61,9 @@ export class WebSocketManager {
         this.client = client;
 
         if (this.client.shardCount === 'auto') {
-            const { shards } = await this.getGatewayBot();
+            for (let i = 0; i < 50; i++) {
+                const shards = await this.getGatewayBot();
+            }
         }
 
         for (const file of readdirSync(resolve(__dirname, 'events'))) {

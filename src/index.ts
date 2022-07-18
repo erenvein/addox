@@ -10,6 +10,8 @@ export { DiscordSocketError } from './client/ws/DiscordSocketError';
 
 // REST
 export { RequestManager } from './client/rest/RequestManager';
+export { HTTPError } from './client/rest/errors/HTTPError';
+export { DiscordAPIError } from './client/rest/errors/DiscordAPIError';
 
 // STRUCTURES
 export { BitField } from './structures/BitField';

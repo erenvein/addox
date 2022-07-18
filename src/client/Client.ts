@@ -45,8 +45,4 @@ export class Client extends BaseClient {
         this.rest.setToken(token);
         await this.ws.connect(this);
     }
-
-    public emit(eventName: keyof typeof GatewayDispatchEvents, ...args: any[]): any {
-        super.emit(eventName, ...args);
-    }
 }

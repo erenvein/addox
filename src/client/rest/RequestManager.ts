@@ -1,6 +1,6 @@
 import { AsyncQueue } from '@sapphire/async-queue';
 import fetch, { type RequestInit } from 'node-fetch';
-import type { RESTOptions } from '../..';
+import { type RESTOptions, HTTPError, DiscordAPIError } from '../..';
 
 export class RequestManager {
     public queue = new AsyncQueue();
@@ -32,6 +32,8 @@ export class RequestManager {
             options.headers.Authorization = this.token;
         }
 
+        options.method ??= 'GET';
+
         const fullRoute = this.baseURL + route;
 
         const response = await fetch(fullRoute, options);
@@ -39,9 +41,41 @@ export class RequestManager {
         const data = await response.json();
         const status = response.status;
 
-        this.queue.shift();
+        try {
+            if (status >= 200 && status < 300) {
+                return data;
+            } else if (status === 401) {
+                throw new HTTPError(status, options.method, fullRoute, 'Unauthorized');
+            } else if (status === 403) {
+                throw new HTTPError(status, options.method, fullRoute, 'Forbidden');
+            } else if (status >= 500 && status < 600) {
+                throw new HTTPError(status, options.method, fullRoute, 'Internal Server Error');
+            } else if (status === 429) {
+                console.log('Rate Limited!\n\n');
 
-        return data;
+                const limit = response.headers.get('x-ratelimit-limit');
+                const remaining = response.headers.get('x-ratelimit-remaining');
+                const reset = response.headers.get('x-ratelimit-reset-after');
+                const hash = response.headers.get('x-ratelimit-bucket');
+                const retry = response.headers.get('retry-after');
+
+                console.log(
+                    `Limit: ${limit}\nRemaining: ${remaining}\nReset: ${reset}\nHash: ${hash}\nRetry: ${retry}`
+                );
+            } else if (status >= 400 && status < 500) {
+                throw new DiscordAPIError(
+                    status,
+                    data.code,
+                    options.method,
+                    fullRoute,
+                    data.message
+                );
+            } else {
+                return data;
+            }
+        } finally {
+            this.queue.shift();
+        }
     }
 
     public async get(route: `/${string}`, options: RequestInit = {}) {
