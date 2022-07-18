@@ -5,9 +5,11 @@ export { Client } from './client/Client';
 // WS
 export { WebSocketManager } from './client/ws/WebSocketManager';
 export { BaseWebSocketEvent } from './client/ws/events/BaseWebSocketEvent';
+export { BaseWebSocketHandler } from './client/ws/handlers/BaseWebSocketHandler';
+export { DiscordSocketError } from './client/ws/DiscordSocketError';
 
 // REST
-///////////////
+export { RequestManager } from './client/rest/RequestManager';
 
 // STRUCTURES
 export { BitField } from './structures/BitField';

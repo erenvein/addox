@@ -7,7 +7,7 @@ export class BaseWebSocketEvent {
         this.name = name;
     }
 
-    public handle(data: any) {
+    public handle(...args: any[]) {
         throw new ReferenceError('This Method Not Implemented!');
     }
 }

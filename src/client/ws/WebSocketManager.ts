@@ -33,7 +33,6 @@ export class WebSocketManager {
     public lastHeartbeatAck: boolean = false;
     public heartbeatInterval: NodeJS.Timer | null = null;
     public sequence: number = -1;
-    public ping: number = -1;
     public sessionId: string | null = null;
     public largeThresold: number;
     public autoReconnect: boolean;
@@ -64,7 +63,7 @@ export class WebSocketManager {
                 const event = new mod() as BaseWebSocketEvent;
 
                 event.ws = this;
-                this.socket.on(event.name, (data) => event.handle(data));
+                this.socket.on(event.name, (...args) => event.handle(...args));
             }
         }
     }
@@ -74,20 +73,15 @@ export class WebSocketManager {
     public reconnect() {}
 
     public heartbeat(ms: number) {
-        if (this.heartbeatInterval) {
-            clearInterval(this.heartbeatInterval);
-        }
-
         this.heartbeatInterval = setInterval(() => {
+            this.lastPing = Date.now();
             this.socket.send(this.pack({ op: GatewayOpcodes.Heartbeat, d: this.sequence }));
             this.lastHeartbeatAck = false;
-            this.lastPing = Date.now();
         }, ms);
     }
 
     public heartbeatAck() {
         this.lastHeartbeatAck = true;
-        this.ping = Date.now() - this.lastPing;
     }
 
     public identify() {
