@@ -5,7 +5,6 @@ export class RateLimitError extends Error {
     public hash: string;
     public retry: string;
     public scope: 'global' | 'shared' | 'user';
-    public message: string;
     public status: number;
     public method: string;
     public url: string;
@@ -19,10 +18,9 @@ export class RateLimitError extends Error {
         scope: 'global' | 'shared' | 'user',
         status: number,
         method: string,
-        url: string,
-        message: string
+        url: string
     ) {
-        super(message);
+        super('You Are Being Rate Limited');
 
         this.limit = limit;
         this.remaining = remaining;
@@ -33,6 +31,5 @@ export class RateLimitError extends Error {
         this.status = status;
         this.method = method;
         this.url = url;
-        this.message = message;
     }
 }

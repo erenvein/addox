@@ -3,9 +3,9 @@ import {
     BitField,
     WebSocketManager,
     BaseClient,
-    GatewayIntentBits,
     RequestManager,
     ClientUser,
+    IntentResolver,
     DISCORD_API_URL,
     DISCORD_API_VERSION,
 } from '../';
@@ -23,13 +23,7 @@ export class Client extends BaseClient {
         this.token = null;
         this.user = null;
 
-        if (typeof intents === 'string') {
-            intents = GatewayIntentBits[intents] as number;
-        } else if (Array.isArray(intents)) {
-            intents = intents.map((intent) => GatewayIntentBits[intent]) as number[];
-        }
-
-        this.intents = new BitField().set(intents);
+        this.intents = new BitField().set(IntentResolver(intents));
         this.shardCount = shardCount ?? 'auto';
 
         this.ws = new WebSocketManager(ws);

@@ -1,4 +1,16 @@
-import type { GatewayIntentBits, Colors, PermissionFlagsBits } from './';
+import type {
+    GatewayIntentBits,
+    Colors,
+    PermissionFlagsBits,
+    Snowflake,
+    GatewayActivityButton,
+    GatewayActivityParty,
+    GatewayActivityTimestamps,
+    GatewayActivitySecrets,
+    ActivityType,
+    GatewayActivityEmoji,
+    ActivityFlags,
+} from './';
 
 export interface ClientOptions {
     intents: GatewayIntentBitsResolvable;
@@ -10,6 +22,7 @@ export interface ClientOptions {
 export interface WebSocketOptions {
     largeThreshold?: number;
     autoReconnect?: boolean;
+    presence?: PresenceData;
 }
 
 export type GatewayIntentBitsResolvable =
@@ -55,4 +68,40 @@ export interface ImageOptions {
     format?: 'png' | 'jpg' | 'webp' | 'gif';
     size?: 16 | 32 | 64 | 128 | 256 | 512 | 1024 | 2048 | 4096 | 8192;
     dynamic?: boolean;
+}
+
+export interface ActivityAssets {
+    largeImage?: string;
+    largeText?: string;
+    smallImage?: string;
+    smallText?: string;
+}
+
+export type ActivityTypeResolvable = keyof typeof ActivityType | number;
+
+export type ActivityFlagsResolvable = keyof typeof ActivityFlags | number;
+
+export interface Activity {
+    name: string;
+    type?: ActivityTypeResolvable;
+    url?: string;
+    createdAt?: number;
+    timestamps?: GatewayActivityTimestamps[];
+    applicationId?: Snowflake;
+    details?: string;
+    state?: string;
+    emoji?: GatewayActivityEmoji[];
+    party?: GatewayActivityParty[];
+    assets?: ActivityAssets[];
+    secrets?: GatewayActivitySecrets[];
+    instance?: boolean;
+    flags?: ActivityFlagsResolvable;
+    buttons?: GatewayActivityButton[];
+}
+
+export interface PresenceData {
+    activities?: Activity[];
+    status?: 'online' | 'idle' | 'dnd' | 'invisible' | 'offline';
+    afk?: boolean;
+    since?: number;
 }

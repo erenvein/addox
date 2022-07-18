@@ -19,6 +19,7 @@ export default class WebSocketMessageEvent extends BaseWebSocketEvent {
 
         switch (op) {
             case GatewayOpcodes.Hello:
+                this.ws.heartbeat(d.heartbeat_interval);
                 this.ws.identify();
                 break;
             case GatewayOpcodes.Heartbeat:

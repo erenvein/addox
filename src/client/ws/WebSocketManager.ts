@@ -6,6 +6,8 @@ import {
     type Client,
     type WebSocketOptions,
     BaseWebSocketEvent,
+    PresenceData,
+    PresenceDataResolver,
 } from '../..';
 import { readdirSync } from 'node:fs';
 import { resolve } from 'node:path';
@@ -37,10 +39,13 @@ export class WebSocketManager {
     public largeThresold: number;
     public autoReconnect: boolean;
     public client: Client | null = null;
+    public shards: number = 0;
+    public presence: PresenceData;
 
-    public constructor({ largeThreshold, autoReconnect }: WebSocketOptions = {}) {
+    public constructor({ largeThreshold, autoReconnect, presence }: WebSocketOptions = {}) {
         this.largeThresold = largeThreshold ?? 50;
         this.autoReconnect = autoReconnect ?? true;
+        this.presence = PresenceDataResolver(presence ?? {});
 
         this.socket = new WebSocket(this.endpoint);
 
@@ -60,6 +65,16 @@ export class WebSocketManager {
     public async connect(client: Client) {
         this.client = client;
 
+        if (client.shardCount !== 'auto') {
+            this.shards = client.shardCount;
+        } else {
+            const bot = await this.getGatewayBot();
+
+            if (bot?.shards) {
+                this.shards = bot.shards;
+            }
+        }
+
         for (const file of readdirSync(resolve(__dirname, 'events'))) {
             const mod = await import(`./events/${file}`).then((mod) => mod.default);
 
@@ -78,7 +93,7 @@ export class WebSocketManager {
                 const bot = await this.getGatewayBot();
 
                 if (bot?.shards) {
-                    console.log(bot.shards);
+                    console.log("fetched gateway bot\n");
                 }
             }
         }*/
@@ -94,8 +109,8 @@ export class WebSocketManager {
         }
 
         this.heartbeatInterval = setInterval(() => {
-            this.lastPing = Date.now();
             this.socket.send(this.pack({ op: GatewayOpcodes.Heartbeat, d: this.sequence }));
+            this.lastPing = Date.now();
             this.lastHeartbeatAck = false;
         }, ms);
     }
@@ -125,6 +140,7 @@ export class WebSocketManager {
                         intents: this.client?.intents!,
                         large_threshold: this.largeThresold,
                         compress: this.encoding !== 'json',
+                        presence: this.presence,
                         properties: {
                             os: 'linux',
                             browser: 'discord-api-wrapper-by-deliever42',

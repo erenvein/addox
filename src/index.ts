@@ -22,6 +22,10 @@ export { ClientUser } from './structures/ClientUser';
 export { UserFlagsBitField } from './structures/UserFlagsBitField';
 export { UserPremiumTypeBitField } from './structures/UserPremiumTypeBitField';
 
+// UTILS
+export { PresenceDataResolver } from './utils/resolvers/PresenceDataResolver';
+export { IntentResolver } from './utils/resolvers/IntentResolver';
+
 // SNOWFLAKE UTIL
 export { DiscordSnowflake as SnowflakeUtil } from '@sapphire/snowflake';
 
