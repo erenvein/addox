@@ -15,10 +15,6 @@ export default class WebSocketMessageEvent extends BaseWebSocketEvent {
         if (s > this.ws.sequence) this.ws.sequence = s;
         if (t === 'READY') {
             this.ws.sessionId = d.session_id;
-            console.log(d.user);
-            this.ws.client?.rest.setToken(
-                `${d.user.bot ? 'BOT' : 'Bearer'} ${this.ws.client.token!}`
-            );
         }
 
         switch (op) {

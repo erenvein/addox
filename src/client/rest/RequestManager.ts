@@ -1,6 +1,12 @@
 import { AsyncQueue } from '@sapphire/async-queue';
 import fetch, { type RequestInit } from 'node-fetch';
-import { type RESTOptions, HTTPError, DiscordAPIError } from '../..';
+import {
+    type RESTOptions,
+    type RateLimitData,
+    HTTPError,
+    DiscordAPIError,
+    RateLimitError,
+} from '../..';
 
 export class RequestManager {
     public queue = new AsyncQueue();
@@ -9,6 +15,9 @@ export class RequestManager {
     public offset: number;
     public baseURL: string;
     public authPrefix: 'Bot' | 'Bearer';
+    #rateLimitData: RateLimitData = {
+        limited: false,
+    };
 
     public constructor({ offset, rejectOnRateLimit, baseURL, authPrefix }: RESTOptions) {
         this.rejectOnRateLimit = rejectOnRateLimit ?? false;
@@ -17,12 +26,30 @@ export class RequestManager {
         this.authPrefix = authPrefix ?? 'Bot';
     }
 
-    private initRateLimit() {
-        if (!this.rejectOnRateLimit) return;
+    public get rateLimitData(): Readonly<RateLimitData> {
+        return this.#rateLimitData;
+    }
+
+    public get timeToReset() {
+        return (this.#rateLimitData.reset ?? -1) + this.offset - Date.now();
     }
 
     public async request(route: `/${string}`, options: RequestInit = {}) {
         await this.queue.wait();
+
+        do {
+            await new Promise((resolve) => setTimeout(resolve, this.timeToReset));
+            this.#rateLimitData = { limited: false };
+        } while (this.rateLimitData.limited && this.rateLimitData.scope === 'global');
+
+        do {
+            await new Promise((resolve) => setTimeout(resolve, this.timeToReset));
+            this.#rateLimitData = { limited: false };
+        } while (
+            this.rateLimitData.limited &&
+            this.rateLimitData.scope !== 'global' &&
+            this.rateLimitData.route! === route
+        );
 
         if (this.token) {
             //@ts-ignore
@@ -32,7 +59,7 @@ export class RequestManager {
             options.headers.Authorization = this.token;
         }
 
-        options.method ??= 'GET';
+        options.method ||= 'GET';
 
         const fullRoute = this.baseURL + route;
 
@@ -44,24 +71,52 @@ export class RequestManager {
         try {
             if (status >= 200 && status < 300) {
                 return data;
+            } else if (status === 400) {
+                throw new HTTPError(status, options.method, fullRoute, 'Bad Request');
             } else if (status === 401) {
                 throw new HTTPError(status, options.method, fullRoute, 'Unauthorized');
+            } else if (status === 402) {
+                throw new HTTPError(status, options.method, fullRoute, 'Gateway Unvailable');
             } else if (status === 403) {
                 throw new HTTPError(status, options.method, fullRoute, 'Forbidden');
-            } else if (status >= 500 && status < 600) {
-                throw new HTTPError(status, options.method, fullRoute, 'Internal Server Error');
+            } else if (status === 404) {
+                throw new HTTPError(status, options.method, fullRoute, 'Not Found');
+            } else if (status === 405) {
+                throw new HTTPError(status, options.method, fullRoute, 'Method Not Allowed');
             } else if (status === 429) {
-                console.log('Rate Limited!\n\n');
+                console.log('\n\n');
 
+                const scope = response.headers.get('x-ratelimit-scope');
                 const limit = response.headers.get('x-ratelimit-limit');
                 const remaining = response.headers.get('x-ratelimit-remaining');
                 const reset = response.headers.get('x-ratelimit-reset-after');
                 const hash = response.headers.get('x-ratelimit-bucket');
                 const retry = response.headers.get('retry-after');
 
-                console.log(
-                    `Limit: ${limit}\nRemaining: ${remaining}\nReset: ${reset}\nHash: ${hash}\nRetry: ${retry}`
-                );
+                if (this.rejectOnRateLimit) {
+                    throw new RateLimitError(
+                        limit!,
+                        remaining!,
+                        reset!,
+                        hash!,
+                        retry!,
+                        scope! as any,
+                        status,
+                        options.method,
+                        fullRoute,
+                        'You Are Being Rate Limited'
+                    );
+                }
+
+                this.#rateLimitData = {
+                    scope: scope! as any,
+                    limit: limit ? +limit : Infinity,
+                    remaining: remaining ? +remaining : 1,
+                    reset: reset ? Date.now() + +reset * 1000 + this.offset : Date.now(),
+                    retry: retry ? +retry * 1000 + this.offset : 0,
+                    limited: true,
+                    route,
+                };
             } else if (status >= 400 && status < 500) {
                 throw new DiscordAPIError(
                     status,
@@ -70,6 +125,8 @@ export class RequestManager {
                     fullRoute,
                     data.message
                 );
+            } else if (status >= 500 && status < 600) {
+                throw new HTTPError(status, options.method, fullRoute, 'Internal Server Error');
             } else {
                 return data;
             }

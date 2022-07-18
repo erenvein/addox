@@ -60,12 +60,6 @@ export class WebSocketManager {
     public async connect(client: Client) {
         this.client = client;
 
-        if (this.client.shardCount === 'auto') {
-            for (let i = 0; i < 50; i++) {
-                const shards = await this.getGatewayBot();
-            }
-        }
-
         for (const file of readdirSync(resolve(__dirname, 'events'))) {
             const mod = await import(`./events/${file}`).then((mod) => mod.default);
 
@@ -74,6 +68,16 @@ export class WebSocketManager {
 
                 event.ws = this;
                 this.socket.on(event.name, (...args) => event.handle(...args));
+            }
+        }
+
+        if (this.client.shardCount === 'auto') {
+            for (let i = 0; i < 6; i++) {
+                const bot = await this.getGatewayBot();
+
+                if (bot?.shards) {
+                    console.log(bot.shards);
+                }
             }
         }
     }

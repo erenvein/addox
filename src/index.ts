@@ -12,9 +12,11 @@ export { DiscordSocketError } from './client/ws/DiscordSocketError';
 export { RequestManager } from './client/rest/RequestManager';
 export { HTTPError } from './client/rest/errors/HTTPError';
 export { DiscordAPIError } from './client/rest/errors/DiscordAPIError';
+export { RateLimitError } from './client/rest/errors/RateLimitError';
 
 // STRUCTURES
 export { BitField } from './structures/BitField';
+export { Collection } from './structures/Collection';
 
 // TYPES
 export * from './Constants';

@@ -40,3 +40,13 @@ export interface PartialRESTOptions {
     rejectOnRateLimit?: boolean;
     authPrefix?: 'Bot' | 'Bearer';
 }
+
+export interface RateLimitData {
+    scope?: 'user' | 'shared' | 'global';
+    limit?: number;
+    remaining?: number;
+    reset?: number;
+    retry?: number;
+    limited: boolean;
+    route?: string;
+}

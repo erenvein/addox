@@ -4,7 +4,6 @@ import {
     WebSocketManager,
     BaseClient,
     GatewayIntentBits,
-    GatewayDispatchEvents,
     RequestManager,
     DISCORD_API_URL,
     DISCORD_API_VERSION,

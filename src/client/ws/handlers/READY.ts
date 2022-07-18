@@ -6,6 +6,8 @@ export default class ReadyHandler extends BaseWebSocketHandler {
     }
 
     public handle(data: any) {
-        this.client.emit('Ready', data);
+        this.client.user = data.user;
+
+        this.client.emit('Ready', this.client);
     }
 }
