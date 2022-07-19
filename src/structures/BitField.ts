@@ -1,6 +1,5 @@
 export class BitField {
     public bitset: number;
-    public Flags: Object = {};
 
     public constructor(defaultBitset: number = 0) {
         this.bitset = defaultBitset;

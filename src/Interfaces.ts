@@ -10,7 +10,15 @@ import type {
     ActivityType,
     GatewayActivityEmoji,
     ActivityFlags,
+    UserFlags,
+    UserPremiumType,
 } from './';
+
+import type { RequestInit } from 'node-fetch';
+
+export type ArrayLike<T> = T | T[];
+
+export type PromiseLike<T> = T | Promise<T>;
 
 export interface ClientOptions {
     intents: GatewayIntentBitsResolvable;
@@ -26,16 +34,16 @@ export interface WebSocketOptions {
 }
 
 export type GatewayIntentBitsResolvable =
-    | number
-    | number[]
-    | keyof typeof GatewayIntentBits
-    | (keyof typeof GatewayIntentBits)[];
+    | ArrayLike<number>
+    | ArrayLike<keyof typeof GatewayIntentBits>;
 
 export type PermissionFlagsBitsResolvable =
-    | number
-    | number[]
-    | keyof typeof PermissionFlagsBits
-    | (keyof typeof PermissionFlagsBits)[];
+    | ArrayLike<number>
+    | ArrayLike<keyof typeof PermissionFlagsBits>;
+
+export type UserFlagsBitsResolvable = ArrayLike<number> | ArrayLike<keyof typeof UserFlags>;
+
+export type UserPremiumTypeResolvable = number | keyof typeof UserPremiumType;
 
 export type ColorResolvable = number | keyof typeof Colors;
 
@@ -46,7 +54,10 @@ export interface RESTOptions {
     rejectOnRateLimit?: boolean;
     baseURL: string;
     authPrefix?: 'Bot' | 'Bearer';
+    retries?: number;
 }
+
+export type RequestOptions = RequestInit & { reason?: string };
 
 export interface PartialRESTOptions {
     offset?: number;

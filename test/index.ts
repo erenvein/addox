@@ -14,6 +14,9 @@ const client = new Client({
             activities: [{ name: 'Eminem - Lose Yourself', type: 'Listening' }],
         },
     },
+    rest: {
+        offset: 100,
+    },
 });
 
 client.connect(process.env.TOKEN as string);

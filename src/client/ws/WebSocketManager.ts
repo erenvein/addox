@@ -1,10 +1,11 @@
 import { WebSocket } from 'ws';
 import {
-    DISCORD_GATEWAY_URL,
-    DISCORD_GATEWAY_VERSION,
+    DiscordGatewayURL,
+    DiscordGatewayVersion,
     GatewayOpcodes,
     type Client,
     type WebSocketOptions,
+    type APIGatewayBotInfo,
     BaseWebSocketEvent,
     PresenceData,
     PresenceDataResolver,
@@ -68,11 +69,9 @@ export class WebSocketManager {
         if (client.shardCount !== 'auto') {
             this.shards = client.shardCount;
         } else {
-            const bot = await this.getGatewayBot();
+            const bot: APIGatewayBotInfo = await this.getGatewayBot();
 
-            if (bot?.shards) {
-                this.shards = bot.shards;
-            }
+            client.shardCount = bot.shards ?? 1;
         }
 
         for (const file of readdirSync(resolve(__dirname, 'events'))) {
@@ -85,23 +84,28 @@ export class WebSocketManager {
                 this.socket.on(event.name, (...args) => event.handle(...args));
             }
         }
-
-        //request handler rate limit test :)
-
-        /*if (this.client.shardCount === 'auto') {
-            for (let i = 0; i < 6; i++) {
-                const bot = await this.getGatewayBot();
-
-                if (bot?.shards) {
-                    console.log("fetched gateway bot\n");
-                }
-            }
-        }*/
     }
 
-    public disconnect() {}
+    public disconnect() {
+        this.sequence = -1;
+        this.sessionId = null;
+        this.socket.close();
+    }
 
     public reconnect() {}
+
+    public resume() {
+        this.socket?.send(
+            this.pack({
+                op: GatewayOpcodes.Resume,
+                d: {
+                    token: this.client?.token!,
+                    session_id: this.sessionId,
+                    seq: this.sequence,
+                },
+            })
+        );
+    }
 
     public heartbeat(ms: number) {
         if (this.heartbeatInterval) {
@@ -121,16 +125,7 @@ export class WebSocketManager {
 
     public identify() {
         if (this.sessionId) {
-            this.socket?.send(
-                this.pack({
-                    op: GatewayOpcodes.Resume,
-                    d: {
-                        token: this.client?.token!,
-                        session_id: this.sessionId,
-                        seq: this.sequence,
-                    },
-                })
-            );
+            this.resume();
         } else {
             this.socket?.send(
                 this.pack({
@@ -201,9 +196,9 @@ export class WebSocketManager {
     }
 
     public get endpoint() {
-        let baseEndpoint = DISCORD_GATEWAY_URL;
+        let baseEndpoint = DiscordGatewayURL;
 
-        baseEndpoint += `?v=${DISCORD_GATEWAY_VERSION}`;
+        baseEndpoint += `?v=${DiscordGatewayVersion}`;
         baseEndpoint += `&encoding=${this.encoding}`;
 
         if (zlib) {

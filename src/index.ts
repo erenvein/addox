@@ -24,7 +24,11 @@ export { UserPremiumTypeBitField } from './structures/UserPremiumTypeBitField';
 
 // UTILS
 export { PresenceDataResolver } from './utils/resolvers/PresenceDataResolver';
-export { IntentResolver } from './utils/resolvers/IntentResolver';
+export { GatewayIntentBitsResolver } from './utils/resolvers/GatewayIntentBitsResolver';
+export { UserFlagsBitsResolver } from './utils/resolvers/UserFlagsBitsResolver';
+export { UserPremiumTypeResolver } from './utils/resolvers/UserPremiumTypeResolver';
+export { ColorResolver } from './utils/resolvers/ColorResolver';
+export { PermissionFlagsBitsResolver } from './utils/resolvers/PermissionFlagsBitsResolver';
 
 // SNOWFLAKE UTIL
 export { DiscordSnowflake as SnowflakeUtil } from '@sapphire/snowflake';
