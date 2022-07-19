@@ -1,35 +1,38 @@
 {
-  "name": "discord-api-wrapper",
-  "version": "1.0.0",
-  "description": "A Basicial Discord API Wrapper",
-  "main": "dist/index.js",
-  "repository": "https://github.com/deliever42/discord-api-wrapper",
-  "author": "deliever42",
-  "license": "GPL-3.0",
-  "private": false,
-  "devDependencies": {
-    "@types/node": "^18.0.6",
-    "@types/ws": "^8.5.3",
-    "@typescript-eslint/eslint-plugin": "^5.30.6",
-    "dotenv": "^16.0.1",
-    "erlpack": "^0.1.4",
-    "eslint": "^8.20.0",
-    "prettier": "^2.7.1",
-    "ts-node": "^10.9.1",
-    "typescript": "^4.7.4",
-    "zlib-sync": "^0.1.7"
-  },
-  "dependencies": {
-    "@sapphire/async-queue": "^1.3.1",
-    "@sapphire/snowflake": "^3.2.2",
-    "@types/node-fetch": "^2.6.2",
-    "discord-api-types": "^0.36.2",
-    "node-fetch": "2",
-    "tslib": "^2.4.0",
-    "ws": "^8.8.1"
-  },
-  "scripts": {
-    "build": "tsc",
-    "test": "ts-node test/index.ts"
-  }
+    "name": "discord-api-wrapper",
+    "version": "1.0.0",
+    "description": "A Basicial Discord API Wrapper",
+    "main": "dist/index.js",
+    "repository": {
+        "url": "https://github.com/deliever42/discord-api-wrapper",
+        "type": "git"
+    },
+    "author": "deliever42",
+    "license": "GPL-3.0",
+    "private": false,
+    "devDependencies": {
+        "@types/node": "^18.0.6",
+        "@types/ws": "^8.5.3",
+        "@types/node-fetch": "^2.6.2",
+        "@typescript-eslint/eslint-plugin": "^5.30.6",
+        "dotenv": "^16.0.1",
+        "erlpack": "^0.1.4",
+        "eslint": "^8.20.0",
+        "prettier": "^2.7.1",
+        "ts-node": "^10.9.1",
+        "typescript": "^4.7.4",
+        "zlib-sync": "^0.1.7"
+    },
+    "dependencies": {
+        "@sapphire/async-queue": "^1.3.1",
+        "@sapphire/snowflake": "^3.2.2",
+        "discord-api-types": "^0.36.2",
+        "node-fetch": "2",
+        "tslib": "^2.4.0",
+        "ws": "^8.8.1"
+    },
+    "scripts": {
+        "build": "tsc",
+        "test": "ts-node test/index.ts"
+    }
 }

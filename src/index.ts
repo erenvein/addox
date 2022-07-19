@@ -4,6 +4,7 @@ export { Client } from './client/Client';
 
 // WS
 export { WebSocketManager } from './client/ws/WebSocketManager';
+export { WebSocketShard } from './client/ws/WebSocketShard';
 export { BaseWebSocketEvent } from './client/ws/events/BaseWebSocketEvent';
 export { BaseWebSocketHandler } from './client/ws/handlers/BaseWebSocketHandler';
 export { DiscordSocketError } from './client/ws/DiscordSocketError';
@@ -29,6 +30,7 @@ export { UserFlagsBitsResolver } from './utils/resolvers/UserFlagsBitsResolver';
 export { UserPremiumTypeResolver } from './utils/resolvers/UserPremiumTypeResolver';
 export { ColorResolver } from './utils/resolvers/ColorResolver';
 export { PermissionFlagsBitsResolver } from './utils/resolvers/PermissionFlagsBitsResolver';
+export { Sleep } from './utils/times/Sleep';
 
 // SNOWFLAKE UTIL
 export { DiscordSnowflake as SnowflakeUtil } from '@sapphire/snowflake';

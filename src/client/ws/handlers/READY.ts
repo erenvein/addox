@@ -6,8 +6,11 @@ export default class ReadyHandler extends BaseWebSocketHandler {
     }
 
     public handle(data: any) {
-        this.client.user = new ClientUser(this.client, data.user);
+        this.shard.readyTimestamp = Date.now();
+        this.shard.sessionId = data.session_id;
 
-        this.client.emit('Ready', this.client);
+        this.shard.manager.client.user = new ClientUser(this.shard.manager.client, data.user);
+
+        this.shard.emit('Ready', this.shard);
     }
 }

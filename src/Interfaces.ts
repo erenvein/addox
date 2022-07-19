@@ -13,18 +13,15 @@ import type {
     UserFlags,
     UserPremiumType,
     Client,
+    WebSocketShard,
 } from './';
 
 import type { RequestInit } from 'node-fetch';
 
 export type ArrayLike<T> = T | T[];
 
-export type PromiseLike<T> = T | Promise<T>;
-
 export interface ClientOptions {
-    intents: GatewayIntentBitsResolvable;
-    shardCount?: number | 'auto';
-    ws?: WebSocketOptions;
+    ws: WebSocketOptions;
     rest?: PartialRESTOptions;
 }
 
@@ -32,6 +29,9 @@ export interface WebSocketOptions {
     largeThreshold?: number;
     autoReconnect?: boolean;
     presence?: PresenceData;
+    shardCount?: number | 'auto';
+    compress?: boolean;
+    intents: GatewayIntentBitsResolvable;
 }
 
 export type GatewayIntentBitsResolvable =
@@ -121,4 +121,17 @@ export interface PresenceData {
 export interface ClientEvents {
     Ready: [client: Client];
     Raw: [data: any];
+    ShardSpawn: [shard: WebSocketShard];
+    ShardReady: [shard: WebSocketShard];
+    ShardDisconnect: [shard: WebSocketShard, reason: string];
+    ShardReconnect: [shard: WebSocketShard];
+    ShardResumed: [shard: WebSocketShard];
+    ShardError: [shard: WebSocketShard, error: any];
+}
+
+export interface WebSocketShardEvents {
+    Ready: [shard: WebSocketShard];
+    Close: [shard: WebSocketShard, code: number, reason: string];
+    Resumed: [shard: WebSocketShard];
+    Error: [shard: WebSocketShard, error: any];
 }

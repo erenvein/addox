@@ -61,63 +61,130 @@ export class Collection<K, V> extends Map<K, V> {
         return true;
     }
 
-    public sort(fn: (a: V, b: V, collection: this) => number) {
-        const sorted = new Collection<K, V>();
+    public sort(
+        fn: (firstValue: V, secondValue: V, firstKey: K, secondKey: K, collection: this) => number
+    ): Collection<K, V> {
+        const entries = [...this.entries()];
 
-        for (const [key, value] of this.entries()) {
-            let inserted = false;
+        this.clear();
 
-            for (const [key2, value2] of sorted.entries()) {
-                if (fn(value, value2, this) < 0) {
-                    sorted.set(key, value);
-                    inserted = true;
-                    break;
-                }
-            }
+        entries.sort((a, b) => fn(a[1], b[1], a[0], b[0], this));
 
-            if (!inserted) {
-                sorted.set(key, value);
-            }
-        }
+        for (const [key, value] of entries) this.set(key, value);
 
-        return sorted;
+        return this;
+    }
+
+    public sorted(
+        fn: (firstValue: V, secondValue: V, firstKey: K, secondKey: K, collection: this) => number
+    ) {
+        return this.clone().sort(fn as any);
     }
 
     public reduce<T>(
         fn: (accumulator: T, value: V, key: K, collection: this) => V,
-        initialValue: T
+        initialValue?: T
     ): T {
         let accumulator = initialValue;
 
-        for (const [key, value] of this.entries()) {
-            accumulator = fn(accumulator, value, key, this) as unknown as T;
+        if (accumulator !== undefined) {
+            for (const [key, value] of this.entries()) {
+                accumulator = fn(accumulator, value, key, this) as unknown as T;
+            }
+
+            return accumulator;
+        } else {
+            let first = true;
+
+            for (const [key, value] of this.entries()) {
+                if (first) {
+                    accumulator = fn(value as unknown as T, value, key, this) as unknown as T;
+                    first = false;
+                    break;
+                }
+            }
+
+            return this.reduce(fn, accumulator);
         }
-
-        return accumulator;
     }
 
-    public random() {
-        return this.array()[Math.floor(Math.random() * this.size)];
+    public intersect(other: Collection<K, V>) {
+        return other.filter((_, key) => this.has(key));
     }
 
-    public randomKey() {
-        return this.keyArray()[Math.floor(Math.random() * this.size)];
+    public partition(fn: (value: V, key: K, collection: this) => boolean) {
+        const result = [new Collection<K, V>(), new Collection<K, V>()];
+
+        for (const [key, value] of this.entries()) {
+            if (fn(value, key, this)) {
+                result[0].set(key, value);
+            } else {
+                result[1].set(key, value);
+            }
+        }
     }
 
-    public first(): V {
-        return this.array()[0];
+    public random(amount: number = 0): V | V[] | undefined {
+        const values = this.array();
+
+        if (amount === 0) return values[Math.floor(Math.random() * this.size)];
+
+        return Array.from(
+            { length: amount },
+            (): V => values[Math.floor(Math.random() * this.size)]
+        );
     }
 
-    public firstKey() {
-        return this.keyArray()[0];
+    public randomKey(amount: number = 0): K | K[] | undefined {
+        const keys = this.keyArray();
+
+        if (amount === 0) return keys[Math.floor(Math.random() * this.size)];
+
+        return Array.from({ length: amount }, (): K => keys[Math.floor(Math.random() * this.size)]);
     }
 
-    public last() {
-        return this.array()[this.size - 1];
+    public first(amount: number = 0): V | V[] | undefined {
+        const iterable = this.values();
+
+        if (amount === 0) return iterable.next().value;
+        if (amount < 0) return this.last(amount * -1);
+
+        amount = Math.min(this.size, amount);
+
+        return Array.from({ length: amount }, (): V => iterable.next().value);
     }
 
-    public lastKey() {
-        return this.keyArray()[this.size - 1];
+    public firstKey(amount: number = 0): K | K[] | undefined {
+        const iterable = this.keys();
+
+        if (amount === 0) return iterable.next().value;
+        if (amount < 0) return this.lastKey(amount * -1);
+
+        amount = Math.min(this.size, amount);
+
+        return Array.from({ length: amount }, (): K => iterable.next().value);
+    }
+
+    public last(amount: number = 0): V | V[] | undefined {
+        const values = this.array();
+
+        if (amount === 0) return values[this.size - 1];
+        if (amount < 0) return this.first(amount * -1);
+
+        amount = Math.min(this.size, amount);
+
+        return values.slice(-amount);
+    }
+
+    public lastKey(amount: number = 0): K | K[] | undefined {
+        const keys = this.keyArray();
+
+        if (amount === 0) return keys[this.size - 1];
+        if (amount < 0) return this.firstKey(amount * -1);
+
+        amount = Math.min(this.size, amount);
+
+        return keys.slice(-amount);
     }
 
     public array() {
@@ -126,6 +193,14 @@ export class Collection<K, V> extends Map<K, V> {
 
     public keyArray() {
         return [...this.keys()];
+    }
+
+    public clone() {
+        return new Collection<K, V>(this);
+    }
+
+    public toObject(): Object {
+        return Object.fromEntries(this.entries());
     }
 
     public _add(key: K, value: V) {

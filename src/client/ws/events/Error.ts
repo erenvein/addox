@@ -5,7 +5,7 @@ export default class WebSocketErrorEvent extends BaseWebSocketEvent {
         super('error');
     }
 
-    public handle(err: any) {
-        console.error(err);
+    public handle(error: any) {
+        this.shard.emit('Error', this.shard, error);
     }
 }

@@ -1,4 +1,4 @@
-import { BaseWebSocketEvent, GatewayOpcodes } from '../../..';
+import { BaseWebSocketEvent, GatewayOpcodes, BaseWebSocketHandler } from '../../..';
 
 export default class WebSocketMessageEvent extends BaseWebSocketEvent {
     public constructor() {
@@ -6,58 +6,52 @@ export default class WebSocketMessageEvent extends BaseWebSocketEvent {
     }
 
     public async handle(data: any) {
-        const resolved = this.ws.resolve(data);
+        const resolved = this.shard.deserialize(data);
 
         if (!resolved) return;
 
         const { op, d, t, s } = resolved;
 
-        if (s > this.ws.sequence) this.ws.sequence = s;
-        if (t === 'READY') {
-            this.ws.sessionId = d.session_id;
-        }
+        if (s > this.shard.sequence) this.shard.sequence = s;
 
         switch (op) {
             case GatewayOpcodes.Hello:
-                this.ws.heartbeat(d.heartbeat_interval);
-                this.ws.identify();
+                this.shard.heartbeat(d.heartbeat_interval);
+                this.shard.identify();
                 break;
             case GatewayOpcodes.Heartbeat:
-                this.ws.lastHeartbeatAck = true;
-                this.ws.heartbeat(d.heartbeat_interval);
+                this.shard.heartbeat(d.heartbeat_interval);
                 break;
             case GatewayOpcodes.HeartbeatAck:
-                this.ws.heartbeatAck();
+                this.shard.heartbeatAck();
                 break;
             case GatewayOpcodes.InvalidSession:
                 if (d) {
-                    this.ws.identify();
+                    this.shard.identify();
                     return;
                 }
 
-                this.ws.disconnect();
+                this.shard.close(1000);
+                this.shard.identify();
                 break;
             case GatewayOpcodes.Reconnect:
-                await this.ws.reconnect();
+                await this.shard.reconnect();
                 break;
             default:
-                if (t === 'RESUMED') {
-                    this.ws.socket.send({ op: GatewayOpcodes.Heartbeat, d: this.ws.sequence });
-                    this.ws.lastHeartbeatAck = true;
-                    this.ws.lastPing = Date.now();
-                } else {
+                if (t) {
                     try {
+                        this.shard.manager.client?.emit('Raw', d);
+
                         const mod = await import(`../handlers/${t}.ts`).then((mod) => mod.default);
 
-                        const handler = new mod();
+                        const handler: BaseWebSocketHandler = new mod();
 
-                        handler.client = this.ws.client;
+                        handler.shard = this.shard;
 
                         handler.handle(d);
-                    } catch (e) {
-                        //console.log(e);
-                    }
+                    } catch {}
                 }
+
                 break;
         }
     }

@@ -6,6 +6,6 @@ export default class WebSocketOpenEvent extends BaseWebSocketEvent {
     }
 
     public handle() {
-        this.ws.socket.ping();
+        this.shard.socket.ping();
     }
 }

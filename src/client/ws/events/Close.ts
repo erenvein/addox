@@ -8,7 +8,16 @@ export default class WebSocketCloseEvent extends BaseWebSocketEvent {
     public handle(code: number, reason: Buffer) {
         const resolved = Buffer.from(reason).toString('utf-8');
 
+        this.shard.closeSequence = this.shard.sequence;
+
+        this.shard.emit('Close', this.shard, code, resolved);
+
         switch (code) {
+            // by owner
+            case 1000:
+                this.shard.emit('Disconnect', this.shard, 1000, 'Performed By Owner');
+                break;
+
             //reconnectable errors
             case GatewayCloseCodes.UnknownError:
             case GatewayCloseCodes.UnknownOpcode:
@@ -18,7 +27,7 @@ export default class WebSocketCloseEvent extends BaseWebSocketEvent {
             case GatewayCloseCodes.InvalidSeq:
             case GatewayCloseCodes.RateLimited:
             case GatewayCloseCodes.SessionTimedOut:
-                this.ws.reconnect();
+                this.shard.reconnect();
                 break;
 
             //non-reconnectable errors

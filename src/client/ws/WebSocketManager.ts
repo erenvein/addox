@@ -1,238 +1,139 @@
-import { WebSocket } from 'ws';
 import {
-    DiscordGatewayURL,
-    DiscordGatewayVersion,
-    GatewayOpcodes,
+    WebSocketShard,
+    Collection,
     type Client,
-    type WebSocketOptions,
-    type APIGatewayBotInfo,
-    BaseWebSocketEvent,
-    PresenceData,
+    type PresenceData,
+    BitField,
+    GatewayIntentBitsResolver,
+    WebSocketOptions,
     PresenceDataResolver,
-} from '../..';
-import { readdirSync } from 'node:fs';
-import { resolve } from 'node:path';
-import { TextDecoder } from 'node:util';
-
-let erlpack: any;
-let zlib: any;
-
-try {
-    erlpack = require('erlpack');
-} catch {
-    erlpack = null;
-}
-
-try {
-    zlib = require('zlib-sync');
-} catch {
-    zlib = null;
-}
+    APIGatewayBotInfo,
+    ReconnectableWebSocketErrorCodes,
+    Sleep,
+} from '../../';
 
 export class WebSocketManager {
-    public socket: WebSocket;
-    public inflate: any = undefined;
-    public lastPing: number = -1;
-    public lastHeartbeatAck: boolean = false;
-    public heartbeatInterval: NodeJS.Timer | null = null;
-    public sequence: number = -1;
-    public sessionId: string | null = null;
-    public largeThresold: number;
-    public autoReconnect: boolean;
-    public client: Client | null = null;
-    public presence: PresenceData;
+    public shards = new Collection<number, WebSocketShard>();
+    public shardCount: number | 'auto';
+    public intents: number;
+    public client: Client;
+    public largeThreshold: number;
+    public presence: PresenceData | null;
+    public shardList: number[] | null;
+    public shardQueue: Set<WebSocketShard> | null;
+    public compress: boolean;
 
-    public constructor({ largeThreshold, autoReconnect, presence }: WebSocketOptions = {}) {
-        this.largeThresold = largeThreshold ?? 50;
-        this.autoReconnect = autoReconnect ?? true;
-        this.presence = PresenceDataResolver(presence ?? {});
+    public constructor(
+        client: Client,
+        { intents, shardCount, largeThreshold, presence, compress }: WebSocketOptions
+    ) {
+        this.client = client;
 
-        this.socket = new WebSocket(this.endpoint);
-
-        if (zlib) {
-            this.inflate = new zlib.Inflate({
-                chunkSize: 65535,
-                to: this.encoding === 'json' ? 'string' : '',
-                flush: zlib.Z_SYNC_FLUSH,
-            });
-        }
+        this.intents = new BitField().set(GatewayIntentBitsResolver(intents));
+        this.shardCount = shardCount ?? 'auto';
+        this.largeThreshold = largeThreshold ?? 250;
+        this.presence = presence ? PresenceDataResolver(presence) : null;
+        this.shardList = null;
+        this.shardQueue = null;
+        this.compress = compress ?? true;
     }
 
     public async getGatewayBot() {
-        return await this.client?.rest.get(`/gateway/bot`);
+        return await this.client.rest.get<APIGatewayBotInfo>('/gateway/bot');
     }
 
-    public async connect(client: Client) {
-        this.client = client;
+    public async connect(token: string) {
+        this.client.token = token;
+        this.client.rest.setToken(token);
 
-        if (client.shardCount === 'auto') {
-            const bot: APIGatewayBotInfo = await this.getGatewayBot();
-            client.shardCount = bot!.shards ?? 1;
+        if (this.shardCount === 'auto') {
+            const { shards } = await this.getGatewayBot();
+
+            this.shardCount = shards;
+        } else if (this.shardCount < 1) {
+            this.shardCount = 1;
         }
 
-        for (const file of readdirSync(resolve(__dirname, 'events'))) {
-            const mod = await import(`./events/${file}`).then((mod) => mod.default);
+        this.shardList = Array.from({ length: this.shardCount }, (_, i) => i);
 
-            if (mod !== undefined) {
-                const event = new mod() as BaseWebSocketEvent;
-
-                event.ws = this;
-                this.socket.on(event.name, (...args) => event.handle(...args));
-            }
-        }
-    }
-
-    public disconnect() {
-        clearInterval(this.heartbeatInterval!);
-
-        this.lastHeartbeatAck = false;
-        this.sequence = -1;
-        this.lastPing = -1;
-        this.sessionId = null;
-        this.client!.user = null;
-        this.inflate = null;
-
-        if (zlib) {
-            this.inflate = new zlib.Inflate({
-                chunkSize: 65535,
-                to: this.encoding === 'json' ? 'string' : '',
-                flush: zlib.Z_SYNC_FLUSH,
-            });
-        }
-
-        this.socket.close();
-    }
-
-    public async reconnect() {
-        this.disconnect();
-        await this.connect(this.client!);
-    }
-
-    public resume() {
-        this.socket?.send(
-            this.pack({
-                op: GatewayOpcodes.Resume,
-                d: {
-                    token: this.client?.token!,
-                    session_id: this.sessionId,
-                    seq: this.sequence,
-                },
-            })
+        this.shardQueue = new Set<WebSocketShard>(
+            this.shardList?.map((id) => new WebSocketShard(this, id))
         );
+
+        return await this.spawnShards();
     }
 
-    public heartbeat(ms: number) {
-        if (this.heartbeatInterval) {
-            clearInterval(this.heartbeatInterval);
-        }
-
-        this.heartbeatInterval = setInterval(() => {
-            this.socket.send(this.pack({ op: GatewayOpcodes.Heartbeat, d: this.sequence }));
-            this.lastPing = Date.now();
-            this.lastHeartbeatAck = false;
-        }, ms);
+    public broadcast(data: any) {
+        this.shards.forEach((shard) => shard.send(data));
     }
 
-    public heartbeatAck() {
-        this.lastHeartbeatAck = true;
+    public async destroy() {
+        this.shards.forEach((shard) => shard.close(1000));
     }
 
-    public identify() {
-        if (this.sessionId) {
-            this.resume();
-        } else {
-            this.socket?.send(
-                this.pack({
-                    op: GatewayOpcodes.Identify,
-                    d: {
-                        token: this.client?.token!,
-                        intents: this.client?.intents!,
-                        large_threshold: this.largeThresold,
-                        compress: this.encoding !== 'json',
-                        presence: this.presence,
-                        properties: {
-                            os: 'linux',
-                            browser: 'discord-api-wrapper-by-deliever42',
-                            device: 'discord-api-wrapper-by-deliever42',
-                        },
-                    },
-                })
-            );
-        }
-    }
+    public async spawnShards(): Promise<boolean> {
+        if (!this.shardQueue!.size) return false;
 
-    public pack(data: any) {
-        if (this.encoding === 'json') {
-            return JSON.stringify(data);
-        } else {
-            return erlpack.pack(data);
-        }
-    }
+        const [shard] = this.shardQueue!;
 
-    public unpack(data: any) {
-        if (this.encoding === 'json') {
-            if (typeof data !== 'string') {
-                data = new TextDecoder().decode(data);
-            }
+        this.client.emit('ShardSpawn', shard);
 
-            return JSON.parse(data);
-        } else {
-            if (!Buffer.isBuffer(data)) {
-                data = Buffer.from(new Uint8Array(data));
-            }
+        this.shardQueue?.delete(shard);
 
-            return erlpack.unpack(data);
-        }
-    }
+        if (!shard.eventsReady) {
+            shard.on('Ready', (...args) => {
+                this.client.emit('ShardReady', ...args);
 
-    public resolve(data: any) {
-        if (data instanceof ArrayBuffer) {
-            data = new Uint8Array(data);
+                if (this.allShardsReady) {
+                    this.client.uptime = Date.now();
+                    this.client.emit('Ready', this.client);
+                }
+            });
+
+            shard.on('Close', (...args) => {
+                this.client.emit('ShardDisconnect', ...args);
+
+                if (ReconnectableWebSocketErrorCodes.has(args[1])) {
+                    this.shardQueue?.add(shard);
+
+                    this.client.emit('ShardReconnect', args[0]);
+                }
+            });
+
+            shard.on('Resumed', (...args) => {
+                this.client.emit('ShardResumed', ...args);
+            });
+
+            shard.on('Error', (...args) => {
+                this.client.emit('ShardError', ...args);
+            });
+
+            shard.eventsReady = true;
         }
 
-        if (zlib) {
-            const isFlush = this.isInflateFlush(data);
-
-            this.inflate.push(data, isFlush && zlib.Z_SYNC_FLUSH);
-
-            if (!isFlush) return null;
-
-            data = this.inflate.result;
-        }
+        this.shards.set(shard.id, shard);
 
         try {
-            data = this.unpack(data);
-        } catch {
-            data = null;
+            await shard.connect();
+        } catch (err) {
+            this.shardQueue?.add(shard);
         }
 
-        return data;
-    }
-
-    public get endpoint() {
-        let baseEndpoint = DiscordGatewayURL;
-
-        baseEndpoint += `?v=${DiscordGatewayVersion}`;
-        baseEndpoint += `&encoding=${this.encoding}`;
-
-        if (zlib) {
-            baseEndpoint += `&compress=zlib-stream`;
+        if (this.shardQueue!.size) {
+            await Sleep(4000);
+            return await this.spawnShards();
         }
 
-        return baseEndpoint;
+        return true;
     }
 
-    public get encoding() {
-        return erlpack ? 'etf' : 'json';
-    }
+    public get allShardsReady() {
+        if (
+            this.shards.size !== this.shardCount ||
+            !this.shards.every((shard) => shard.readyTimestamp > 0)
+        )
+            return false;
 
-    public isInflateFlush(data: any) {
-        return (
-            data.length >= 4 &&
-            data[data.length - 4] === 0x00 &&
-            data[data.length - 3] === 0x00 &&
-            data[data.length - 2] === 0xff &&
-            data[data.length - 1] === 0xff
-        );
+        return true;
     }
 }

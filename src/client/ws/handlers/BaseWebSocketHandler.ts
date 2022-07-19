@@ -1,8 +1,8 @@
-import type { GatewayDispatchEvents, Client } from '../../..';
+import type { GatewayDispatchEvents, WebSocketShard } from '../../..';
 
 export class BaseWebSocketHandler {
     public name: keyof typeof GatewayDispatchEvents;
-    public client!: Client;
+    public shard!: WebSocketShard;
     public constructor(name: keyof typeof GatewayDispatchEvents) {
         this.name = name;
     }

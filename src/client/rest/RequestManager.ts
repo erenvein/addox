@@ -38,7 +38,7 @@ export class RequestManager {
         return this.#globalRateLimitData;
     }
 
-    public async request(route: `/${string}`, options: RequestOptions = {}): Promise<any> {
+    public async request<T>(route: `/${string}`, options: RequestOptions = {}): Promise<T> {
         await this.queue.wait();
 
         //@ts-ignore
@@ -167,23 +167,23 @@ export class RequestManager {
         }
     }
 
-    public async get(route: `/${string}`, options: RequestOptions = {}) {
-        return await this.request(route, { ...options, method: 'GET' });
+    public async get<T>(route: `/${string}`, options: RequestOptions = {}) {
+        return await this.request<T>(route, { ...options, method: 'GET' });
     }
 
-    public async post(route: `/${string}`, options: RequestOptions = {}) {
+    public async post<T>(route: `/${string}`, options: RequestOptions = {}) {
         return await this.request(route, { ...options, method: 'POST' });
     }
 
-    public async put(route: `/${string}`, options: RequestOptions = {}) {
+    public async put<T>(route: `/${string}`, options: RequestOptions = {}) {
         return await this.request(route, { ...options, method: 'PUT' });
     }
 
-    public async patch(route: `/${string}`, options: RequestOptions = {}) {
+    public async patch<T>(route: `/${string}`, options: RequestOptions = {}) {
         return await this.request(route, { ...options, method: 'PATCH' });
     }
 
-    public async delete(route: `/${string}`, options: RequestOptions = {}) {
+    public async delete<T>(route: `/${string}`, options: RequestOptions = {}) {
         return await this.request(route, { ...options, method: 'DELETE' });
     }
 
