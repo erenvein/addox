@@ -9,48 +9,26 @@ export default class WebSocketCloseEvent extends BaseWebSocketEvent {
         const resolved = Buffer.from(reason).toString('utf-8');
 
         switch (code) {
+            //reconnectable errors
             case GatewayCloseCodes.UnknownError:
-                this.ws.reconnect();
-                break;
             case GatewayCloseCodes.UnknownOpcode:
-                this.ws.reconnect();
-                break;
             case GatewayCloseCodes.DecodeError:
-                this.ws.reconnect();
-                break;
             case GatewayCloseCodes.NotAuthenticated:
-                this.ws.reconnect();
-                break;
-            case GatewayCloseCodes.AuthenticationFailed:
-                throw new DiscordSocketError(resolved);
-                break;
             case GatewayCloseCodes.AlreadyAuthenticated:
-                this.ws.reconnect();
-                break;
             case GatewayCloseCodes.InvalidSeq:
-                this.ws.reconnect();
-                break;
             case GatewayCloseCodes.RateLimited:
-                this.ws.reconnect();
-                break;
             case GatewayCloseCodes.SessionTimedOut:
                 this.ws.reconnect();
                 break;
+
+            //non-reconnectable errors
             case GatewayCloseCodes.InvalidShard:
-                throw new DiscordSocketError(resolved);
-                break;
             case GatewayCloseCodes.ShardingRequired:
-                throw new DiscordSocketError(resolved);
-                break;
             case GatewayCloseCodes.InvalidAPIVersion:
-                throw new DiscordSocketError(resolved);
-                break;
             case GatewayCloseCodes.InvalidIntents:
-                throw new DiscordSocketError(resolved);
-                break;
             case GatewayCloseCodes.DisallowedIntents:
+            case GatewayCloseCodes.AuthenticationFailed:
                 throw new DiscordSocketError(resolved);
-                break;
         }
     }
 }

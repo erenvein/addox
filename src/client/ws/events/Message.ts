@@ -1,4 +1,4 @@
-import { BaseWebSocketEvent, GatewayOpcodes, GatewayDispatchEvents } from '../../..';
+import { BaseWebSocketEvent, GatewayOpcodes } from '../../..';
 
 export default class WebSocketMessageEvent extends BaseWebSocketEvent {
     public constructor() {
@@ -23,15 +23,11 @@ export default class WebSocketMessageEvent extends BaseWebSocketEvent {
                 this.ws.identify();
                 break;
             case GatewayOpcodes.Heartbeat:
+                this.ws.lastHeartbeatAck = true;
                 this.ws.heartbeat(d.heartbeat_interval);
                 break;
             case GatewayOpcodes.HeartbeatAck:
                 this.ws.heartbeatAck();
-                break;
-            case GatewayDispatchEvents.Resumed:
-                this.ws.socket.send({ op: GatewayOpcodes.Heartbeat, d: this.ws.sequence });
-                this.ws.lastHeartbeatAck = true;
-                this.ws.lastPing = Date.now();
                 break;
             case GatewayOpcodes.InvalidSession:
                 if (d) {
@@ -43,16 +39,22 @@ export default class WebSocketMessageEvent extends BaseWebSocketEvent {
                 this.ws.sessionId = null;
                 break;
             default:
-                try {
-                    const mod = await import(`../handlers/${t}.ts`).then((mod) => mod.default);
+                if (t === 'RESUMED') {
+                    this.ws.socket.send({ op: GatewayOpcodes.Heartbeat, d: this.ws.sequence });
+                    this.ws.lastHeartbeatAck = true;
+                    this.ws.lastPing = Date.now();
+                } else {
+                    try {
+                        const mod = await import(`../handlers/${t}.ts`).then((mod) => mod.default);
 
-                    const handler = new mod();
+                        const handler = new mod();
 
-                    handler.client = this.ws.client;
+                        handler.client = this.ws.client;
 
-                    handler.handle(d);
-                } catch (e) {
-                    //console.log(e);
+                        handler.handle(d);
+                    } catch (e) {
+                        //console.log(e);
+                    }
                 }
                 break;
         }

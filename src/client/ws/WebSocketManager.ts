@@ -40,7 +40,6 @@ export class WebSocketManager {
     public largeThresold: number;
     public autoReconnect: boolean;
     public client: Client | null = null;
-    public shards: number = 0;
     public presence: PresenceData;
 
     public constructor({ largeThreshold, autoReconnect, presence }: WebSocketOptions = {}) {
@@ -66,12 +65,9 @@ export class WebSocketManager {
     public async connect(client: Client) {
         this.client = client;
 
-        if (client.shardCount !== 'auto') {
-            this.shards = client.shardCount;
-        } else {
+        if (client.shardCount === 'auto') {
             const bot: APIGatewayBotInfo = await this.getGatewayBot();
-
-            client.shardCount = bot.shards ?? 1;
+            client.shardCount = bot!.shards ?? 1;
         }
 
         for (const file of readdirSync(resolve(__dirname, 'events'))) {
@@ -87,12 +83,30 @@ export class WebSocketManager {
     }
 
     public disconnect() {
+        clearInterval(this.heartbeatInterval!);
+
+        this.lastHeartbeatAck = false;
         this.sequence = -1;
+        this.lastPing = -1;
         this.sessionId = null;
+        this.client!.user = null;
+        this.inflate = null;
+
+        if (zlib) {
+            this.inflate = new zlib.Inflate({
+                chunkSize: 65535,
+                to: this.encoding === 'json' ? 'string' : '',
+                flush: zlib.Z_SYNC_FLUSH,
+            });
+        }
+
         this.socket.close();
     }
 
-    public reconnect() {}
+    public async reconnect() {
+        this.disconnect();
+        await this.connect(this.client!);
+    }
 
     public resume() {
         this.socket?.send(
