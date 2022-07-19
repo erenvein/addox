@@ -8,6 +8,7 @@ import {
     GatewayIntentBitsResolver,
     DiscordAPIURL,
     DiscordAPIVersion,
+    ClientEvents,
 } from '../';
 
 export class Client extends BaseClient {
@@ -38,5 +39,31 @@ export class Client extends BaseClient {
 
         this.rest.setToken(token);
         await this.ws.connect(this);
+    }
+
+    public override on<K extends keyof ClientEvents>(
+        event: K,
+        listener: (...args: ClientEvents[K]) => void
+    ): this;
+    public override on(event: string | symbol, ...args: any[]): this;
+    public override on(event: string | symbol, listener: (...args: any) => any) {
+        super.on(event, listener);
+        return this;
+    }
+
+    public override once<K extends keyof ClientEvents>(
+        event: K,
+        listener: (...args: ClientEvents[K]) => void
+    ): this;
+    public override once(event: string | symbol, ...args: any[]): this;
+    public override once(event: string | symbol, listener: (...args: any) => any) {
+        super.once(event, listener);
+        return this;
+    }
+
+    public override emit<K extends keyof ClientEvents>(event: K, ...args: ClientEvents[K]): boolean;
+    public override emit(event: string | symbol, ...args: any[]): boolean;
+    public override emit(event: string | symbol, ...args: any[]) {
+        return super.emit(event, ...args);
     }
 }

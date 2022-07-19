@@ -35,8 +35,10 @@ export default class WebSocketMessageEvent extends BaseWebSocketEvent {
                     return;
                 }
 
-                this.ws.sequence = -1;
-                this.ws.sessionId = null;
+                this.ws.disconnect();
+                break;
+            case GatewayOpcodes.Reconnect:
+                await this.ws.reconnect();
                 break;
             default:
                 if (t === 'RESUMED') {

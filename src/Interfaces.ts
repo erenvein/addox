@@ -12,6 +12,7 @@ import type {
     ActivityFlags,
     UserFlags,
     UserPremiumType,
+    Client,
 } from './';
 
 import type { RequestInit } from 'node-fetch';
@@ -115,4 +116,9 @@ export interface PresenceData {
     status?: 'online' | 'idle' | 'dnd' | 'invisible' | 'offline';
     afk?: boolean;
     since?: number;
+}
+
+export interface ClientEvents {
+    Ready: [client: Client];
+    Raw: [data: any];
 }
