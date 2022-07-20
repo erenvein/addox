@@ -9,6 +9,15 @@ import {
     ClientEvents,
 } from '../';
 
+export declare interface Client {
+    on<K extends keyof ClientEvents>(event: K, listener: (...args: ClientEvents[K]) => void): this;
+    once<K extends keyof ClientEvents>(
+        event: K,
+        listener: (...args: ClientEvents[K]) => void
+    ): this;
+    emit<K extends keyof ClientEvents>(event: K, ...args: ClientEvents[K]): any;
+}
+
 export class Client extends BaseClient {
     public token: string | null;
     public user: ClientUser | null;
@@ -36,31 +45,5 @@ export class Client extends BaseClient {
 
         this.ws.destroy();
         this.rest.token = undefined;
-    }
-
-    public override on<K extends keyof ClientEvents>(
-        event: K,
-        listener: (...args: ClientEvents[K]) => void
-    ): this;
-    public override on(event: string | symbol, ...args: any[]): this;
-    public override on(event: string | symbol, listener: (...args: any) => any) {
-        super.on(event, listener);
-        return this;
-    }
-
-    public override once<K extends keyof ClientEvents>(
-        event: K,
-        listener: (...args: ClientEvents[K]) => void
-    ): this;
-    public override once(event: string | symbol, ...args: any[]): this;
-    public override once(event: string | symbol, listener: (...args: any) => any) {
-        super.once(event, listener);
-        return this;
-    }
-
-    public override emit<K extends keyof ClientEvents>(event: K, ...args: ClientEvents[K]): boolean;
-    public override emit(event: string | symbol, ...args: any[]): boolean;
-    public override emit(event: string | symbol, ...args: any[]) {
-        return super.emit(event, ...args);
     }
 }

@@ -8,12 +8,12 @@ const client = new Client({
     ws: {
         presence: {
             status: 'dnd',
-            activities: [{ name: 'Eminem - Lose Yourself', type: 'Listening' }],
+            activities: [{ name: 'annen ile', type: 'Playing' }],
         },
         intents: Object.values(GatewayIntentBits)
             .filter((bit) => typeof bit === 'number')
             .reduce((accumulator, bit) => accumulator | (bit as number), 0),
-        shardCount: 3,
+        shardCount: 2,
     },
     rest: {
         offset: 100,
@@ -32,12 +32,24 @@ client.on('ShardSpawn', (shard) => {
     console.log(`Shard ${shard.id + 1} spawned.`);
 });
 
-client.on('ShardReady', (shard) => {
+client.on('ShardReady', async (shard) => {
     console.log(`Shard ${shard.id + 1} ready.`);
 });
 
-client.on('ShardDisconnect', (shard, reason) => {
-    console.log(`Shard ${shard.id + 1} closed.\nReason: ${reason}`);
+client.on('ShardClosed', (shard, code, reason) => {
+    console.log(`Shard ${shard.id + 1} closed.\nReason: ${reason}\nCode: ${code}`);
+});
+
+client.on('ShardReconnect', (shard) => {
+    console.log(`Shard ${shard.id + 1} reconnecting.`);
+});
+
+client.on('ShardResumed', (shard) => {
+    console.log(`Shard ${shard.id + 1} resumed.`);
+});
+
+client.on('ShardDeath', (shard) => {
+    console.log(`Shard ${shard.id + 1} death.`);
 });
 
 client.ws.connect(process.env.TOKEN as string);

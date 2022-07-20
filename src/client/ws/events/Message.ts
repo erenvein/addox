@@ -16,14 +16,14 @@ export default class WebSocketMessageEvent extends BaseWebSocketEvent {
 
         switch (op) {
             case GatewayOpcodes.Hello:
-                this.shard.heartbeat(d.heartbeat_interval);
+                this.shard.setHeartbeatTimer(d.heartbeat_interval);
                 this.shard.identify();
                 break;
             case GatewayOpcodes.Heartbeat:
-                this.shard.heartbeat(d.heartbeat_interval);
+                this.shard.sendHeartbeat();
                 break;
             case GatewayOpcodes.HeartbeatAck:
-                this.shard.heartbeatAck();
+                this.shard.heartbeatAck(true);
                 break;
             case GatewayOpcodes.InvalidSession:
                 if (d) {
@@ -37,21 +37,18 @@ export default class WebSocketMessageEvent extends BaseWebSocketEvent {
             case GatewayOpcodes.Reconnect:
                 await this.shard.reconnect();
                 break;
-            default:
-                if (t) {
-                    try {
-                        this.shard.manager.client?.emit('Raw', d);
+            case GatewayOpcodes.Dispatch:
+                try {
+                    this.shard.manager.client?.emit('Raw', d);
 
-                        const mod = await import(`../handlers/${t}.ts`).then((mod) => mod.default);
+                    const mod = await import(`../handlers/${t}.ts`).then((mod) => mod.default);
 
-                        const handler: BaseWebSocketHandler = new mod();
+                    const handler: BaseWebSocketHandler = new mod();
 
-                        handler.shard = this.shard;
+                    handler.shard = this.shard;
 
-                        handler.handle(d);
-                    } catch {}
-                }
-
+                    handler.handle({ op, d, t, s });
+                } catch {}
                 break;
         }
     }

@@ -41,4 +41,6 @@ export enum Colors {
     LightNavy = 0x3a5fcd,
 }
 
-export const ReconnectableWebSocketErrorCodes = new Set([4000, 4001, 4002, 4003, 4005, 4007, 4008, 4009]);
+export const ReconnectableWebSocketCloseCodes = new Set([
+    4000, 4001, 4002, 4003, 4005, 4007, 4008, 4009,
+]);

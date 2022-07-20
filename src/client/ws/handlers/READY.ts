@@ -1,16 +1,19 @@
-import { BaseWebSocketHandler, ClientUser } from '../../../';
+import { BaseWebSocketHandler, ClientUser, GatewayReadyDispatch } from '../../../';
 
 export default class ReadyHandler extends BaseWebSocketHandler {
     public constructor() {
         super('Ready');
     }
 
-    public handle(data: any) {
-        this.shard.readyTimestamp = Date.now();
-        this.shard.sessionId = data.session_id;
+    public handle({ d }: GatewayReadyDispatch) {
+        this.shard.uptime = Date.now();
+        this.shard.sessionId = d.session_id;
+        this.shard.status = 'READY';
 
-        this.shard.manager.client.user = new ClientUser(this.shard.manager.client, data.user);
+        this.shard.manager.client.user = new ClientUser(this.shard.manager.client, d.user);
 
+        this.shard.heartbeatAck();
+        this.shard.sendHeartbeat();
         this.shard.emit('Ready', this.shard);
     }
 }

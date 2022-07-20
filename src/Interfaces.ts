@@ -14,6 +14,8 @@ import type {
     UserPremiumType,
     Client,
     WebSocketShard,
+    GatewayCloseCodes,
+    APIGuild,
 } from './';
 
 import type { RequestInit } from 'node-fetch';
@@ -25,12 +27,19 @@ export interface ClientOptions {
     rest?: PartialRESTOptions;
 }
 
+export interface WebSocketProperties {
+    os?: string;
+    browser?: string;
+    device?: string;
+}
+
 export interface WebSocketOptions {
     largeThreshold?: number;
     autoReconnect?: boolean;
     presence?: PresenceData;
     shardCount?: number | 'auto';
     compress?: boolean;
+    properties?: WebSocketProperties;
     intents: GatewayIntentBitsResolvable;
 }
 
@@ -123,15 +132,22 @@ export interface ClientEvents {
     Raw: [data: any];
     ShardSpawn: [shard: WebSocketShard];
     ShardReady: [shard: WebSocketShard];
-    ShardDisconnect: [shard: WebSocketShard, reason: string];
+    ShardClosed: [shard: WebSocketShard, code: number, reason: string];
+    ShardDeath: [shard: WebSocketShard, code: number, reason: string];
     ShardReconnect: [shard: WebSocketShard];
-    ShardResumed: [shard: WebSocketShard];
+    ShardResumed: [shard: WebSocketShard, replayed: number];
     ShardError: [shard: WebSocketShard, error: any];
 }
 
 export interface WebSocketShardEvents {
     Ready: [shard: WebSocketShard];
     Close: [shard: WebSocketShard, code: number, reason: string];
-    Resumed: [shard: WebSocketShard];
+    Resumed: [shard: WebSocketShard, replayed: number];
     Error: [shard: WebSocketShard, error: any];
 }
+
+export type GatewayCloseCodesResolvable = number | keyof typeof GatewayCloseCodes;
+
+export type WebSocketShardStatus = 'IDLE' | 'READY' | 'CONNECTING' | 'RECONNECTING' | 'CLOSED';
+
+export type RawGuildData = APIGuild & { shard_id?: number };

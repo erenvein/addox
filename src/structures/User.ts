@@ -32,7 +32,7 @@ export class User {
         this._patch(data);
     }
 
-    private _patch(data: APIUser) {
+    protected _patch(data: APIUser) {
         this.id = data.id;
         this.username = data.username;
         this.discriminator = data.discriminator;

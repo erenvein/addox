@@ -9,13 +9,12 @@ export default class WebSocketCloseEvent extends BaseWebSocketEvent {
         const resolved = Buffer.from(reason).toString('utf-8');
 
         this.shard.closeSequence = this.shard.sequence;
-
-        this.shard.emit('Close', this.shard, code, resolved);
+        this.shard.status = 'CLOSED';
 
         switch (code) {
             // by owner
             case 1000:
-                this.shard.emit('Disconnect', this.shard, 1000, 'Performed By Owner');
+                this.shard.emit('Close', this.shard, code, 'Performed By Owner');
                 break;
 
             //reconnectable errors
@@ -27,7 +26,7 @@ export default class WebSocketCloseEvent extends BaseWebSocketEvent {
             case GatewayCloseCodes.InvalidSeq:
             case GatewayCloseCodes.RateLimited:
             case GatewayCloseCodes.SessionTimedOut:
-                this.shard.reconnect();
+                this.shard.emit('Close', this.shard, code, resolved);
                 break;
 
             //non-reconnectable errors
@@ -36,8 +35,13 @@ export default class WebSocketCloseEvent extends BaseWebSocketEvent {
             case GatewayCloseCodes.InvalidAPIVersion:
             case GatewayCloseCodes.InvalidIntents:
             case GatewayCloseCodes.DisallowedIntents:
-            case GatewayCloseCodes.AuthenticationFailed:
+                this.shard.emit('Close', this.shard, code, resolved);
                 throw new DiscordSocketError(resolved);
+
+            //invalid token (non-reconnectable)
+            case GatewayCloseCodes.AuthenticationFailed:
+                this.shard.emit('Close', this.shard, code, 'Invalid token.');
+                throw new DiscordSocketError('Invalid token.');
         }
     }
 }

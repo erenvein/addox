@@ -1,4 +1,4 @@
-import type { GatewayDispatchEvents, WebSocketShard } from '../../..';
+import type { GatewayDispatchEvents, WebSocketShard, GatewayDispatchPayload } from '../../..';
 
 export class BaseWebSocketHandler {
     public name: keyof typeof GatewayDispatchEvents;
@@ -7,7 +7,7 @@ export class BaseWebSocketHandler {
         this.name = name;
     }
 
-    public handle(data: any) {
+    public handle(packet: GatewayDispatchPayload) {
         throw new ReferenceError('This Method Not Implemented!');
     }
 }

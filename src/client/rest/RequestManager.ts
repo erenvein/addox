@@ -58,7 +58,7 @@ export class RequestManager {
 
         const fullRoute = this.baseURL + route;
 
-        while (this.#globalRateLimitData.limited) {
+        if (this.#globalRateLimitData.limited) {
             await new Promise((resolve) => setTimeout(resolve, this.#globalRateLimitData.retry));
             this.#rateLimits.clear();
             this.#globalRateLimitData = { limited: false };
@@ -75,6 +75,8 @@ export class RequestManager {
             } else if (status === 400) {
                 throw new HTTPError(status, options.method, fullRoute, 'Bad Request');
             } else if (status === 401) {
+                this.token = undefined;
+
                 throw new HTTPError(status, options.method, fullRoute, 'Unauthorized');
             } else if (status === 402) {
                 throw new HTTPError(status, options.method, fullRoute, 'Gateway Unvailable');
@@ -172,19 +174,19 @@ export class RequestManager {
     }
 
     public async post<T>(route: `/${string}`, options: RequestOptions = {}) {
-        return await this.request(route, { ...options, method: 'POST' });
+        return await this.request<T>(route, { ...options, method: 'POST' });
     }
 
     public async put<T>(route: `/${string}`, options: RequestOptions = {}) {
-        return await this.request(route, { ...options, method: 'PUT' });
+        return await this.request<T>(route, { ...options, method: 'PUT' });
     }
 
     public async patch<T>(route: `/${string}`, options: RequestOptions = {}) {
-        return await this.request(route, { ...options, method: 'PATCH' });
+        return await this.request<T>(route, { ...options, method: 'PATCH' });
     }
 
     public async delete<T>(route: `/${string}`, options: RequestOptions = {}) {
-        return await this.request(route, { ...options, method: 'DELETE' });
+        return await this.request<T>(route, { ...options, method: 'DELETE' });
     }
 
     public setToken(token: string) {

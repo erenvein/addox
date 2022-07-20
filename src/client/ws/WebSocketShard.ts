@@ -5,8 +5,13 @@ import {
     GatewayOpcodes,
     WebSocketShardEvents,
     type WebSocketManager,
+    type GatewayCloseCodesResolvable,
+    type APIGuild,
     BaseWebSocketEvent,
     GatewayCloseCodes,
+    Collection,
+    WebSocketShardStatus,
+    Sleep,
 } from '../..';
 import { readdirSync } from 'node:fs';
 import { resolve } from 'node:path';
@@ -28,12 +33,23 @@ try {
     zlib = null;
 }
 
+export declare interface WebSocketShard {
+    on<K extends keyof WebSocketShardEvents>(
+        event: K,
+        listener: (...args: WebSocketShardEvents[K]) => void
+    ): this;
+    once<K extends keyof WebSocketShardEvents>(
+        event: K,
+        listener: (...args: WebSocketShardEvents[K]) => void
+    ): this;
+    emit<K extends keyof WebSocketShardEvents>(event: K, ...args: WebSocketShardEvents[K]): any;
+}
+
 export class WebSocketShard extends EventEmitter {
-    public socket: WebSocket;
+    public socket: WebSocket | null;
     public inflate: any = undefined;
-    public lastHeartbeatAck: number = -1;
+    public lastPinged: number = -1;
     public lastHeartbeatAcked: boolean = false;
-    public lastPing: number = -1;
     public heartbeatInterval: NodeJS.Timer | null = null;
     public sequence: number = -1;
     public closeSequence: number = 0;
@@ -41,14 +57,18 @@ export class WebSocketShard extends EventEmitter {
     public manager: WebSocketManager;
     public id: number;
     public eventsReady: boolean = false;
-    public readyTimestamp: number = -1;
+    public uptime: number = -1;
+    public ping: number = -1;
+    public status: WebSocketShardStatus = 'IDLE';
+    public packetQueue: number = 0;
+    public guilds = new Collection<string, APIGuild>();
 
     public constructor(manager: WebSocketManager, id: number) {
         super();
 
         this.manager = manager;
         this.id = id;
-        this.socket = new WebSocket(this.endpoint);
+        this.socket = null;
 
         if (zlib) {
             this.inflate = new zlib.Inflate({
@@ -59,14 +79,19 @@ export class WebSocketShard extends EventEmitter {
         }
     }
 
-    public get ping() {
-        return this.lastHeartbeatAck - this.lastPing;
-    }
-
     public async connect() {
-        if (this.readyTimestamp > 0) {
+        if (
+            this.socket &&
+            this.uptime > 0 &&
+            this.status === 'READY' &&
+            this.socket?.readyState === WebSocket.OPEN
+        ) {
             return Promise.resolve();
         }
+
+        this.status = 'CONNECTING';
+
+        this.socket = new WebSocket(this.endpoint, { handshakeTimeout: 30000 });
 
         for (const file of readdirSync(resolve(__dirname, 'events'))) {
             const mod = await import(`./events/${file}`).then((mod) => mod.default);
@@ -80,15 +105,25 @@ export class WebSocketShard extends EventEmitter {
         }
     }
 
-    public close(code?: keyof typeof GatewayCloseCodes | number) {
+    public cleanup() {
         clearInterval(this.heartbeatInterval!);
 
-        this.lastHeartbeatAck = -1;
+        this.lastPinged = -1;
         this.sequence = -1;
         this.sessionId = null;
         this.manager.client!.user = null;
         this.inflate = null;
-        this.readyTimestamp = -1;
+        this.uptime = -1;
+        this.eventsReady = false;
+
+        this.guilds.clear();
+
+        if (this.socket) {
+            this.socket.removeAllListeners();
+            this.socket = null;
+        }
+
+        this.removeAllListeners();
 
         if (zlib) {
             this.inflate = new zlib.Inflate({
@@ -97,46 +132,61 @@ export class WebSocketShard extends EventEmitter {
                 flush: zlib.Z_SYNC_FLUSH,
             });
         }
+    }
 
+    public close(code?: GatewayCloseCodesResolvable, emit: boolean = true) {
         if (typeof code === 'string') {
             code = GatewayCloseCodes[code];
         }
 
-        this.socket.close(code);
+        this.socket?.close(emit ? code : undefined);
+        this.cleanup();
     }
 
-    public async reconnect() {
-        this.close(GatewayCloseCodes.UnknownError);
+    public async reconnect(emit: boolean = true) {
+        this.close(GatewayCloseCodes.UnknownError, emit);
         await this.connect();
     }
 
     public resume() {
-        this.emit('Resumed', this);
-        this.send({
-            op: GatewayOpcodes.Resume,
-            d: {
-                token: this.manager.client?.token!,
-                session_id: this.sessionId,
-                seq: this.closeSequence,
-            },
-        });
+        if (!this.sessionId) {
+            this.identify();
+        } else {
+            this.send({
+                op: GatewayOpcodes.Resume,
+                d: {
+                    token: this.manager.client?.token!,
+                    session_id: this.sessionId,
+                    seq: this.closeSequence,
+                },
+            });
+        }
     }
 
-    public heartbeat(ms: number) {
+    public setHeartbeatTimer(ms: number) {
         if (this.heartbeatInterval) {
             clearInterval(this.heartbeatInterval);
         }
 
         this.heartbeatInterval = setInterval(() => {
-            this.send({ op: GatewayOpcodes.Heartbeat, d: this.sequence });
-            this.lastHeartbeatAcked = false;
-            this.lastPing = Date.now();
+            this.sendHeartbeat();
         }, ms);
     }
 
-    public heartbeatAck() {
-        this.lastHeartbeatAck = Date.now();
+    public sendHeartbeat() {
+        if (this.status === 'READY') {
+            this.lastHeartbeatAcked = false;
+            this.lastPinged = Date.now();
+            this.send({ op: GatewayOpcodes.Heartbeat, d: this.sequence });
+        }
+    }
+
+    public heartbeatAck(updatePing: boolean = false) {
         this.lastHeartbeatAcked = true;
+
+        if (updatePing) {
+            this.ping = Date.now() - this.lastPinged;
+        }
     }
 
     public identify() {
@@ -151,12 +201,8 @@ export class WebSocketShard extends EventEmitter {
                     large_threshold: this.manager.largeThreshold,
                     compress: this.manager.compress,
                     presence: this.manager.presence,
-                    properties: {
-                        os: 'linux',
-                        browser: 'discord-api-wrapper-by-deliever42',
-                        device: 'discord-api-wrapper-by-deliever42',
-                    },
-                    shard: [this.id, this.manager.shardCount],
+                    properties: this.manager.properties,
+                    shard: [this.id, +this.manager.shardCount],
                 },
             });
         }
@@ -166,8 +212,22 @@ export class WebSocketShard extends EventEmitter {
         return this.encoding === 'json' ? JSON.stringify : erlpack.pack;
     }
 
+    private _send(data: any) {
+        if (this.socket) {
+            this.socket.send(this.pack(data));
+        }
+    }
+
     public send(data: any) {
-        this.socket?.send(this.pack(data));
+        if (++this.packetQueue > 2) {
+            Sleep(1150).then(() => {
+                this._send(data);
+                this.packetQueue--;
+            });
+        } else {
+            this._send(data);
+            this.packetQueue--;
+        }
     }
 
     public unpack(data: any) {
@@ -237,32 +297,7 @@ export class WebSocketShard extends EventEmitter {
         );
     }
 
-    public override on<K extends keyof WebSocketShardEvents>(
-        event: K,
-        listener: (...args: WebSocketShardEvents[K]) => void
-    ): this;
-    public override on(event: string | symbol, ...args: any[]): this;
-    public override on(event: string | symbol, listener: (...args: any) => any) {
-        super.on(event, listener);
-        return this;
-    }
-
-    public override once<K extends keyof WebSocketShardEvents>(
-        event: K,
-        listener: (...args: WebSocketShardEvents[K]) => void
-    ): this;
-    public override once(event: string | symbol, ...args: any[]): this;
-    public override once(event: string | symbol, listener: (...args: any) => any) {
-        super.once(event, listener);
-        return this;
-    }
-
-    public override emit<K extends keyof WebSocketShardEvents>(
-        event: K,
-        ...args: WebSocketShardEvents[K]
-    ): boolean;
-    public override emit(event: string | symbol, ...args: any[]): boolean;
-    public override emit(event: string | symbol, ...args: any[]) {
-        return super.emit(event, ...args);
+    public eval<T>(script: string): T {
+        return eval(script);
     }
 }

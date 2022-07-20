@@ -1,15 +1,13 @@
-import { BaseWebSocketHandler, GatewayOpcodes } from '../../../';
+import { BaseWebSocketHandler } from '../../../';
 
 export default class ResumedHandler extends BaseWebSocketHandler {
     public constructor() {
         super('Resumed');
     }
 
-    public handle(data: any) {
-        this.shard.send({
-            op: GatewayOpcodes.Heartbeat,
-            d: this.shard.sequence,
-        });
+    public handle() {
         this.shard.heartbeatAck();
+        this.shard.sendHeartbeat();
+        this.shard.emit('Resumed', this.shard, this.shard.sequence - this.shard.closeSequence);
     }
 }
