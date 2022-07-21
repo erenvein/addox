@@ -1,14 +1,16 @@
 import {
     type APIUser,
     UserFlagsBitField,
-    Client,
-    Snowflake,
+    type Client,
+    type Snowflake,
     SnowflakeUtil,
-    UserPremiumTypeBitField,
-    ImageOptions,
+    UserPremiumType,
+    type ImageOptions,
 } from '../';
 
-export class User {
+import { BaseStructure } from './BaseStructure';
+
+export class User extends BaseStructure {
     public id!: Snowflake;
     public username!: string;
     public discriminator!: string;
@@ -22,17 +24,16 @@ export class User {
     public verified!: boolean;
     public email!: string | null;
     public flags!: UserFlagsBitField;
-    public premiumType!: UserPremiumTypeBitField;
+    public premiumType!: keyof typeof UserPremiumType;
     public publicFlags!: UserFlagsBitField;
-    public client: Client;
 
     public constructor(client: Client, data: APIUser) {
-        this.client = client;
+        super(client);
 
         this._patch(data);
     }
 
-    protected _patch(data: APIUser) {
+    public _patch(data: APIUser) {
         this.id = data.id;
         this.username = data.username;
         this.discriminator = data.discriminator;
@@ -46,8 +47,12 @@ export class User {
         this.verified = data.verified ?? false;
         this.email = data.email ?? null;
         this.flags = new UserFlagsBitField(data.public_flags as number);
-        this.premiumType = new UserPremiumTypeBitField(data.premium_type as number);
+        this.premiumType = UserPremiumType[
+            data.premium_type as number
+        ] as keyof typeof UserPremiumType;
         this.publicFlags = new UserFlagsBitField(data.public_flags as number);
+
+        return this;
     }
 
     public get tag(): string {
@@ -91,6 +96,4 @@ export class User {
 
         return this;
     }
-
-    public async send() {}
 }

@@ -6,12 +6,14 @@ import {
     WebSocketShardEvents,
     type WebSocketManager,
     type GatewayCloseCodesResolvable,
-    type APIGuild,
+    type PresenceData,
+    type Guild,
     BaseWebSocketEvent,
     GatewayCloseCodes,
     Collection,
     WebSocketShardStatus,
     Sleep,
+    PresenceDataResolver,
 } from '../..';
 import { readdirSync } from 'node:fs';
 import { resolve } from 'node:path';
@@ -61,7 +63,7 @@ export class WebSocketShard extends EventEmitter {
     public ping: number = -1;
     public status: WebSocketShardStatus = 'IDLE';
     public packetQueue: number = 0;
-    public guilds = new Collection<string, APIGuild>();
+    public guilds = new Collection<string, Guild>();
 
     public constructor(manager: WebSocketManager, id: number) {
         super();
@@ -228,6 +230,13 @@ export class WebSocketShard extends EventEmitter {
             this._send(data);
             this.packetQueue--;
         }
+    }
+
+    public setPresence(data: PresenceData) {
+        this.send({
+            op: GatewayOpcodes.PresenceUpdate,
+            d: PresenceDataResolver(data),
+        });
     }
 
     public unpack(data: any) {

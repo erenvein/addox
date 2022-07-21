@@ -13,7 +13,6 @@ const client = new Client({
         intents: Object.values(GatewayIntentBits)
             .filter((bit) => typeof bit === 'number')
             .reduce((accumulator, bit) => accumulator | (bit as number), 0),
-        shardCount: 2,
     },
     rest: {
         offset: 100,
@@ -48,8 +47,8 @@ client.on('ShardResumed', (shard) => {
     console.log(`Shard ${shard.id + 1} resumed.`);
 });
 
-client.on('ShardDeath', (shard) => {
-    console.log(`Shard ${shard.id + 1} death.`);
+client.on('ShardDeath', (shard, code, reason) => {
+    console.log(`Shard ${shard.id + 1} death.\nReason: ${reason}\nCode: ${code}`);
 });
 
 client.ws.connect(process.env.TOKEN as string);

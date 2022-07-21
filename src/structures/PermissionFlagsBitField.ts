@@ -1,17 +1,17 @@
 //@ts-nocheck
 
-import { BitField, PermissionFlagsBitsResolvable, UserPremiumTypeResolver } from '..';
+import { BitField, PermissionFlagsBitsResolvable, PermissionFlagsBitsResolver } from '..';
 
 export class PermissionFlagsBitField extends BitField {
     public override set(bits: PermissionFlagsBitsResolvable) {
-        return super.set(UserPremiumTypeResolver(bits));
+        return super.set(PermissionFlagsBitsResolver(bits));
     }
 
     public override unset(bits: PermissionFlagsBitsResolvable) {
-        return super.unset(UserPremiumTypeResolver(bits));
+        return super.unset(PermissionFlagsBitsResolver(bits));
     }
 
     public override has(bits: PermissionFlagsBitsResolvable) {
-        return super.has(UserPremiumTypeResolver(bits));
+        return super.has(PermissionFlagsBitsResolver(bits));
     }
 }

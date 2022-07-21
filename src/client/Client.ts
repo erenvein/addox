@@ -2,11 +2,9 @@ import {
     type ClientOptions,
     WebSocketManager,
     BaseClient,
-    RequestManager,
     ClientUser,
-    DiscordAPIURL,
-    DiscordAPIVersion,
     ClientEvents,
+    ClientCacheManager,
 } from '../';
 
 export declare interface Client {
@@ -22,20 +20,17 @@ export class Client extends BaseClient {
     public token: string | null;
     public user: ClientUser | null;
     public ws: WebSocketManager;
-    public rest: RequestManager;
     public uptime: number;
+    public caches: ClientCacheManager;
     public constructor({ ws, rest }: ClientOptions) {
-        super();
+        super(rest!);
 
         this.token = null;
         this.user = null;
         this.uptime = -1;
 
-        this.rest = new RequestManager({
-            ...rest,
-            baseURL: `${DiscordAPIURL}/v${DiscordAPIVersion}`,
-        });
         this.ws = new WebSocketManager(this, ws);
+        this.caches = new ClientCacheManager(this);
     }
 
     public destroy() {

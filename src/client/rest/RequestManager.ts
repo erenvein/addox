@@ -1,13 +1,14 @@
 import { AsyncQueue } from '@sapphire/async-queue';
 import fetch from 'node-fetch';
 import {
-    type RESTOptions,
+    type RequestManagerOptions,
     type RateLimitData,
     HTTPError,
     DiscordAPIError,
     RateLimitError,
     Collection,
     RequestOptions,
+    Sleep,
 } from '../..';
 
 export class RequestManager {
@@ -22,7 +23,13 @@ export class RequestManager {
     #rateLimits = new Collection<string, RateLimitData>();
     #globalRateLimitData: RateLimitData = { limited: false };
 
-    public constructor({ offset, rejectOnRateLimit, baseURL, authPrefix, retries }: RESTOptions) {
+    public constructor({
+        offset,
+        rejectOnRateLimit,
+        baseURL,
+        authPrefix,
+        retries,
+    }: RequestManagerOptions) {
         this.rejectOnRateLimit = rejectOnRateLimit ?? false;
         this.offset = offset ?? 250;
         this.baseURL = baseURL;
@@ -59,7 +66,7 @@ export class RequestManager {
         const fullRoute = this.baseURL + route;
 
         if (this.#globalRateLimitData.limited) {
-            await new Promise((resolve) => setTimeout(resolve, this.#globalRateLimitData.retry));
+            await Sleep(this.#globalRateLimitData.retry!);
             this.#rateLimits.clear();
             this.#globalRateLimitData = { limited: false };
         }
@@ -138,7 +145,7 @@ export class RequestManager {
                     ? this.#globalRateLimitData.retry
                     : this.#rateLimits.get(route)?.retry;
 
-                await new Promise((resolve) => setTimeout(resolve, rateLimitRetry));
+                await Sleep(rateLimitRetry!);
 
                 return this.request(route, options);
             } else if (status >= 400 && status < 500) {

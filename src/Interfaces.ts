@@ -11,20 +11,29 @@ import type {
     GatewayActivityEmoji,
     ActivityFlags,
     UserFlags,
-    UserPremiumType,
+    GuildMFALevel,
     Client,
     WebSocketShard,
     GatewayCloseCodes,
     APIGuild,
+    Collection,
+    Guild,
+    GatewayDispatchEvents,
+    GuildEmoji,
+    GatewayActivityAssets,
+    GuildSystemChannelFlags,
+    GatewayGuildCreateDispatchData,
 } from './';
 
 import type { RequestInit } from 'node-fetch';
 
 export type ArrayLike<T> = T | T[];
 
+export type CollectionLike<K, V> = V | Collection<K, V>;
+
 export interface ClientOptions {
     ws: WebSocketOptions;
-    rest?: PartialRESTOptions;
+    rest?: PartialRequestManagerOptions;
 }
 
 export interface WebSocketProperties {
@@ -53,13 +62,15 @@ export type PermissionFlagsBitsResolvable =
 
 export type UserFlagsBitsResolvable = ArrayLike<number> | ArrayLike<keyof typeof UserFlags>;
 
-export type UserPremiumTypeResolvable = number | keyof typeof UserPremiumType;
-
 export type ColorResolvable = number | keyof typeof Colors;
 
 export type WebSocketEvents = 'open' | 'message' | 'error' | 'close';
 
-export interface RESTOptions {
+export type SystemChannelFlagsBitsResolvable =
+    | ArrayLike<number>
+    | ArrayLike<keyof typeof GuildSystemChannelFlags>;
+
+export interface RequestManagerOptions {
     offset?: number;
     rejectOnRateLimit?: boolean;
     baseURL: string;
@@ -67,12 +78,15 @@ export interface RESTOptions {
     retries?: number;
 }
 
-export type RequestOptions = RequestInit & { reason?: string };
+export interface RequestOptions extends RequestInit {
+    reason?: string;
+}
 
-export interface PartialRESTOptions {
+export interface PartialRequestManagerOptions {
     offset?: number;
     rejectOnRateLimit?: boolean;
     authPrefix?: 'Bot' | 'Bearer';
+    retries?: number;
 }
 
 export interface RateLimitData {
@@ -86,16 +100,9 @@ export interface RateLimitData {
 }
 
 export interface ImageOptions {
-    format?: 'png' | 'jpg' | 'webp' | 'gif';
+    format?: 'png' | 'jpg' | 'jpeg' | 'webp' | 'gif' | 'json';
     size?: 16 | 32 | 64 | 128 | 256 | 512 | 1024 | 2048 | 4096 | 8192;
     dynamic?: boolean;
-}
-
-export interface ActivityAssets {
-    largeImage?: string;
-    largeText?: string;
-    smallImage?: string;
-    smallText?: string;
 }
 
 export type ActivityTypeResolvable = keyof typeof ActivityType | number;
@@ -106,14 +113,14 @@ export interface Activity {
     name: string;
     type?: ActivityTypeResolvable;
     url?: string;
-    createdAt?: number;
+    created_at?: number;
     timestamps?: GatewayActivityTimestamps[];
-    applicationId?: Snowflake;
+    application_id?: Snowflake;
     details?: string;
     state?: string;
     emoji?: GatewayActivityEmoji[];
     party?: GatewayActivityParty[];
-    assets?: ActivityAssets[];
+    assets?: GatewayActivityAssets[];
     secrets?: GatewayActivitySecrets[];
     instance?: boolean;
     flags?: ActivityFlagsResolvable;
@@ -127,9 +134,61 @@ export interface PresenceData {
     since?: number;
 }
 
+export type GatewayCloseCodesResolvable = number | keyof typeof GatewayCloseCodes;
+
+export type WebSocketShardStatus = 'IDLE' | 'READY' | 'CONNECTING' | 'RECONNECTING' | 'CLOSED';
+
+export interface APIGuildWithShard extends APIGuild {
+    shard_id?: number;
+}
+
+export interface GatewayGuildCreateDispatchDataWithShard extends GatewayGuildCreateDispatchData {
+    shard_id?: number;
+}
+
+export interface ClientUserEditData {
+    username?: string;
+    avatar?: string;
+}
+export interface FetchGuildOptions extends FetchOptions {
+    with_counts?: boolean;
+}
+
+export interface FetchOptions {
+    force?: boolean;
+}
+
+export interface RoleData {
+    name?: string;
+    permissions?: PermissionFlagsBitsResolvable;
+    color?: ColorResolvable;
+    hoist?: boolean;
+    icon?: string;
+    unicode_emoji?: string;
+    mentionable?: boolean;
+}
+
+export interface RoleTags {
+    botId?: string | null;
+    integrationId?: string | null;
+    premiumSubscriber?: true | null;
+}
+
+export type GuildMFALevelResolvable = keyof typeof GuildMFALevel | number;
+
+export interface GuildFetchPruneOptions {
+    days?: number;
+    includeRoles?: 'none' | Snowflake[];
+}
+
 export interface ClientEvents {
     Ready: [client: Client];
-    Raw: [data: any];
+    GuildCreate: [guild: Guild];
+    GuildDelete: [guild: Guild];
+    EmojiCreate: [emoji: GuildEmoji];
+    EmojiDelete: [emoji: GuildEmoji];
+    EmojiUpdate: [oldEmoji: GuildEmoji, newEmoji: GuildEmoji];
+    Raw: [eventName: keyof typeof GatewayDispatchEvents, data: any];
     ShardSpawn: [shard: WebSocketShard];
     ShardReady: [shard: WebSocketShard];
     ShardClosed: [shard: WebSocketShard, code: number, reason: string];
@@ -145,9 +204,3 @@ export interface WebSocketShardEvents {
     Resumed: [shard: WebSocketShard, replayed: number];
     Error: [shard: WebSocketShard, error: any];
 }
-
-export type GatewayCloseCodesResolvable = number | keyof typeof GatewayCloseCodes;
-
-export type WebSocketShardStatus = 'IDLE' | 'READY' | 'CONNECTING' | 'RECONNECTING' | 'CLOSED';
-
-export type RawGuildData = APIGuild & { shard_id?: number };

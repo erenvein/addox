@@ -21,16 +21,39 @@ export { Collection } from './structures/Collection';
 export { User } from './structures/User';
 export { ClientUser } from './structures/ClientUser';
 export { UserFlagsBitField } from './structures/UserFlagsBitField';
-export { UserPremiumTypeBitField } from './structures/UserPremiumTypeBitField';
+export { SystemChannelFlagsBitField } from './structures/SystemChannelFlagsBitField';
+export { PermissionFlagsBitField } from './structures/PermissionFlagsBitField';
+export { Guild } from './structures/Guild';
+export { BaseStructure } from './structures/BaseStructure';
+export { Oauth2Guild } from './structures/Oauth2Guild';
+export { BaseGuild } from './structures/BaseGuild';
+export { GuildEmoji } from './structures/GuildEmoji';
+export { Role } from './structures/Role';
+
+// MANAGERS
+export { CachedManager } from './managers/CachedManager';
+export { BaseManager } from './managers/BaseManager';
+export { ClientCacheManager } from './managers/client/ClientCacheManager';
+export { ClientGuildManager } from './managers/client/ClientGuildManager';
+export { ClientUserManager } from './managers/client/ClientUserManager';
+export { ClientEmojiManager } from './managers/client/ClientEmojiManager';
+export { ClientRoleManager } from './managers/client/ClientRoleManager';
+export { GuildEmojiManager } from './managers/guild/GuildEmojiManager';
+export { GuildRoleManager } from './managers/guild/GuildRoleManager';
+export { GuildCacheManager } from './managers/guild/GuildCacheManager';
 
 // UTILS
 export { PresenceDataResolver } from './utils/resolvers/PresenceDataResolver';
 export { GatewayIntentBitsResolver } from './utils/resolvers/GatewayIntentBitsResolver';
-export { UserFlagsBitsResolver } from './utils/resolvers/UserFlagsBitsResolver';
-export { UserPremiumTypeResolver } from './utils/resolvers/UserPremiumTypeResolver';
+export { SystemChannelFlagsBitsResolver } from './utils/resolvers/SystemChannelFlagsBitsResolver';
+export { GuildMFALevelResolver } from './utils/resolvers/GuildMFALevelResolver';
 export { ColorResolver } from './utils/resolvers/ColorResolver';
+export { UserFlagsBitsResolver } from './utils/resolvers/UserFlagsBitsResolver';
 export { PermissionFlagsBitsResolver } from './utils/resolvers/PermissionFlagsBitsResolver';
+export { RoleDataResolver } from './utils/resolvers/RoleDataResolver';
 export { Sleep } from './utils/times/Sleep';
+export { HexDecimalToHex } from './utils/colors/HexDecimalToHex';
+export { HexToHexDecimal } from './utils/colors/HexToHexDecimal';
 
 // SNOWFLAKE UTIL
 export { DiscordSnowflake as SnowflakeUtil } from '@sapphire/snowflake';

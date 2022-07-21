@@ -1,5 +1,7 @@
 export class Collection<K, V> extends Map<K, V> {
-    accumulator(_rawGuilds: Collection<string, import("discord-api-types/v10").APIGuild>): import("..").WebSocketShard {
+    accumulator(
+        _rawGuilds: Collection<string, import('discord-api-types/v10').APIGuild>
+    ): import('..').WebSocketShard {
         throw new Error('Method not implemented.');
     }
     public find(fn: (value: V, key: K, collection: this) => boolean) {
@@ -200,6 +202,11 @@ export class Collection<K, V> extends Map<K, V> {
         }
 
         return concated;
+    }
+
+    public _add(key: K, value: V) {
+        this.set(key, value);
+        return value;
     }
 
     public array() {

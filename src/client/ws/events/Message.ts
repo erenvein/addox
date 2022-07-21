@@ -39,7 +39,7 @@ export default class WebSocketMessageEvent extends BaseWebSocketEvent {
                 break;
             case GatewayOpcodes.Dispatch:
                 try {
-                    this.shard.manager.client?.emit('Raw', d);
+                    this.shard.manager.client?.emit('Raw', t, d);
 
                     const mod = await import(`../handlers/${t}.ts`).then((mod) => mod.default);
 

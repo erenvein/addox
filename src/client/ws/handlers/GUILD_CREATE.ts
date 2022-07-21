@@ -1,4 +1,9 @@
-import { BaseWebSocketHandler, GatewayGuildCreateDispatch, RawGuildData } from '../../..';
+import {
+    BaseWebSocketHandler,
+    GatewayGuildCreateDispatch,
+    type APIGuildWithShard,
+    Guild,
+} from '../../..';
 
 export default class GuildCreateHandler extends BaseWebSocketHandler {
     public constructor() {
@@ -6,8 +11,14 @@ export default class GuildCreateHandler extends BaseWebSocketHandler {
     }
 
     public handle({ d }: GatewayGuildCreateDispatch) {
-        (d as RawGuildData).shard_id = this.shard.id;
+        (d as unknown as APIGuildWithShard).shard_id = this.shard.id;
 
-        this.shard.guilds.set(d.id, d);
+        const guild = new Guild(this.shard.manager.client, d);
+
+        this.shard.guilds.set(d.id, guild);
+
+        if (this.shard.status === 'READY') {
+            this.shard.manager.client.emit('GuildCreate', guild);
+        }
     }
 }

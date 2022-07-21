@@ -39,6 +39,7 @@ export enum Colors {
     LightRed = 0xe55b3c,
     LightGrey = 0xbcc0c0,
     LightNavy = 0x3a5fcd,
+    Random = Math.floor(Math.random() * (0xffffff + 1)),
 }
 
 export const ReconnectableWebSocketCloseCodes = new Set([

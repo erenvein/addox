@@ -4,7 +4,7 @@ import {
     type Client,
     type PresenceData,
     type WebSocketProperties,
-    type APIGuild,
+    type Guild,
     type APIGatewaySessionStartLimit,
     BitField,
     GatewayIntentBitsResolver,
@@ -63,7 +63,7 @@ export class WebSocketManager {
     public get guilds() {
         return this.shards.reduce(
             (accumulator, shard) => (accumulator as any).concat(shard.guilds),
-            new Collection<string, APIGuild>()
+            new Collection<string, Guild>()
         );
     }
 
@@ -110,7 +110,12 @@ export class WebSocketManager {
     }
 
     public destroy() {
+        this.shardList = null;
+
         this.shards.forEach((shard) => shard.close(1000));
+
+        this.shards.clear();
+        this.shardQueue?.clear();
     }
 
     public async spawnShards(): Promise<boolean> {
