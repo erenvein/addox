@@ -19,59 +19,35 @@ const client = new Client({
     },
 });
 
-client.on('StickerCreate', (sticker) => {
-    console.log('Sticker created:', sticker.name);
-});
-
-client.on('StickerDelete', (sticker) => {
-    console.log('Sticker deleted:', sticker.name);
-});
-
-client.on('StickerUpdate', (oldSticker, newSticker) => {
-    console.log('Sticker updated:', oldSticker.name, newSticker.name);
-});
-
-client.on('EmojiCreate', (emoji) => {
-    console.log('Emoji created:', emoji.name);
-});
-
-client.on('EmojiDelete', (emoji) => {
-    console.log('Emoji deleted:', emoji.name);
-});
-
-client.on('EmojiUpdate', (oldEmoji, newEmoji) => {
-    console.log('Emoji updated:', oldEmoji.name, newEmoji.name);
-});
-
-client.on('Ready', () => {
+client.on('ready', () => {
     console.log('Online!');
 });
 
-client.on('ShardError', (shard, error) => {
+client.on('shardError', (shard, error) => {
     throw error;
 });
 
-client.on('ShardSpawn', (shard) => {
+client.on('shardSpawn', (shard) => {
     console.log(`Shard ${shard.id + 1} spawned.`);
 });
 
-client.on('ShardReady', async (shard) => {
+client.on('shardReady', async (shard) => {
     console.log(`Shard ${shard.id + 1} ready.`);
 });
 
-client.on('ShardClosed', (shard, code, reason) => {
+client.on('shardClosed', (shard, code, reason) => {
     console.log(`Shard ${shard.id + 1} closed.\nReason: ${reason}\nCode: ${code}`);
 });
 
-client.on('ShardReconnect', (shard) => {
+client.on('shardReconnect', (shard) => {
     console.log(`Shard ${shard.id + 1} reconnecting.`);
 });
 
-client.on('ShardResumed', (shard) => {
+client.on('shardResumed', (shard) => {
     console.log(`Shard ${shard.id + 1} resumed.`);
 });
 
-client.on('ShardDeath', (shard, code, reason) => {
+client.on('shardDeath', (shard, code, reason) => {
     console.log(`Shard ${shard.id + 1} death.\nReason: ${reason}\nCode: ${code}`);
 });
 

@@ -24,9 +24,16 @@ import type {
     GuildSystemChannelFlags,
     GatewayGuildCreateDispatchData,
     GuildSticker,
+    RESTPostAPIGuildStickerFormDataBody,
+    RESTPatchAPIGuildJSONBody,
+    GuildExplicitContentFilter,
+    GuildDefaultMessageNotifications,
+    GuildFeature,
+    GuildVerificationLevel,
+    RESTPostAPIGuildsJSONBody,
 } from './';
 
-import type { RequestInit } from 'node-fetch';
+import type { RequestInit, HeadersInit } from 'node-fetch';
 
 export type ArrayLike<T> = T | T[];
 
@@ -45,7 +52,6 @@ export interface WebSocketProperties {
 
 export interface WebSocketOptions {
     largeThreshold?: number;
-    autoReconnect?: boolean;
     presence?: PresenceData;
     shardCount?: number | 'auto';
     compress?: boolean;
@@ -77,10 +83,23 @@ export interface RequestManagerOptions {
     baseURL: string;
     authPrefix?: 'Bot' | 'Bearer';
     retries?: number;
+    baseHeaders?: HeadersInit;
 }
+
+export type FileData = {
+    data: Buffer | string;
+    type: string;
+};
 
 export interface RequestOptions extends RequestInit {
     reason?: string;
+    files?: {
+        name: string;
+        data: Buffer | string;
+        type: string;
+    }[];
+    formData?: boolean;
+    query?: object;
 }
 
 export interface PartialRequestManagerOptions {
@@ -184,29 +203,55 @@ export interface GuildFetchPruneOptions {
     includeRoles?: 'none' | Snowflake[];
 }
 
+export type ImageMimes = 'image/png' | 'image/jpeg' | 'image/gif';
+
+//@ts-ignore
+export interface CreateStickerData extends RESTPostAPIGuildStickerFormDataBody {
+    description?: string;
+    tags?: string;
+    file: Buffer | string;
+}
+
+//@ts-ignore
+export interface EditGuildData extends RESTPatchAPIGuildJSONBody {
+    explicit_content_filter?: keyof typeof GuildExplicitContentFilter | number;
+    default_message_notifications?: keyof typeof GuildDefaultMessageNotifications | number;
+    features?: (keyof typeof GuildFeature)[];
+    system_channel_flags?: SystemChannelFlagsBitsResolvable;
+    verification_level?: keyof typeof GuildVerificationLevel | number;
+}
+
+//@ts-ignore
+export interface CreateGuildData extends RESTPostAPIGuildsJSONBody {
+    explicit_content_filter?: keyof typeof GuildExplicitContentFilter | number;
+    default_message_notifications?: keyof typeof GuildDefaultMessageNotifications | number;
+    system_channel_flags?: SystemChannelFlagsBitsResolvable;
+    verification_level?: keyof typeof GuildVerificationLevel | number;
+}
+
 export interface ClientEvents {
-    Ready: [client: Client];
-    GuildCreate: [guild: Guild];
-    GuildDelete: [guild: Guild];
-    EmojiCreate: [emoji: GuildEmoji];
-    EmojiDelete: [emoji: GuildEmoji];
-    EmojiUpdate: [oldEmoji: GuildEmoji, newEmoji: GuildEmoji];
-    StickerCreate: [sticker: GuildSticker];
-    StickerDelete: [sticker: GuildSticker];
-    StickerUpdate: [oldSticker: GuildSticker, newSticker: GuildSticker];
-    Raw: [eventName: keyof typeof GatewayDispatchEvents, data: any];
-    ShardSpawn: [shard: WebSocketShard];
-    ShardReady: [shard: WebSocketShard];
-    ShardClosed: [shard: WebSocketShard, code: number, reason: string];
-    ShardDeath: [shard: WebSocketShard, code: number, reason: string];
-    ShardReconnect: [shard: WebSocketShard];
-    ShardResumed: [shard: WebSocketShard, replayed: number];
-    ShardError: [shard: WebSocketShard, error: any];
+    ready: [client: Client];
+    guildCreate: [guild: Guild];
+    guildDelete: [guild: Guild];
+    emojiCreate: [emoji: GuildEmoji];
+    emojiDelete: [emoji: GuildEmoji];
+    emojiUpdate: [oldEmoji: GuildEmoji, newEmoji: GuildEmoji];
+    stickerCreate: [sticker: GuildSticker];
+    stickerDelete: [sticker: GuildSticker];
+    stickerUpdate: [oldSticker: GuildSticker, newSticker: GuildSticker];
+    raw: [eventName: keyof typeof GatewayDispatchEvents, data: any];
+    shardSpawn: [shard: WebSocketShard];
+    shardReady: [shard: WebSocketShard];
+    shardClosed: [shard: WebSocketShard, code: number, reason: string];
+    shardDeath: [shard: WebSocketShard, code: number, reason: string];
+    shardReconnect: [shard: WebSocketShard];
+    shardResumed: [shard: WebSocketShard, replayed: number];
+    shardError: [shard: WebSocketShard, error: any];
 }
 
 export interface WebSocketShardEvents {
-    Ready: [shard: WebSocketShard];
-    Close: [shard: WebSocketShard, code: number, reason: string];
-    Resumed: [shard: WebSocketShard, replayed: number];
-    Error: [shard: WebSocketShard, error: any];
+    ready: [shard: WebSocketShard];
+    close: [shard: WebSocketShard, code: number, reason: string];
+    resumed: [shard: WebSocketShard, replayed: number];
+    error: [shard: WebSocketShard, error: any];
 }

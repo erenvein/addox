@@ -11,7 +11,7 @@ import {
     GuildNSFWLevel,
     GuildPremiumTier,
     Role,
-    type RESTPatchAPIGuildJSONBody,
+    type EditGuildData,
     SystemChannelFlagsBitField,
     type GatewayGuildCreateDispatchDataWithShard,
     GuildVerificationLevel,
@@ -21,7 +21,7 @@ import {
     type User,
     type RESTPatchAPIGuildWidgetSettingsJSONBody,
     type RESTPatchAPIGuildWelcomeScreenJSONBody,
-    GuildSticker
+    GuildSticker,
 } from '../';
 
 import { BaseGuild } from './BaseGuild';
@@ -150,7 +150,7 @@ export class Guild extends BaseGuild {
                 this.caches.roles.cache.set(role.id!, new Role(this.client, this, role));
             }
         }
-        
+
         if ('stickers' in data) {
             for (const sticker of data.stickers) {
                 this.caches.stickers.cache.set(sticker.id!, new GuildSticker(this.client, sticker));
@@ -255,7 +255,7 @@ export class Guild extends BaseGuild {
         return await this.client.caches.guilds.leave(this.id);
     }
 
-    public async edit(data: RESTPatchAPIGuildJSONBody, reason?: string) {
+    public async edit(data: EditGuildData, reason?: string) {
         return await this.client.caches.guilds.edit(this.id, data, reason);
     }
 

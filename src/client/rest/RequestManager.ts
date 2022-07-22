@@ -1,5 +1,5 @@
 import { AsyncQueue } from '@sapphire/async-queue';
-import fetch from 'node-fetch';
+import fetch, { type HeaderInit } from 'node-fetch';
 import {
     type RequestManagerOptions,
     type RateLimitData,
@@ -10,6 +10,8 @@ import {
     RequestOptions,
     Sleep,
 } from '../..';
+import FormData from 'form-data';
+import { Blob } from 'node:buffer';
 
 export class RequestManager {
     public queue = new AsyncQueue();
@@ -18,6 +20,7 @@ export class RequestManager {
     public offset: number;
     public baseURL: string;
     public authPrefix: 'Bot' | 'Bearer';
+    public baseHeaders: HeaderInit;
     public retries = new Collection<`/${string}`, number>();
     #retries: number;
     #rateLimits = new Collection<string, RateLimitData>();
@@ -29,12 +32,16 @@ export class RequestManager {
         baseURL,
         authPrefix,
         retries,
+        baseHeaders,
     }: RequestManagerOptions) {
         this.rejectOnRateLimit = rejectOnRateLimit ?? false;
         this.offset = offset ?? 250;
         this.baseURL = baseURL;
         this.authPrefix = authPrefix ?? 'Bot';
         this.#retries = retries ?? 2;
+        this.baseHeaders = baseHeaders ?? {
+            'content-type': 'application/json',
+        };
     }
 
     public get rateLimits(): Readonly<Collection<string, RateLimitData>> {
@@ -51,9 +58,11 @@ export class RequestManager {
         //@ts-ignore
         if (!options.headers) options.headers = {};
 
+        options.headers = { ...options.headers, ...this.baseHeaders };
+
         if (this.token) {
             //@ts-ignore
-            options.headers.Authorization = this.token;
+            options.headers['Authorization'] = this.token;
         }
 
         if (options.reason) {
@@ -62,6 +71,37 @@ export class RequestManager {
         }
 
         options.method ||= 'GET';
+
+        if (Object.keys(options.query || {}).length) {
+            //@ts-ignore
+            route +=
+                '?' +
+                Object.entries(options.query!)
+                    .map(([key, value]) => `${key}=${value}`)
+                    .join('&');
+        }
+
+        if (options.formData || options.files?.length) {
+            const body = options.body ?? {};
+
+            options.body = new FormData();
+
+            //@ts-ignore
+            options.body.append('payload_json', JSON.stringify(body));
+
+            if (options.files?.length) {
+                for (const file of options.files) {
+                    //@ts-ignore
+                    options.body.append(file.name, file.data, file.type);
+                }
+            }
+
+            options.headers = {
+                ...options.headers,
+                //@ts-ignore
+                ...options.body.getHeaders(),
+            };
+        }
 
         const fullRoute = this.baseURL + route;
 
@@ -164,7 +204,7 @@ export class RequestManager {
         } catch (error: any) {
             let retries = this.retries.get(route) || 0;
 
-            if (error.name === 'AbortError' && retries !== this.#retries) {
+            if (retries !== this.#retries) {
                 this.retries.set(route, ++retries);
                 return this.request(route, options);
             }

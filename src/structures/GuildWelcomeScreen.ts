@@ -33,7 +33,7 @@ export class GuildWelcomeScreen extends BaseStructure {
     }
 
     public get guild() {
-        return this.client.caches.guilds.cache.get(this.guildId);
+        return this.client.caches.guilds.cache.get(this.guildId)!;
     }
 
     public async fetch() {

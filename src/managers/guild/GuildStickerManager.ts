@@ -6,14 +6,10 @@ import {
     type CollectionLike,
     type APISticker,
     type FetchOptions,
-    type RESTPostAPIGuildStickerFormDataBody,
+    type CreateStickerData,
     type RESTPatchAPIGuildStickerJSONBody,
     DataResolver,
 } from '../../';
-
-import { fromBuffer } from 'file-type';
-import FormData from 'form-data';
-import { Blob } from 'node:buffer';
 
 import { CachedManager } from '../CachedManager';
 
@@ -67,25 +63,23 @@ export class GuildStickerManager extends CachedManager<Snowflake, GuildSticker> 
         }
     }
 
-    public async create(data: RESTPostAPIGuildStickerFormDataBody, reason?: string) {
-        const body = new FormData();
+    public async create(data: CreateStickerData, reason?: string) {
+        const resolvedImage = await DataResolver.resolveFile(data.file);
+        data.file = resolvedImage.data;
 
-        data.file = DataResolver.resolveImage(data.file as string);
-
-        const fileType = await fromBuffer(data.file as Buffer);
-
-        body.append('description', data.description);
-        body.append('file', new Blob([data.file as Buffer], { type: fileType?.mime }), {
-            filename: data.name,
-        });
-        body.append('name', data.name);
-        body.append('tags', data.tags);
+        data.description ??= '';
+        data.tags ??= '';
 
         const sticker = await this.client.rest.post<APISticker>(
             `/guilds/${this.guild.id}/stickers`,
             {
-                body,
+                body: JSON.stringify({
+                    name: data.name,
+                    description: data.description,
+                    tags: data.tags,
+                }),
                 reason: reason,
+                files: [{ name: 'file', data: data.file, type: resolvedImage.type }],
             }
         );
 

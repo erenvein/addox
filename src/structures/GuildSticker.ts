@@ -47,7 +47,7 @@ export class GuildSticker extends BaseStructure {
     }
 
     public get guild() {
-        return this.client.caches.guilds.cache.get(this.guildId!);
+        return this.client.caches.guilds.cache.get(this.guildId!)!;
     }
 
     public async edit(data: RESTPatchAPIGuildStickerJSONBody) {
@@ -60,5 +60,11 @@ export class GuildSticker extends BaseStructure {
 
     public async delete(reason?: string) {
         return this.guild?.caches.stickers.delete(this.id, reason);
+    }
+
+    public get url() {
+        return `https://cdn.discordapp.com/stickers/${this.id}.${
+            this.formatType === 'Lottie' ? 'json' : 'png'
+        }`;
     }
 }

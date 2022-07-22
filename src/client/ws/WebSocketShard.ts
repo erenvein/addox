@@ -50,8 +50,9 @@ export declare interface WebSocketShard {
 export class WebSocketShard extends EventEmitter {
     public socket: WebSocket | null;
     public inflate: any = undefined;
-    public lastPinged: number = -1;
+    public lastHeartbeat: number = -1;
     public lastHeartbeatAcked: boolean = false;
+    public lastHeartbeatAck: number = -1;
     public heartbeatInterval: NodeJS.Timer | null = null;
     public sequence: number = -1;
     public closeSequence: number = 0;
@@ -60,7 +61,6 @@ export class WebSocketShard extends EventEmitter {
     public id: number;
     public eventsReady: boolean = false;
     public uptime: number = -1;
-    public ping: number = -1;
     public status: WebSocketShardStatus = 'IDLE';
     public packetQueue: number = 0;
     public guilds = new Collection<string, Guild>();
@@ -79,6 +79,10 @@ export class WebSocketShard extends EventEmitter {
                 flush: zlib.Z_SYNC_FLUSH,
             });
         }
+    }
+
+    public get ping() {
+        return this.lastHeartbeatAck - this.lastHeartbeat;
     }
 
     public async connect() {
@@ -110,7 +114,9 @@ export class WebSocketShard extends EventEmitter {
     public cleanup() {
         clearInterval(this.heartbeatInterval!);
 
-        this.lastPinged = -1;
+        this.lastHeartbeat = -1;
+        this.lastHeartbeatAck = -1;
+        this.lastHeartbeatAcked = false;
         this.sequence = -1;
         this.sessionId = null;
         this.manager.client!.user = null;
@@ -178,7 +184,7 @@ export class WebSocketShard extends EventEmitter {
     public sendHeartbeat() {
         if (this.status === 'READY') {
             this.lastHeartbeatAcked = false;
-            this.lastPinged = Date.now();
+            this.lastHeartbeat = Date.now();
             this.send({ op: GatewayOpcodes.Heartbeat, d: this.sequence });
         }
     }
@@ -187,7 +193,7 @@ export class WebSocketShard extends EventEmitter {
         this.lastHeartbeatAcked = true;
 
         if (updatePing) {
-            this.ping = Date.now() - this.lastPinged;
+            this.lastHeartbeatAck = Date.now();
         }
     }
 

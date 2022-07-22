@@ -9,6 +9,6 @@ export default class GuildDeleteHandler extends BaseWebSocketHandler {
         const guild = this.shard.guilds.get(d.id);
         this.shard.guilds.delete(d.id);
 
-        this.shard.manager.client.emit('GuildCreate', guild!);
+        this.shard.manager.client.emit('guildCreate', guild!);
     }
 }

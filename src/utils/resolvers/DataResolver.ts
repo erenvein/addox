@@ -1,21 +1,42 @@
-import { readFile } from 'node:fs/promises';
+import { readFileSync } from 'node:fs';
 import fetch from 'node-fetch';
+import { fromBuffer } from 'file-type';
+import type { ImageMimes,FileData } from '../..';
 
-export const HttpPattern = /^https?:\/\//;
+export const HttpPattern = /^(https?)?:\/\//;
 
-export async function resolveFile(filePathOrUrl: string) {
-    if (HttpPattern.test(filePathOrUrl)) {
-        return await fetch(filePathOrUrl).then(res => res.buffer());
+export const ImageMimesArray = ['image/png', 'image/jpeg', 'image/gif'] as const;
+
+export async function resolveFile(filePathOrUrlOrBuffer: string | Buffer): Promise<FileData> {
+    if (Buffer.isBuffer(filePathOrUrlOrBuffer)) {
+        return {
+            data: filePathOrUrlOrBuffer,
+            type: (await fromBuffer(filePathOrUrlOrBuffer))?.mime ?? 'image/jpeg',
+        };
+    } else if (HttpPattern.test(filePathOrUrlOrBuffer)) {
+        const response = await fetch(filePathOrUrlOrBuffer);
+        const buffer = Buffer.from(await response.arrayBuffer());
+
+        return {
+            data: buffer,
+            type:
+                response.headers.get('content-type') ??
+                (await fromBuffer(buffer))?.mime ??
+                'image/jpeg',
+        };
     } else {
-        return await readFile(filePathOrUrl);
+        const buffer = readFileSync(filePathOrUrlOrBuffer);
+        return { data: buffer, type: (await fromBuffer(buffer))?.mime ?? 'image/jpeg' };
     }
 }
 
-
-export async function resolveImage(data: Buffer | string): Promise<string> {
+export async function resolveImage(data: Buffer | string, type: ImageMimes): Promise<string> {
     if (Buffer.isBuffer(data)) {
-        return `data:image/jpg;base64,${data.toString('base64')}`;
+        return `data:${type};base64,${data.toString('base64')}`;
     } else {
-        return resolveImage(await resolveFile(data));
+        const resolved = await resolveFile(data);
+        if (!ImageMimesArray.includes(resolved.type as ImageMimes)) type = 'image/jpeg';
+
+        return await resolveImage(resolved.data, resolved.type as ImageMimes);
     }
 }

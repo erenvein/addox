@@ -128,28 +128,28 @@ export class WebSocketManager {
         this.shardQueue?.delete(shard);
 
         if (!shard.eventsReady) {
-            shard.on('Ready', (shard) => {
-                this.client.emit('ShardReady', shard);
+            shard.on('ready', (shard) => {
+                this.client.emit('shardReady', shard);
 
                 if (this.allShardsReady) {
                     this.client.uptime = Date.now();
-                    this.client.emit('Ready', this.client);
+                    this.client.emit('ready', this.client);
                 }
             });
 
-            shard.on('Resumed', (shard, replayed) => {
-                this.client.emit('ShardResumed', shard, replayed);
+            shard.on('resumed', (shard, replayed) => {
+                this.client.emit('shardResumed', shard, replayed);
             });
 
-            shard.on('Error', (shard, error) => {
-                this.client.emit('ShardError', shard, error);
+            shard.on('error', (shard, error) => {
+                this.client.emit('shardError', shard, error);
             });
 
-            shard.on('Close', (shard, code, reason) => {
-                this.client.emit('ShardClosed', shard, code, reason);
+            shard.on('close', (shard, code, reason) => {
+                this.client.emit('shardClosed', shard, code, reason);
 
                 if (ReconnectableWebSocketCloseCodes.has(code)) {
-                    this.client.emit('ShardReconnect', shard);
+                    this.client.emit('shardReconnect', shard);
                     shard.status = 'RECONNECTING';
 
                     if (shard.sessionId) {
@@ -159,7 +159,7 @@ export class WebSocketManager {
                         this.shardQueue?.add(shard);
                     }
                 } else {
-                    this.client.emit('ShardDeath', shard, code, reason);
+                    this.client.emit('shardDeath', shard, code, reason);
                 }
             });
 
@@ -169,7 +169,7 @@ export class WebSocketManager {
         this.shards.set(shard.id, shard);
 
         try {
-            this.client.emit('ShardSpawn', shard);
+            this.client.emit('shardSpawn', shard);
             await shard.connect();
         } catch (error) {
             this.shardQueue?.add(shard);

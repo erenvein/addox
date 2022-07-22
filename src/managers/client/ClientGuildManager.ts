@@ -2,8 +2,7 @@ import {
     type Client,
     type APIGuild,
     type CollectionLike,
-    type RESTPatchAPIGuildJSONBody,
-    type RESTPostAPIGuildsJSONBody,
+    type CreateGuildData,
     type Snowflake,
     type RESTAPIPartialCurrentUserGuild,
     type FetchGuildOptions,
@@ -22,13 +21,15 @@ import {
     type RESTPatchAPIGuildWelcomeScreenJSONBody,
     type RESTPatchAPIGuildWelcomeScreenResult,
     type RESTGetAPIGuildWelcomeScreenResult,
-    GuildMFALevelResolver,
     GuildWidgetSettings,
     GuildWidget,
     GuildPreview,
     Guild,
     Oauth2Guild,
     GuildWelcomeScreen,
+    GuildDataResolver,
+    GuildMFALevel,
+    EditGuildData,
 } from '../..';
 
 import { BaseManager } from '../BaseManager';
@@ -52,9 +53,9 @@ export class ClientGuildManager extends BaseManager {
             if (!force && _guild) {
                 return _guild;
             } else {
-                const guild = await this.client.rest.get<APIGuild>(
-                    `/guilds/${id}?with_counts=${with_counts ?? true}`
-                );
+                const guild = await this.client.rest.get<APIGuild>(`/guilds/${id}`, {
+                    query: { with_counts },
+                });
 
                 if (_guild) {
                     _guild = _guild._patch(guild);
@@ -63,10 +64,20 @@ export class ClientGuildManager extends BaseManager {
                 return this.cache._add(guild.id, _guild ?? new Guild(this.client, guild));
             }
         } else {
-            const guilds = await this.client.rest.get<RESTAPIPartialCurrentUserGuild[]>('/guilds');
+            const guilds = await this.client.rest.get<RESTAPIPartialCurrentUserGuild[]>(
+                '/users/@me/guilds'
+            );
 
             return guilds.map((guild) => new Oauth2Guild(this.client, guild));
         }
+    }
+
+    public async create(data: CreateGuildData): Promise<Guild> {
+        const guild = await this.client.rest.post<APIGuild>('/guilds', {
+            body: JSON.stringify(GuildDataResolver(data)),
+        });
+
+        return this.cache._add(guild.id, new Guild(this.client, guild));
     }
 
     public async delete(id: Snowflake) {
@@ -79,13 +90,9 @@ export class ClientGuildManager extends BaseManager {
         this.cache.delete(id);
     }
 
-    public async edit(
-        id: Snowflake,
-        data: RESTPatchAPIGuildJSONBody,
-        reason?: string
-    ): Promise<Guild> {
+    public async edit(id: Snowflake, data: EditGuildData, reason?: string): Promise<Guild> {
         const guild = await this.client.rest.patch<APIGuild>(`/guilds/${id}`, {
-            body: JSON.stringify(data),
+            body: JSON.stringify(GuildDataResolver(data)),
             reason: reason,
         });
 
@@ -100,16 +107,10 @@ export class ClientGuildManager extends BaseManager {
 
     public async setMFALevel(id: Snowflake, level: GuildMFALevelResolvable) {
         await this.client.rest.put(`/guilds/${id}/mfa`, {
-            body: JSON.stringify({ level: GuildMFALevelResolver(level) }),
+            body: JSON.stringify({
+                level: typeof level === 'number' ? level : GuildMFALevel[level],
+            }),
         });
-    }
-
-    public async create(data: RESTPostAPIGuildsJSONBody): Promise<Guild> {
-        const guild = await this.client.rest.post<APIGuild>('/guilds', {
-            body: JSON.stringify(data),
-        });
-
-        return this.cache._add(guild.id, new Guild(this.client, guild));
     }
 
     public async fetchPruneCount(

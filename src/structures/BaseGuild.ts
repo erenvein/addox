@@ -14,7 +14,7 @@ import { BaseStructure } from './BaseStructure';
 export class BaseGuild extends BaseStructure {
     public id!: Snowflake;
     public name!: string;
-    public icon!: string;
+    public icon!: string | null;
     public features!: (keyof typeof GuildFeature)[];
 
     public constructor(client: Client, data: APIGuild) {
@@ -27,6 +27,7 @@ export class BaseGuild extends BaseStructure {
         this.id = data.id;
         this.name = data.name;
         this.features = data.features.map((feature) => (GuildFeature as any)[feature]);
+        this.icon = data.icon ?? null;
 
         return this;
     }

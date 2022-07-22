@@ -15,22 +15,21 @@ export default class GuildStickersUpdateHandler extends BaseWebSocketHandler {
 
             if (_sticker) {
                 deletions.delete(_sticker);
-
                 const __sticker =  new GuildSticker(this.shard.manager.client, sticker);
 
                 guild.caches.stickers.cache.set(__sticker.id, __sticker);
-                this.shard.manager.client.emit('StickerUpdate', _sticker, __sticker);
+                this.shard.manager.client.emit('stickerUpdate', _sticker, __sticker);
             } else {
                 const __sticker = new GuildSticker(this.shard.manager.client, sticker);
 
                 guild.caches.stickers.cache.set(__sticker.id, __sticker);
-                this.shard.manager.client.emit('StickerCreate', __sticker);
+                this.shard.manager.client.emit('stickerCreate', __sticker);
             }
         }
 
         for (const sticker of deletions) {
             guild.caches.stickers.cache.delete(sticker.id);
-            this.shard.manager.client.emit('StickerDelete', sticker);
+            this.shard.manager.client.emit('stickerDelete', sticker);
         }
     }
 }

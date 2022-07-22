@@ -8,6 +8,7 @@ import {
     type FetchOptions,
     type RESTPostAPIGuildEmojiJSONBody,
     type RESTPatchAPIGuildEmojiJSONBody,
+    DataResolver,
 } from '../../';
 
 import { CachedManager } from '../CachedManager';
@@ -63,6 +64,10 @@ export class GuildEmojiManager extends CachedManager<Snowflake, GuildEmoji> {
     }
 
     public async create(data: RESTPostAPIGuildEmojiJSONBody, reason?: string) {
+        const resolvedImage = await DataResolver.resolveImage(data.image as string, 'image/jpeg');
+
+        data.image = resolvedImage;
+
         const emoji = await this.client.rest.post<APIEmoji>(`/guilds/${this.guild.id}/emojis`, {
             body: JSON.stringify(data),
             reason: reason,

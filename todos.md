@@ -1,3 +1,5 @@
--   Fix guild edit data.
+-   Fix guild create role data.
+-   Fix guild create channel data.
+-   Fix request manager form data.
 -   Complete structures.
 -   Voice

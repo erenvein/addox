@@ -38,6 +38,7 @@ export { GuildPreview } from './structures/GuildPreview';
 export { GuildWelcomeScreen } from './structures/GuildWelcomeScreen';
 export { GuildWelcomeScreenChannel } from './structures/GuildWelcomeScreenChannel';
 export { GuildSticker } from './structures/GuildSticker';
+export { StickerPack } from './structures/StickerPack';
 
 // MANAGERS
 export { CachedManager } from './managers/CachedManager';
@@ -57,11 +58,11 @@ export { GuildStickerManager } from './managers/guild/GuildStickerManager';
 export { PresenceDataResolver } from './utils/resolvers/PresenceDataResolver';
 export { GatewayIntentBitsResolver } from './utils/resolvers/GatewayIntentBitsResolver';
 export { SystemChannelFlagsBitsResolver } from './utils/resolvers/SystemChannelFlagsBitsResolver';
-export { GuildMFALevelResolver } from './utils/resolvers/GuildMFALevelResolver';
 export { ColorResolver } from './utils/resolvers/ColorResolver';
 export { UserFlagsBitsResolver } from './utils/resolvers/UserFlagsBitsResolver';
 export { PermissionFlagsBitsResolver } from './utils/resolvers/PermissionFlagsBitsResolver';
 export { RoleDataResolver } from './utils/resolvers/RoleDataResolver';
+export { GuildDataResolver } from './utils/resolvers/GuildDataResolver';
 export { Sleep } from './utils/times/Sleep';
 export { HexDecimalToHex } from './utils/colors/HexDecimalToHex';
 export { HexToHexDecimal } from './utils/colors/HexToHexDecimal';

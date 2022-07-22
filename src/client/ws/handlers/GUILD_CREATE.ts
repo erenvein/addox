@@ -18,7 +18,7 @@ export default class GuildCreateHandler extends BaseWebSocketHandler {
         this.shard.guilds.set(d.id, guild);
 
         if (this.shard.status === 'READY') {
-            this.shard.manager.client.emit('GuildCreate', guild);
+            this.shard.manager.client.emit('guildCreate', guild);
         }
     }
 }
