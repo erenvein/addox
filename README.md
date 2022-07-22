@@ -1,3 +1,3 @@
 # Discord API Wrapper
 
-- A Basicial Discord API Wrapper
+- A Discord API Wrapper

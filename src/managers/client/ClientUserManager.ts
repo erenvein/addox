@@ -25,7 +25,7 @@ export class ClientUserManager extends CachedManager<Snowflake, User> {
             if (!force && _user) {
                 return _user;
             } else {
-                const user: APIUser = await this.client.rest.get(`/users/${id}`);
+                const user = await this.client.rest.get<APIUser>(`/users/${id}`);
 
                 if (_user) {
                     _user = _user._patch(user);
@@ -34,7 +34,7 @@ export class ClientUserManager extends CachedManager<Snowflake, User> {
                 return this.cache._add(user.id, _user ?? new User(this.client, user));
             }
         } else {
-            const users: APIUser[] = await this.client.rest.get('/users/@me');
+            const users = await this.client.rest.get<APIUser[]>('/users/@me');
 
             for (const user of users) {
                 let _user = this.cache.get(user.id);
@@ -51,7 +51,7 @@ export class ClientUserManager extends CachedManager<Snowflake, User> {
     }
 
     public async createDM(id: Snowflake) {
-        const channel: APIDMChannel = await this.client.rest.post(`/users/@me/channels`, {
+        const channel = await this.client.rest.post<APIDMChannel>(`/users/@me/channels`, {
             body: JSON.stringify({ recipient_id: id }),
         });
 
@@ -59,7 +59,7 @@ export class ClientUserManager extends CachedManager<Snowflake, User> {
     }
 
     public async fetchDM(id: Snowflake) {
-        const channel: APIDMChannel = await this.client.rest.get(`/channels/${id}`);
+        const channel = await this.client.rest.get<APIDMChannel>(`/channels/${id}`);
 
         // TODO
     }

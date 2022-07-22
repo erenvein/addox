@@ -23,6 +23,7 @@ import type {
     GatewayActivityAssets,
     GuildSystemChannelFlags,
     GatewayGuildCreateDispatchData,
+    GuildSticker,
 } from './';
 
 import type { RequestInit } from 'node-fetch';
@@ -127,9 +128,11 @@ export interface Activity {
     buttons?: GatewayActivityButton[];
 }
 
+export type PresenceStatus = 'online' | 'idle' | 'dnd' | 'invisible' | 'offline';
+
 export interface PresenceData {
     activities?: Activity[];
-    status?: 'online' | 'idle' | 'dnd' | 'invisible' | 'offline';
+    status?: PresenceStatus;
     afk?: boolean;
     since?: number;
 }
@@ -188,6 +191,9 @@ export interface ClientEvents {
     EmojiCreate: [emoji: GuildEmoji];
     EmojiDelete: [emoji: GuildEmoji];
     EmojiUpdate: [oldEmoji: GuildEmoji, newEmoji: GuildEmoji];
+    StickerCreate: [sticker: GuildSticker];
+    StickerDelete: [sticker: GuildSticker];
+    StickerUpdate: [oldSticker: GuildSticker, newSticker: GuildSticker];
     Raw: [eventName: keyof typeof GatewayDispatchEvents, data: any];
     ShardSpawn: [shard: WebSocketShard];
     ShardReady: [shard: WebSocketShard];

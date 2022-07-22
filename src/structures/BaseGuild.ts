@@ -52,9 +52,6 @@ export class BaseGuild extends BaseStructure {
     }
 
     public async fetch(options?: FetchGuildOptions): Promise<Guild> {
-        return (await this.client.caches.guilds.fetch(
-            this.id,
-            options
-        )) as unknown as Promise<Guild>;
+        return (await this.client.caches.guilds.fetch(this.id, options)) as unknown as Guild;
     }
 }

@@ -30,7 +30,7 @@ export class GuildEmojiManager extends CachedManager<Snowflake, GuildEmoji> {
             if (!force && _emoji) {
                 return _emoji;
             } else {
-                const emoji: APIEmoji = await this.client.rest.get(
+                const emoji = await this.client.rest.get<APIEmoji>(
                     `/guilds/${this.guild.id}/emojis/${id}`
                 );
 
@@ -44,7 +44,7 @@ export class GuildEmojiManager extends CachedManager<Snowflake, GuildEmoji> {
                 );
             }
         } else {
-            const emojis: APIEmoji[] = await this.client.rest.get(
+            const emojis = await this.client.rest.get<APIEmoji[]>(
                 `/guilds/${this.guild.id}/emojis`
             );
 
@@ -62,23 +62,24 @@ export class GuildEmojiManager extends CachedManager<Snowflake, GuildEmoji> {
         }
     }
 
-    public async create(data: RESTPostAPIGuildEmojiJSONBody) {
-        const emoji: APIEmoji = await this.client.rest.post(`/guilds/${this.guild.id}/emojis`, {
+    public async create(data: RESTPostAPIGuildEmojiJSONBody, reason?: string) {
+        const emoji = await this.client.rest.post<APIEmoji>(`/guilds/${this.guild.id}/emojis`, {
             body: JSON.stringify(data),
+            reason: reason,
         });
 
         return this.cache._add(emoji.id!, new GuildEmoji(this.client, this.guild, emoji));
     }
 
-    public async delete(id: Snowflake) {
-        await this.client.rest.delete(`/guilds/${this.guild.id}/emojis/${id}`);
+    public async delete(id: Snowflake, reason?: string) {
+        await this.client.rest.delete(`/guilds/${this.guild.id}/emojis/${id}`, { reason: reason });
         this.cache.delete(id);
     }
 
-    public async edit(id: Snowflake, data: RESTPatchAPIGuildEmojiJSONBody) {
-        const emoji: APIEmoji = await this.client.rest.patch(
+    public async edit(id: Snowflake, data: RESTPatchAPIGuildEmojiJSONBody, reason?: string) {
+        const emoji = await this.client.rest.patch<APIEmoji>(
             `/guilds/${this.guild.id}/emojis/${id}`,
-            { body: JSON.stringify(data) }
+            { body: JSON.stringify(data), reason: reason }
         );
 
         let _emoji = this.cache.get(id);

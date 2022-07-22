@@ -29,6 +29,15 @@ export { Oauth2Guild } from './structures/Oauth2Guild';
 export { BaseGuild } from './structures/BaseGuild';
 export { GuildEmoji } from './structures/GuildEmoji';
 export { Role } from './structures/Role';
+export { BaseChannel } from './structures/BaseChannel';
+export { GuildWidgetChannel } from './structures/GuildWidgetChannel';
+export { GuildWidgetMember } from './structures/GuildWidgetMember';
+export { GuildWidgetSettings } from './structures/GuildWidgetSettings';
+export { GuildWidget } from './structures/GuildWidget';
+export { GuildPreview } from './structures/GuildPreview';
+export { GuildWelcomeScreen } from './structures/GuildWelcomeScreen';
+export { GuildWelcomeScreenChannel } from './structures/GuildWelcomeScreenChannel';
+export { GuildSticker } from './structures/GuildSticker';
 
 // MANAGERS
 export { CachedManager } from './managers/CachedManager';
@@ -36,11 +45,13 @@ export { BaseManager } from './managers/BaseManager';
 export { ClientCacheManager } from './managers/client/ClientCacheManager';
 export { ClientGuildManager } from './managers/client/ClientGuildManager';
 export { ClientUserManager } from './managers/client/ClientUserManager';
+export { ClientStickerManager } from './managers/client/ClientStickerManager';
 export { ClientEmojiManager } from './managers/client/ClientEmojiManager';
 export { ClientRoleManager } from './managers/client/ClientRoleManager';
 export { GuildEmojiManager } from './managers/guild/GuildEmojiManager';
 export { GuildRoleManager } from './managers/guild/GuildRoleManager';
 export { GuildCacheManager } from './managers/guild/GuildCacheManager';
+export { GuildStickerManager } from './managers/guild/GuildStickerManager';
 
 // UTILS
 export { PresenceDataResolver } from './utils/resolvers/PresenceDataResolver';
@@ -54,6 +65,7 @@ export { RoleDataResolver } from './utils/resolvers/RoleDataResolver';
 export { Sleep } from './utils/times/Sleep';
 export { HexDecimalToHex } from './utils/colors/HexDecimalToHex';
 export { HexToHexDecimal } from './utils/colors/HexToHexDecimal';
+export * as DataResolver from './utils/resolvers/DataResolver';
 
 // SNOWFLAKE UTIL
 export { DiscordSnowflake as SnowflakeUtil } from '@sapphire/snowflake';

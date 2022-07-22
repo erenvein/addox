@@ -1,7 +1,7 @@
 {
     "name": "discord-api-wrapper",
     "version": "1.0.0",
-    "description": "A Basicial Discord API Wrapper",
+    "description": "A Discord API Wrapper",
     "main": "dist/index.js",
     "repository": {
         "url": "https://github.com/deliever42/discord-api-wrapper",
@@ -12,8 +12,8 @@
     "private": false,
     "devDependencies": {
         "@types/node": "^18.0.6",
-        "@types/ws": "^8.5.3",
         "@types/node-fetch": "^2.6.2",
+        "@types/ws": "^8.5.3",
         "@typescript-eslint/eslint-plugin": "^5.30.6",
         "dotenv": "^16.0.1",
         "erlpack": "^0.1.4",
@@ -26,7 +26,9 @@
     "dependencies": {
         "@sapphire/async-queue": "^1.3.1",
         "@sapphire/snowflake": "^3.2.2",
-        "discord-api-types": "^0.36.2",
+        "discord-api-types": "^0.36.3",
+        "file-type": "16.5.4",
+        "form-data": "^4.0.0",
         "node-fetch": "2",
         "tslib": "^2.4.0",
         "ws": "^8.8.1"

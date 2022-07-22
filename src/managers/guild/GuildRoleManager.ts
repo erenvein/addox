@@ -38,7 +38,7 @@ export class GuildRoleManager extends CachedManager<Snowflake, Role> {
 
             return this.cache._add(role.id, role);
         } else {
-            const roles: APIRole[] = await this.client.rest.get(`/guilds/${this.guild.id}/roles`);
+            const roles = await this.client.rest.get<APIRole[]>(`/guilds/${this.guild.id}/roles`);
 
             for (const role of roles) {
                 this.cache.set(role.id, new Role(this.client, this.guild, role));
@@ -48,22 +48,24 @@ export class GuildRoleManager extends CachedManager<Snowflake, Role> {
         }
     }
 
-    public async create(data: RoleData) {
-        const role: APIRole = await this.client.rest.post(`/guilds/${this.guild.id}/roles`, {
+    public async create(data: RoleData, reason?: string) {
+        const role = await this.client.rest.post<APIRole>(`/guilds/${this.guild.id}/roles`, {
             body: JSON.stringify(RoleDataResolver(data)),
+            reason: reason,
         });
 
         return this.cache._add(role.id, new Role(this.client, this.guild, role));
     }
 
-    public async delete(id: Snowflake) {
-        await this.client.rest.delete(`/guilds/${this.guild.id}/roles/${id}`);
+    public async delete(id: Snowflake, reason?: string) {
+        await this.client.rest.delete(`/guilds/${this.guild.id}/roles/${id}`, { reason: reason });
         this.cache.delete(id);
     }
 
-    public async edit(id: Snowflake, data: RoleData) {
-        const role: APIRole = await this.client.rest.patch(`/guilds/${this.guild.id}/roles/${id}`, {
+    public async edit(id: Snowflake, data: RoleData, reason?: string) {
+        const role = await this.client.rest.patch<APIRole>(`/guilds/${this.guild.id}/roles/${id}`, {
             body: JSON.stringify(RoleDataResolver(data)),
+            reason: reason,
         });
 
         let _role = this.cache.get(id)!;
@@ -75,9 +77,9 @@ export class GuildRoleManager extends CachedManager<Snowflake, Role> {
         return this.cache._add(role.id, _role ?? new Role(this.client, this.guild, role));
     }
 
-    public async setPosition(id: Snowflake, position: number) {
-        const role: APIRole = await this.client.rest.patch(`/guilds/${this.guild.id}/roles`, {
-            body: JSON.stringify({ id, position }),
+    public async setPosition(id: Snowflake, position: number, reason?: string) {
+        const role = await this.client.rest.patch<APIRole>(`/guilds/${this.guild.id}/roles`, {
+            body: JSON.stringify({ id, position, reason: reason }),
         });
 
         let _role = this.cache.get(id);

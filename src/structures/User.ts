@@ -90,10 +90,6 @@ export class User extends BaseStructure {
     }
 
     public async fetch(): Promise<User> {
-        const response: APIUser = await this.client.rest.get(`/users/${this.id}`);
-
-        this._patch(response);
-
-        return this;
+        return (await this.client.caches.users.fetch(this.id)) as unknown as User;
     }
 }

@@ -19,6 +19,30 @@ const client = new Client({
     },
 });
 
+client.on('StickerCreate', (sticker) => {
+    console.log('Sticker created:', sticker.name);
+});
+
+client.on('StickerDelete', (sticker) => {
+    console.log('Sticker deleted:', sticker.name);
+});
+
+client.on('StickerUpdate', (oldSticker, newSticker) => {
+    console.log('Sticker updated:', oldSticker.name, newSticker.name);
+});
+
+client.on('EmojiCreate', (emoji) => {
+    console.log('Emoji created:', emoji.name);
+});
+
+client.on('EmojiDelete', (emoji) => {
+    console.log('Emoji deleted:', emoji.name);
+});
+
+client.on('EmojiUpdate', (oldEmoji, newEmoji) => {
+    console.log('Emoji updated:', oldEmoji.name, newEmoji.name);
+});
+
 client.on('Ready', () => {
     console.log('Online!');
 });

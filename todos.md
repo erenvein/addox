@@ -1,2 +1,3 @@
+-   Fix guild edit data.
 -   Complete structures.
 -   Voice

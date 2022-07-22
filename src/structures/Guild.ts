@@ -4,7 +4,6 @@ import {
     type APIGuildWithShard,
     GuildDefaultMessageNotifications,
     GuildCacheManager,
-    type FetchGuildOptions,
     GuildEmoji,
     GuildExplicitContentFilter,
     GuildHubType,
@@ -16,6 +15,13 @@ import {
     SystemChannelFlagsBitField,
     type GatewayGuildCreateDispatchDataWithShard,
     GuildVerificationLevel,
+    type ImageOptions,
+    type GuildFetchPruneOptions,
+    type RESTPostAPIGuildPruneJSONBody,
+    type User,
+    type RESTPatchAPIGuildWidgetSettingsJSONBody,
+    type RESTPatchAPIGuildWelcomeScreenJSONBody,
+    GuildSticker
 } from '../';
 
 import { BaseGuild } from './BaseGuild';
@@ -55,6 +61,9 @@ export class Guild extends BaseGuild {
     public verificationLevel!: keyof typeof GuildVerificationLevel;
     public widgetChannelId!: Snowflake | null;
     public widgetEnabled!: boolean;
+    public memberCount!: number;
+    public large!: boolean;
+    public joinedAt!: Date;
 
     public constructor(
         client: Client,
@@ -101,7 +110,6 @@ export class Guild extends BaseGuild {
         this.splash = data.splash;
         this.systemChannelFlags = new SystemChannelFlagsBitField(data.system_channel_flags);
         this.systemChannelId = data.system_channel_id;
-        this.available = !data.unavailable;
         this.vanityURLCode = data.vanity_url_code;
         this.verificationLevel = GuildVerificationLevel[
             data.verification_level
@@ -109,56 +117,193 @@ export class Guild extends BaseGuild {
         this.widgetChannelId = data.widget_channel_id ?? null;
         this.widgetEnabled = data.widget_enabled ?? false;
 
+        if ('unavailable' in data) {
+            this.available = !data.unavailable;
+        }
+
         if ('shard_id' in data) {
             this.shardId = data.shard_id!;
         }
 
+        if ('member_count' in data) {
+            this.memberCount = data.member_count;
+        }
+
+        if ('large' in data) {
+            this.large = data.large;
+        }
+
+        if ('joined_at' in data) {
+            this.joinedAt = new Date(Date.parse(data.joined_at));
+        }
+
         this.caches = new GuildCacheManager(this.client, this);
 
-        for (const emoji of data.emojis) {
-            this.caches.emojis.cache.set(emoji.id!, new GuildEmoji(this.client, this, emoji));
+        if ('emojis' in data) {
+            for (const emoji of data.emojis) {
+                this.caches.emojis.cache.set(emoji.id!, new GuildEmoji(this.client, this, emoji));
+            }
         }
 
-        for (const role of data.roles) {
-            this.caches.roles.cache.set(role.id, new Role(this.client, this, role));
+        if ('roles' in data) {
+            for (const role of data.roles) {
+                this.caches.roles.cache.set(role.id!, new Role(this.client, this, role));
+            }
+        }
+        
+        if ('stickers' in data) {
+            for (const sticker of data.stickers) {
+                this.caches.stickers.cache.set(sticker.id!, new GuildSticker(this.client, sticker));
+            }
         }
 
-        // STICKERS
+        // BANS
         // - TODO
 
-        // VOICE STATES
+        // CHANNELS
         // - TODO
 
-        // WEBHOOKS
+        // STAGE INSTANCES
         // - TODO
 
         // INVITES
         // - TODO
 
-        // BANS
-        // - TODO
-
-        // MEMBERS
+        // INTEGRATIONS
         // - TODO
 
         // PRESENCES
         // - TODO
 
+        // GUILD SCHEDULED EVENTS
+        // - TODO
+
+        // VOICE STATES
+        // - TODO
+
         // WELCOME SCREEN
+        // - TODO
+
+        // MEMBERS
+        // - TODO
+
+        // THREADS
+        // - TODO
+
+        // WEBHOOKS
+        // - TODO
+
+        // THREADS
         // - TODO
 
         return this;
     }
 
+    public get owner() {
+        return this.client.caches.users.cache.get(this.ownerId);
+    }
+
+    /* TODO
+
+    /public get afkChannel() {
+        return this.caches.channels.cache.get(this.afkChannelId);
+    }
+
+    public get systemChannel() {
+        return this.caches.channels.cache.get(this.systemChannelId);
+    }
+
+    public get publicUpdatesChannel() {
+        return this.caches.channels.cache.get(this.publicUpdatesChannelId);
+    }
+
+    public get rulesChannel() {
+        return this.caches.channels.cache.get(this.rulesChannelId);
+    }
+
+    public get widgetChannel() {
+        return this.caches.channels.cache.get(this.widgetChannelId);
+    }*/
+
+    public splashURL({ dynamic, size, format }: ImageOptions = { dynamic: true, size: 1024 }) {
+        return this.splash
+            ? `https://cdn.discordapp.com/splashes/${this.id}/${this.splash}.${
+                  dynamic && this.splash.startsWith('a_') ? 'gif' : format ?? 'png'
+              }?size=${size ?? 1024}`
+            : null;
+    }
+
+    public discoverySplashURL(
+        { dynamic, size, format }: ImageOptions = { dynamic: true, size: 1024 }
+    ) {
+        return this.discoverySplash
+            ? `https://cdn.discordapp.com/discovery-splashes/${this.id}/${this.discoverySplash}.${
+                  dynamic && this.discoverySplash.startsWith('a_') ? 'gif' : format ?? 'png'
+              }?size=${size ?? 1024}`
+            : null;
+    }
+
+    public get shard() {
+        return this.client.ws.shards.get(this.shardId!);
+    }
+
+    public get joinedTimestamp() {
+        return this.joinedAt.getTime();
+    }
+
     public async leave() {
-        return await this.client.caches.guilds.delete(this.id);
+        return await this.client.caches.guilds.leave(this.id);
     }
 
-    public async fetch(options?: FetchGuildOptions): Promise<Guild> {
-        return (await this.client.caches.guilds.fetch(this.id, options)) as Guild;
+    public async edit(data: RESTPatchAPIGuildJSONBody, reason?: string) {
+        return await this.client.caches.guilds.edit(this.id, data, reason);
     }
 
-    public async edit(data: RESTPatchAPIGuildJSONBody) {
-        return await this.client.caches.guilds.edit(this.id, data);
+    public async fetchOwner() {
+        return (await this.client.caches.users.fetch(this.ownerId)) as User;
+    }
+
+    public async fetchPruneCount(options?: GuildFetchPruneOptions) {
+        return await this.client.caches.guilds.fetchPruneCount(this.id, options);
+    }
+
+    public async pruneMembers(options?: RESTPostAPIGuildPruneJSONBody) {
+        return await this.client.caches.guilds.pruneMembers(this.id, options);
+    }
+
+    public async fetchPreview() {
+        return await this.client.caches.guilds.fetchPreview(this.id);
+    }
+
+    public async fetchVoiceRegions() {
+        return await this.client.caches.guilds.fetchVoiceRegions(this.id);
+    }
+
+    public async fetchWidgetImage() {
+        return await this.client.caches.guilds.fetchWidgetImage(this.id);
+    }
+
+    public async fetchWidgetSettings() {
+        return await this.client.caches.guilds.fetchWidgetSettings(this.id);
+    }
+
+    public async fetchWidget() {
+        return await this.client.caches.guilds.fetchWidget(this.id);
+    }
+
+    public async fetchVanityURL() {
+        return await this.client.caches.guilds.fetchVanityURL(this.id);
+    }
+
+    public async fetchWelcomeScreen() {
+        return await this.client.caches.guilds.fetchWelcomeScreen(this.id);
+    }
+
+    public async editWidget(data: RESTPatchAPIGuildWidgetSettingsJSONBody, reason?: string) {
+        return await this.client.caches.guilds.editWidget(this.id, data, reason);
+    }
+
+    public async editWelcomeScreen(data: RESTPatchAPIGuildWelcomeScreenJSONBody, reason?: string) {
+        return await this.client.caches.guilds.editWelcomeScreen(this.id, data, reason);
     }
 }
