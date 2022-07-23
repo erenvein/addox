@@ -17,7 +17,6 @@ export declare interface Client {
 }
 
 export class Client extends BaseClient {
-    public token: string | null;
     public user: ClientUser | null;
     public ws: WebSocketManager;
     public uptime: number;
@@ -25,7 +24,6 @@ export class Client extends BaseClient {
     public constructor({ ws, rest }: ClientOptions) {
         super(rest!);
 
-        this.token = null;
         this.user = null;
         this.uptime = -1;
 
@@ -35,7 +33,6 @@ export class Client extends BaseClient {
 
     public destroy() {
         this.user = null;
-        this.token = null;
         this.uptime = -1;
 
         this.ws.destroy();

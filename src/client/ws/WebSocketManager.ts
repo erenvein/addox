@@ -27,10 +27,20 @@ export class WebSocketManager {
     public compress: boolean;
     public properties: WebSocketProperties;
     public spawnStreak: number;
+    public autoReconnect: boolean;
+    #token: string | null;
 
     public constructor(
         client: Client,
-        { intents, shardCount, largeThreshold, presence, compress, properties }: WebSocketOptions
+        {
+            intents,
+            shardCount,
+            largeThreshold,
+            presence,
+            compress,
+            properties,
+            autoReconnect,
+        }: WebSocketOptions
     ) {
         this.client = client;
 
@@ -47,6 +57,12 @@ export class WebSocketManager {
             device: 'discord-api-wrapper-by-deliever42',
         };
         this.spawnStreak = 0;
+        this.autoReconnect = autoReconnect ?? true;
+        this.#token = null;
+    }
+
+    public get token() {
+        return this.#token;
     }
 
     public async getGatewayBot() {
@@ -69,7 +85,7 @@ export class WebSocketManager {
 
     public async connect(token: string) {
         token = token.replace(/^(Bot|Bearer)\s/iu, '');
-        this.client.token = token;
+        this.#token = token;
         this.client.rest.setToken(token);
 
         const { shards, session_start_limit } = await this.getGatewayBot();
@@ -111,6 +127,7 @@ export class WebSocketManager {
 
     public destroy() {
         this.shardList = null;
+        this.#token = null;
 
         this.shards.forEach((shard) => shard.close(1000));
 
@@ -127,7 +144,7 @@ export class WebSocketManager {
 
         this.shardQueue?.delete(shard);
 
-        if (!shard.eventsReady) {
+        if (!shard.eventsAppended) {
             shard.on('ready', (shard) => {
                 this.client.emit('shardReady', shard);
 
@@ -148,22 +165,19 @@ export class WebSocketManager {
             shard.on('close', (shard, code, reason) => {
                 this.client.emit('shardClosed', shard, code, reason);
 
-                if (ReconnectableWebSocketCloseCodes.has(code)) {
+                if (ReconnectableWebSocketCloseCodes.has(code) && this.autoReconnect) {
                     this.client.emit('shardReconnect', shard);
                     shard.status = 'RECONNECTING';
 
-                    if (shard.sessionId) {
-                        shard.resume();
-                    } else {
-                        shard.cleanup();
-                        this.shardQueue?.add(shard);
-                    }
+                    shard.cleanup();
+
+                    this.respawn(shard.id);
                 } else {
                     this.client.emit('shardDeath', shard, code, reason);
                 }
             });
 
-            shard.eventsReady = true;
+            shard.eventsAppended = true;
         }
 
         this.shards.set(shard.id, shard);
@@ -171,7 +185,7 @@ export class WebSocketManager {
         try {
             this.client.emit('shardSpawn', shard);
             await shard.connect();
-        } catch (error) {
+        } catch {
             this.shardQueue?.add(shard);
         }
 
@@ -186,7 +200,11 @@ export class WebSocketManager {
     }
 
     public get allShardsReady() {
-        if (this.shards.size !== this.shardCount || !this.shards.every((shard) => shard.uptime > 0))
+        if (
+            this.shards.size !== this.shardCount ||
+            !this.shards.every((shard) => shard.uptime > 0) ||
+            this.shardQueue!.size
+        )
             return false;
 
         return true;
@@ -221,11 +239,9 @@ export class WebSocketManager {
     }
 
     public async respawnAll() {
-        this.shards.forEach((shard) => shard.close(1000, false));
+        const token = this.#token;
 
-        this.shards.clear();
-        this.shardQueue?.clear();
-
-        return await this.connect(this.client.token!);
+        this.destroy();
+        return await this.connect(token!);
     }
 }

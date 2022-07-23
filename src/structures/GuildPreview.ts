@@ -5,7 +5,7 @@ import {
     GuildFeature,
     type ImageOptions,
     GuildEmoji,
-    GuildSticker,
+    Sticker,
     Collection,
 } from '../';
 
@@ -22,7 +22,7 @@ export class GuildPreview extends BaseStructure {
     approximateMemberCount!: number;
     approximatePresenceCount!: number;
     description!: string | null;
-    stickers!: Collection<Snowflake, GuildSticker>;
+    stickers!: Collection<Snowflake, Sticker>;
 
     public constructor(client: Client, data: APIGuildPreview) {
         super(client);
@@ -49,7 +49,7 @@ export class GuildPreview extends BaseStructure {
         }
 
         for (const sticker of data.stickers) {
-            this.stickers.set(sticker.id, new GuildSticker(this.client, sticker));
+            this.stickers.set(sticker.id, new Sticker(this.client, sticker));
         }
 
         return this;

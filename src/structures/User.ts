@@ -47,9 +47,9 @@ export class User extends BaseStructure {
         this.verified = data.verified ?? false;
         this.email = data.email ?? null;
         this.flags = new UserFlagsBitField(data.public_flags as number);
-        this.premiumType = UserPremiumType[
-            data.premium_type as number
-        ] as keyof typeof UserPremiumType;
+        this.premiumType = data.premium_type
+            ? (UserPremiumType[data.premium_type as number] as keyof typeof UserPremiumType)
+            : 'None';
         this.publicFlags = new UserFlagsBitField(data.public_flags as number);
 
         return this;

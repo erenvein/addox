@@ -1,5 +1,17 @@
--   Fix guild create role data.
--   Fix guild create channel data.
--   Fix request manager form data.
--   Complete structures.
+-   Presences
+-   Bans
+-   Channels
+-   Stage Instances
+-   Invites
+-   Integrations
+-   Guild Scheduled Events
+-   Voice States
+-   Guild Welcome Screen
+-   Guild Members
+-   Audit Logs
+-   Threads
+-   Webhooks
+-   Application Commands
+-   Auto Moderation
+-   Builders
 -   Voice

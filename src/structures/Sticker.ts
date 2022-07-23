@@ -11,7 +11,7 @@ import {
 
 import { BaseStructure } from './BaseStructure';
 
-export class GuildSticker extends BaseStructure {
+export class Sticker extends BaseStructure {
     public id!: Snowflake;
     public packId!: Snowflake | null;
     public name!: string;
@@ -55,7 +55,7 @@ export class GuildSticker extends BaseStructure {
     }
 
     public async fetch(options?: FetchOptions) {
-        return this.guild?.caches.stickers.fetch(this.id, options) as unknown as GuildSticker;
+        return this.guild?.caches.stickers.fetch(this.id, options) as unknown as Sticker;
     }
 
     public async delete(reason?: string) {

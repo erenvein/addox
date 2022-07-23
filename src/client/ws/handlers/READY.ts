@@ -1,4 +1,9 @@
-import { BaseWebSocketHandler, ClientUser, GatewayReadyDispatch } from '../../../';
+import {
+    BaseWebSocketHandler,
+    ClientUser,
+    GatewayReadyDispatch,
+    UnavailableGuild,
+} from '../../../';
 
 export default class ReadyHandler extends BaseWebSocketHandler {
     public constructor() {
@@ -10,7 +15,18 @@ export default class ReadyHandler extends BaseWebSocketHandler {
         this.shard.sessionId = d.session_id;
         this.shard.status = 'READY';
 
-        this.shard.manager.client.user = new ClientUser(this.shard.manager.client, d.user);
+        if (this.shard.manager.client.user) {
+            this.shard.manager.client.user._patch(d.user);
+        } else {
+            this.shard.manager.client.user = new ClientUser(this.shard.manager.client, d.user);
+        }
+
+        for (const guild of d.guilds) {
+            this.shard.manager.client.caches.guilds.unavailables.set(
+                guild.id,
+                new UnavailableGuild(this.shard.manager.client, guild)
+            );
+        }
 
         this.shard.heartbeatAck();
         this.shard.sendHeartbeat();

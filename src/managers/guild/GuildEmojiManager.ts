@@ -69,7 +69,7 @@ export class GuildEmojiManager extends CachedManager<Snowflake, GuildEmoji> {
         data.image = resolvedImage;
 
         const emoji = await this.client.rest.post<APIEmoji>(`/guilds/${this.guild.id}/emojis`, {
-            body: JSON.stringify(data),
+            body: data,
             reason: reason,
         });
 
@@ -84,7 +84,7 @@ export class GuildEmojiManager extends CachedManager<Snowflake, GuildEmoji> {
     public async edit(id: Snowflake, data: RESTPatchAPIGuildEmojiJSONBody, reason?: string) {
         const emoji = await this.client.rest.patch<APIEmoji>(
             `/guilds/${this.guild.id}/emojis/${id}`,
-            { body: JSON.stringify(data), reason: reason }
+            { body: data, reason: reason }
         );
 
         let _emoji = this.cache.get(id);

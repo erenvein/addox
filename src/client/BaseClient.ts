@@ -18,6 +18,7 @@ export class BaseClient extends EventEmitter {
         this.rest = new RequestManager({
             ...requestManagerOptions,
             baseURL: `${DiscordAPIURL}/v${DiscordAPIVersion}`,
+            agent: `DiscordAPIWrapper (https://github.com/deliever42/discord-api-wrapper, 1.0.0)`,
         });
     }
 }

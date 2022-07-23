@@ -21,7 +21,7 @@ import {
     type User,
     type RESTPatchAPIGuildWidgetSettingsJSONBody,
     type RESTPatchAPIGuildWelcomeScreenJSONBody,
-    GuildSticker,
+    Sticker,
 } from '../';
 
 import { BaseGuild } from './BaseGuild';
@@ -153,9 +153,12 @@ export class Guild extends BaseGuild {
 
         if ('stickers' in data) {
             for (const sticker of data.stickers) {
-                this.caches.stickers.cache.set(sticker.id!, new GuildSticker(this.client, sticker));
+                this.caches.stickers.cache.set(sticker.id!, new Sticker(this.client, sticker));
             }
         }
+
+        // PRESENCES
+        // - TODO
 
         // BANS
         // - TODO
@@ -170,9 +173,6 @@ export class Guild extends BaseGuild {
         // - TODO
 
         // INTEGRATIONS
-        // - TODO
-
-        // PRESENCES
         // - TODO
 
         // GUILD SCHEDULED EVENTS
@@ -191,9 +191,6 @@ export class Guild extends BaseGuild {
         // - TODO
 
         // WEBHOOKS
-        // - TODO
-
-        // THREADS
         // - TODO
 
         return this;

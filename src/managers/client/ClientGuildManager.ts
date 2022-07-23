@@ -30,11 +30,15 @@ import {
     GuildDataResolver,
     GuildMFALevel,
     EditGuildData,
+    UnavailableGuild,
+    Collection,
 } from '../..';
 
 import { BaseManager } from '../BaseManager';
 
 export class ClientGuildManager extends BaseManager {
+    public unavailables = new Collection<Snowflake, UnavailableGuild>();
+
     public constructor(client: Client) {
         super(client);
     }
@@ -74,7 +78,7 @@ export class ClientGuildManager extends BaseManager {
 
     public async create(data: CreateGuildData): Promise<Guild> {
         const guild = await this.client.rest.post<APIGuild>('/guilds', {
-            body: JSON.stringify(GuildDataResolver(data)),
+            body: GuildDataResolver(data),
         });
 
         return this.cache._add(guild.id, new Guild(this.client, guild));
@@ -92,7 +96,7 @@ export class ClientGuildManager extends BaseManager {
 
     public async edit(id: Snowflake, data: EditGuildData, reason?: string): Promise<Guild> {
         const guild = await this.client.rest.patch<APIGuild>(`/guilds/${id}`, {
-            body: JSON.stringify(GuildDataResolver(data)),
+            body: GuildDataResolver(data),
             reason: reason,
         });
 
@@ -107,9 +111,9 @@ export class ClientGuildManager extends BaseManager {
 
     public async setMFALevel(id: Snowflake, level: GuildMFALevelResolvable) {
         await this.client.rest.put(`/guilds/${id}/mfa`, {
-            body: JSON.stringify({
+            body: {
                 level: typeof level === 'number' ? level : GuildMFALevel[level],
-            }),
+            },
         });
     }
 
@@ -135,7 +139,7 @@ export class ClientGuildManager extends BaseManager {
         reason?: string
     ) {
         await this.client.rest.post(`/guilds/${id}/prune`, {
-            body: JSON.stringify({ days, include_roles, compute_prune_count }),
+            body: { days, include_roles, compute_prune_count },
             reason: reason,
         });
     }
@@ -196,7 +200,7 @@ export class ClientGuildManager extends BaseManager {
         const widget = await this.client.rest.patch<RESTPatchAPIGuildWidgetSettingsResult>(
             `/guilds/${id}/widget`,
             {
-                body: JSON.stringify(data),
+                body: data,
                 reason: reason,
             }
         );
@@ -212,7 +216,7 @@ export class ClientGuildManager extends BaseManager {
         const welcomeScreen = await this.client.rest.patch<RESTPatchAPIGuildWelcomeScreenResult>(
             `/guilds/${id}/welcome-screen`,
             {
-                body: JSON.stringify(data),
+                body: data,
                 reason: reason,
             }
         );

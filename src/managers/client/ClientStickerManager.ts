@@ -1,5 +1,5 @@
 import {
-    GuildSticker,
+    Sticker,
     type Client,
     Collection,
     type Snowflake,
@@ -18,7 +18,7 @@ export class ClientStickerManager extends BaseManager {
     public get cache() {
         return this.client.caches.guilds.cache.reduce(
             (accumulator, guild) => (accumulator as any).concat(guild.caches.stickers.cache),
-            new Collection<Snowflake, GuildSticker>()
+            new Collection<Snowflake, Sticker>()
         );
     }
 

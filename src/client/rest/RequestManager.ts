@@ -1,5 +1,3 @@
-import { AsyncQueue } from '@sapphire/async-queue';
-import fetch, { type HeaderInit } from 'node-fetch';
 import {
     type RequestManagerOptions,
     type RateLimitData,
@@ -10,8 +8,9 @@ import {
     RequestOptions,
     Sleep,
 } from '../..';
+import { AsyncQueue } from '@sapphire/async-queue';
+import fetch from 'node-fetch';
 import FormData from 'form-data';
-import { Blob } from 'node:buffer';
 
 export class RequestManager {
     public queue = new AsyncQueue();
@@ -20,9 +19,11 @@ export class RequestManager {
     public offset: number;
     public baseURL: string;
     public authPrefix: 'Bot' | 'Bearer';
-    public baseHeaders: HeaderInit;
-    public retries = new Collection<`/${string}`, number>();
-    #retries: number;
+    public baseHeaders: Record<string, string>;
+    public retries: number;
+    public agent: string;
+    public requestTimeout: number;
+    #retrys = new Collection<`/${string}`, number>();
     #rateLimits = new Collection<string, RateLimitData>();
     #globalRateLimitData: RateLimitData = { limited: false };
 
@@ -33,19 +34,27 @@ export class RequestManager {
         authPrefix,
         retries,
         baseHeaders,
+        agent,
+        requestTimeout,
     }: RequestManagerOptions) {
         this.rejectOnRateLimit = rejectOnRateLimit ?? false;
         this.offset = offset ?? 250;
         this.baseURL = baseURL;
         this.authPrefix = authPrefix ?? 'Bot';
-        this.#retries = retries ?? 2;
+        this.retries = retries ?? 0;
         this.baseHeaders = baseHeaders ?? {
             'content-type': 'application/json',
         };
+        this.agent = agent ?? '';
+        this.requestTimeout = requestTimeout ?? 15000;
     }
 
     public get rateLimits(): Readonly<Collection<string, RateLimitData>> {
         return this.#rateLimits;
+    }
+
+    public get retrys(): Readonly<Collection<string, number>> {
+        return this.#retrys;
     }
 
     public get globalRateLimitData(): Readonly<RateLimitData> {
@@ -55,25 +64,26 @@ export class RequestManager {
     public async request<T>(route: `/${string}`, options: RequestOptions = {}): Promise<T> {
         await this.queue.wait();
 
-        //@ts-ignore
         if (!options.headers) options.headers = {};
+        if (!options.appendBodyToFormData) options.appendBodyToFormData = false;
 
         options.headers = { ...options.headers, ...this.baseHeaders };
 
+        options.method ||= 'Get';
+
         if (this.token) {
-            //@ts-ignore
             options.headers['Authorization'] = this.token;
         }
 
         if (options.reason) {
-            //@ts-ignore
             options.headers['X-Audit-Log-Reason'] = encodeURIComponent(options.reason);
         }
 
-        options.method ||= 'GET';
+        if (this.agent.length) {
+            options.headers['User-Agent'] = this.agent;
+        }
 
-        if (Object.keys(options.query || {}).length) {
-            //@ts-ignore
+        if (options.query) {
             route +=
                 '?' +
                 Object.entries(options.query!)
@@ -81,27 +91,34 @@ export class RequestManager {
                     .join('&');
         }
 
-        if (options.formData || options.files?.length) {
-            const body = options.body ?? {};
-
-            options.body = new FormData();
-
-            //@ts-ignore
-            options.body.append('payload_json', JSON.stringify(body));
+        if (options.files?.length) {
+            const formData = new FormData();
 
             if (options.files?.length) {
-                for (const file of options.files) {
-                    //@ts-ignore
-                    options.body.append(file.name, file.data, file.type);
+                for (let i = 0; i < options.files.length; i++) {
+                    const file = options.files[i];
+
+                    formData.append(file.key ?? `files[${i}]`, file.data, file.name);
                 }
             }
 
-            options.headers = {
-                ...options.headers,
-                //@ts-ignore
-                ...options.body.getHeaders(),
-            };
+            if (options.appendBodyToFormData) {
+                for (const [key, value] of Object.entries(options.body ?? {})) {
+                    formData.append(key, value);
+                }
+            } else if (options.files?.length) {
+                formData.append('payload_json', JSON.stringify(options.body ?? {}));
+            }
+
+            options.body = formData;
+
+            options.headers = Object.assign({}, options.headers, formData.getHeaders());
+        } else if (options.body) {
+            options.body = JSON.stringify(options.body);
+            options.headers['content-type'] = 'application/json';
         }
+
+        if (options.method === 'Get') options.body = undefined;
 
         const fullRoute = this.baseURL + route;
 
@@ -111,10 +128,18 @@ export class RequestManager {
             this.#globalRateLimitData = { limited: false };
         }
 
-        try {
-            const response = await fetch(fullRoute, options);
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), this.requestTimeout);
 
-            const data = await response.json();
+        try {
+            const response = await fetch(fullRoute, {
+                method: options.method,
+                body: options.body as any,
+                headers: options.headers,
+                signal: controller.signal as any,
+            });
+
+            const data = (await response.json()) as T;
             const status = response.status;
 
             if (status >= 200 && status < 300) {
@@ -191,9 +216,11 @@ export class RequestManager {
             } else if (status >= 400 && status < 500) {
                 throw new DiscordAPIError(
                     status,
+                    //@ts-ignore
                     data.code,
                     options.method,
                     fullRoute,
+                    //@ts-ignore
                     data.message
                 );
             } else if (status >= 500 && status < 600) {
@@ -201,39 +228,40 @@ export class RequestManager {
             } else {
                 return data;
             }
-        } catch (error: any) {
-            let retries = this.retries.get(route) || 0;
+        } catch (error) {
+            let retries = this.retrys.get(route) || 0;
 
-            if (retries !== this.#retries) {
-                this.retries.set(route, ++retries);
+            if (error instanceof Error && error.name === 'AbortError' && retries !== this.retries) {
+                this.retrys.set(route, ++retries);
                 return this.request(route, options);
             }
 
-            this.retries.delete(route);
+            this.retrys.delete(route);
             throw error;
         } finally {
+            clearTimeout(timeout);
             this.queue.shift();
         }
     }
 
     public async get<T>(route: `/${string}`, options: RequestOptions = {}) {
-        return await this.request<T>(route, { ...options, method: 'GET' });
+        return await this.request<T>(route, { ...options, method: 'Get' });
     }
 
     public async post<T>(route: `/${string}`, options: RequestOptions = {}) {
-        return await this.request<T>(route, { ...options, method: 'POST' });
+        return await this.request<T>(route, { ...options, method: 'Post' });
     }
 
     public async put<T>(route: `/${string}`, options: RequestOptions = {}) {
-        return await this.request<T>(route, { ...options, method: 'PUT' });
+        return await this.request<T>(route, { ...options, method: 'Put' });
     }
 
     public async patch<T>(route: `/${string}`, options: RequestOptions = {}) {
-        return await this.request<T>(route, { ...options, method: 'PATCH' });
+        return await this.request<T>(route, { ...options, method: 'Patch' });
     }
 
     public async delete<T>(route: `/${string}`, options: RequestOptions = {}) {
-        return await this.request<T>(route, { ...options, method: 'DELETE' });
+        return await this.request<T>(route, { ...options, method: 'Delete' });
     }
 
     public setToken(token: string) {

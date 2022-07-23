@@ -52,7 +52,7 @@ export class ClientUserManager extends CachedManager<Snowflake, User> {
 
     public async createDM(id: Snowflake) {
         const channel = await this.client.rest.post<APIDMChannel>(`/users/@me/channels`, {
-            body: JSON.stringify({ recipient_id: id }),
+            body: ({ recipient_id: id }),
         });
 
         // TODO

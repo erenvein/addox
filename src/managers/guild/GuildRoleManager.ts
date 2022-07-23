@@ -50,7 +50,7 @@ export class GuildRoleManager extends CachedManager<Snowflake, Role> {
 
     public async create(data: RoleData, reason?: string) {
         const role = await this.client.rest.post<APIRole>(`/guilds/${this.guild.id}/roles`, {
-            body: JSON.stringify(RoleDataResolver(data)),
+            body: RoleDataResolver(data),
             reason: reason,
         });
 
@@ -64,7 +64,7 @@ export class GuildRoleManager extends CachedManager<Snowflake, Role> {
 
     public async edit(id: Snowflake, data: RoleData, reason?: string) {
         const role = await this.client.rest.patch<APIRole>(`/guilds/${this.guild.id}/roles/${id}`, {
-            body: JSON.stringify(RoleDataResolver(data)),
+            body: RoleDataResolver(data),
             reason: reason,
         });
 
@@ -79,7 +79,7 @@ export class GuildRoleManager extends CachedManager<Snowflake, Role> {
 
     public async setPosition(id: Snowflake, position: number, reason?: string) {
         const role = await this.client.rest.patch<APIRole>(`/guilds/${this.guild.id}/roles`, {
-            body: JSON.stringify({ id, position, reason: reason }),
+            body: { id, position, reason: reason },
         });
 
         let _role = this.cache.get(id);

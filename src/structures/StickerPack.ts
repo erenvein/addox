@@ -1,5 +1,5 @@
 import {
-    GuildSticker,
+    Sticker,
     type Client,
     type APIStickerPack,
     type Snowflake,
@@ -16,7 +16,7 @@ export class StickerPack extends BaseStructure {
     public id!: Snowflake;
     public name!: string;
     public skuId!: Snowflake;
-    public stickers!: Collection<Snowflake, GuildSticker>;
+    public stickers!: Collection<Snowflake, Sticker>;
 
     public constructor(client: Client, data: APIStickerPack) {
         super(client);
@@ -35,7 +35,7 @@ export class StickerPack extends BaseStructure {
         this.stickers = new Collection();
 
         for (const sticker of data.stickers) {
-            this.stickers.set(sticker.id, new GuildSticker(this.client, sticker));
+            this.stickers.set(sticker.id, new Sticker(this.client, sticker));
         }
 
         return this;

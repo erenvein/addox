@@ -1,6 +1,6 @@
-import { Client, GatewayIntentBits } from '../src/';
-import { resolve } from 'node:path';
 import { config } from 'dotenv';
+import { resolve } from 'node:path';
+import { Client, GatewayIntentBits } from '../src/';
 
 config({ path: resolve(__dirname, '.env') });
 
@@ -51,4 +51,4 @@ client.on('shardDeath', (shard, code, reason) => {
     console.log(`Shard ${shard.id + 1} death.\nReason: ${reason}\nCode: ${code}`);
 });
 
-client.ws.connect(process.env.TOKEN as string);
+client.ws.connect(process.env.TOKEN!);

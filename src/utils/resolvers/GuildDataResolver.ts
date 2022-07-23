@@ -7,6 +7,7 @@ import {
     GuildFeature,
     SystemChannelFlagsBitField,
     GuildVerificationLevel,
+    RoleDataResolver,
 } from '../..';
 
 export function GuildDataResolver(guild: EditGuildData | CreateGuildData) {
@@ -43,6 +44,10 @@ export function GuildDataResolver(guild: EditGuildData | CreateGuildData) {
         res.features = res.features?.map(
             (feature) => GuildFeature[feature as unknown as keyof typeof GuildFeature]
         ) as unknown as (keyof typeof GuildFeature)[];
+    }
+
+    if ('roles' in res) {
+        res.roles = res.roles?.map((role) => RoleDataResolver(role));
     }
 
     return res;

@@ -1,6 +1,7 @@
 // CLIENT
 export { BaseClient } from './client/BaseClient';
 export { Client } from './client/Client';
+export { ClientUser } from './client/ClientUser';
 
 // WS
 export { WebSocketManager } from './client/ws/WebSocketManager';
@@ -19,7 +20,6 @@ export { RateLimitError } from './client/rest/errors/RateLimitError';
 export { BitField } from './structures/BitField';
 export { Collection } from './structures/Collection';
 export { User } from './structures/User';
-export { ClientUser } from './structures/ClientUser';
 export { UserFlagsBitField } from './structures/UserFlagsBitField';
 export { SystemChannelFlagsBitField } from './structures/SystemChannelFlagsBitField';
 export { PermissionFlagsBitField } from './structures/PermissionFlagsBitField';
@@ -37,8 +37,9 @@ export { GuildWidget } from './structures/GuildWidget';
 export { GuildPreview } from './structures/GuildPreview';
 export { GuildWelcomeScreen } from './structures/GuildWelcomeScreen';
 export { GuildWelcomeScreenChannel } from './structures/GuildWelcomeScreenChannel';
-export { GuildSticker } from './structures/GuildSticker';
+export { Sticker } from './structures/Sticker';
 export { StickerPack } from './structures/StickerPack';
+export { UnavailableGuild } from './structures/UnavailableGuild';
 
 // MANAGERS
 export { CachedManager } from './managers/CachedManager';

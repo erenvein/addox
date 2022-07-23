@@ -1,6 +1,5 @@
 import {
     type Client,
-    GuildSticker,
     type Snowflake,
     type Guild,
     type CollectionLike,
@@ -9,11 +8,14 @@ import {
     type CreateStickerData,
     type RESTPatchAPIGuildStickerJSONBody,
     DataResolver,
+    Sticker,
 } from '../../';
+
+import { createReadStream } from 'node:fs';
 
 import { CachedManager } from '../CachedManager';
 
-export class GuildStickerManager extends CachedManager<Snowflake, GuildSticker> {
+export class GuildStickerManager extends CachedManager<Snowflake, Sticker> {
     public guild: Guild;
     public constructor(client: Client, guild: Guild) {
         super(client);
@@ -24,7 +26,7 @@ export class GuildStickerManager extends CachedManager<Snowflake, GuildSticker> 
     public async fetch(
         id?: Snowflake | null,
         { force }: FetchOptions = { force: false }
-    ): Promise<CollectionLike<Snowflake, GuildSticker>> {
+    ): Promise<CollectionLike<Snowflake, Sticker>> {
         if (id) {
             let _sticker = this.cache.get(id)!;
 
@@ -39,10 +41,7 @@ export class GuildStickerManager extends CachedManager<Snowflake, GuildSticker> 
                     _sticker = _sticker._patch(sticker);
                 }
 
-                return this.cache._add(
-                    sticker.id!,
-                    _sticker ?? new GuildSticker(this.client, sticker)
-                );
+                return this.cache._add(sticker.id!, _sticker ?? new Sticker(this.client, sticker));
             }
         } else {
             const stickers = await this.client.rest.get<APISticker[]>(
@@ -56,7 +55,7 @@ export class GuildStickerManager extends CachedManager<Snowflake, GuildSticker> 
                     _sticker = _sticker._patch(sticker);
                 }
 
-                this.cache.set(sticker.id!, _sticker ?? new GuildSticker(this.client, sticker));
+                this.cache.set(sticker.id!, _sticker ?? new Sticker(this.client, sticker));
             }
 
             return this.cache;
@@ -64,8 +63,7 @@ export class GuildStickerManager extends CachedManager<Snowflake, GuildSticker> 
     }
 
     public async create(data: CreateStickerData, reason?: string) {
-        const resolvedImage = await DataResolver.resolveFile(data.file);
-        data.file = resolvedImage.data;
+        const resolvedFile = await DataResolver.resolveFile(data.file);
 
         data.description ??= '';
         data.tags ??= '';
@@ -73,17 +71,25 @@ export class GuildStickerManager extends CachedManager<Snowflake, GuildSticker> 
         const sticker = await this.client.rest.post<APISticker>(
             `/guilds/${this.guild.id}/stickers`,
             {
-                body: JSON.stringify({
+                body: {
                     name: data.name,
                     description: data.description,
                     tags: data.tags,
-                }),
+                },
                 reason: reason,
-                files: [{ name: 'file', data: data.file, type: resolvedImage.type }],
+                files: [
+                    {
+                        key: 'file',
+                        name: resolvedFile.name,
+                        data: resolvedFile.data,
+                        type: resolvedFile.type,
+                    },
+                ],
+                appendBodyToFormData: true,
             }
         );
 
-        return this.cache._add(sticker.id!, new GuildSticker(this.client, sticker));
+        return this.cache._add(sticker.id!, new Sticker(this.client, sticker));
     }
 
     public async delete(id: Snowflake, reason?: string) {
@@ -96,7 +102,7 @@ export class GuildStickerManager extends CachedManager<Snowflake, GuildSticker> 
     public async edit(id: Snowflake, data: RESTPatchAPIGuildStickerJSONBody, reason?: string) {
         const sticker = await this.client.rest.patch<APISticker>(
             `/guilds/${this.guild.id}/stickers/${id}`,
-            { body: JSON.stringify(data), reason: reason }
+            { body: data, reason: reason }
         );
 
         let _sticker = this.cache.get(id);
@@ -105,6 +111,6 @@ export class GuildStickerManager extends CachedManager<Snowflake, GuildSticker> 
             _sticker = _sticker._patch(sticker);
         }
 
-        return this.cache._add(sticker.id!, _sticker ?? new GuildSticker(this.client, sticker));
+        return this.cache._add(sticker.id!, _sticker ?? new Sticker(this.client, sticker));
     }
 }

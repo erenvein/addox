@@ -7,8 +7,10 @@ export default class GuildDeleteHandler extends BaseWebSocketHandler {
 
     public handle({ d }: GatewayGuildDeleteDispatch) {
         const guild = this.shard.guilds.get(d.id);
-        this.shard.guilds.delete(d.id);
 
-        this.shard.manager.client.emit('guildCreate', guild!);
+        if (guild) {
+            this.shard.guilds.delete(d.id);
+            this.shard.manager.client.emit('guildDelete', guild!);
+        }
     }
 }

@@ -59,7 +59,7 @@ export class WebSocketShard extends EventEmitter {
     public sessionId: string | null = null;
     public manager: WebSocketManager;
     public id: number;
-    public eventsReady: boolean = false;
+    public eventsAppended: boolean = false;
     public uptime: number = -1;
     public status: WebSocketShardStatus = 'IDLE';
     public packetQueue: number = 0;
@@ -122,7 +122,7 @@ export class WebSocketShard extends EventEmitter {
         this.manager.client!.user = null;
         this.inflate = null;
         this.uptime = -1;
-        this.eventsReady = false;
+        this.eventsAppended = false;
 
         this.guilds.clear();
 
@@ -163,7 +163,7 @@ export class WebSocketShard extends EventEmitter {
             this.send({
                 op: GatewayOpcodes.Resume,
                 d: {
-                    token: this.manager.client?.token!,
+                    token: this.manager.token!,
                     session_id: this.sessionId,
                     seq: this.closeSequence,
                 },
@@ -204,7 +204,7 @@ export class WebSocketShard extends EventEmitter {
             this.send({
                 op: GatewayOpcodes.Identify,
                 d: {
-                    token: this.manager.client?.token!,
+                    token: this.manager.token!,
                     intents: this.manager.client?.ws.intents!,
                     large_threshold: this.manager.largeThreshold,
                     compress: this.manager.compress,

@@ -23,7 +23,7 @@ import type {
     GatewayActivityAssets,
     GuildSystemChannelFlags,
     GatewayGuildCreateDispatchData,
-    GuildSticker,
+    Sticker,
     RESTPostAPIGuildStickerFormDataBody,
     RESTPatchAPIGuildJSONBody,
     GuildExplicitContentFilter,
@@ -31,9 +31,12 @@ import type {
     GuildFeature,
     GuildVerificationLevel,
     RESTPostAPIGuildsJSONBody,
+    Role,
 } from './';
 
-import type { RequestInit, HeadersInit } from 'node-fetch';
+import type { Stream } from 'node:stream';
+
+import type { BodyInit } from 'node-fetch';
 
 export type ArrayLike<T> = T | T[];
 
@@ -56,6 +59,7 @@ export interface WebSocketOptions {
     shardCount?: number | 'auto';
     compress?: boolean;
     properties?: WebSocketProperties;
+    autoReconnect?: boolean;
     intents: GatewayIntentBitsResolvable;
 }
 
@@ -83,23 +87,36 @@ export interface RequestManagerOptions {
     baseURL: string;
     authPrefix?: 'Bot' | 'Bearer';
     retries?: number;
-    baseHeaders?: HeadersInit;
+    baseHeaders?: Record<string, string>;
+    agent?: string;
+    requestTimeout?: number;
 }
 
-export type FileData = {
-    data: Buffer | string;
-    type: string;
-};
+export interface FileData {
+    name: string;
+    data: Buffer | Stream | string;
+    type?: string;
+}
 
-export interface RequestOptions extends RequestInit {
+export interface RawFileData {
+    key?: string;
+    name: string;
+    data: Buffer | Stream | string;
+    type?: string;
+}
+
+export type RequestMethods = 'Get' | 'Post' | 'Put' | 'Delete' | 'Patch';
+
+//@ts-ignore
+export interface RequestOptions {
     reason?: string;
-    files?: {
-        name: string;
-        data: Buffer | string;
-        type: string;
-    }[];
-    formData?: boolean;
+    files?: RawFileData[];
+    appendBodyToFormData?: boolean;
     query?: object;
+    headers?: Record<string, string>;
+    body?: Record<string, any> | BodyInit;
+    agent?: string;
+    method?: RequestMethods;
 }
 
 export interface PartialRequestManagerOptions {
@@ -207,9 +224,8 @@ export type ImageMimes = 'image/png' | 'image/jpeg' | 'image/gif';
 
 //@ts-ignore
 export interface CreateStickerData extends RESTPostAPIGuildStickerFormDataBody {
-    description?: string;
-    tags?: string;
     file: Buffer | string;
+    description?: string;
 }
 
 //@ts-ignore
@@ -227,18 +243,23 @@ export interface CreateGuildData extends RESTPostAPIGuildsJSONBody {
     default_message_notifications?: keyof typeof GuildDefaultMessageNotifications | number;
     system_channel_flags?: SystemChannelFlagsBitsResolvable;
     verification_level?: keyof typeof GuildVerificationLevel | number;
+    roles?: RoleData[];
 }
 
 export interface ClientEvents {
     ready: [client: Client];
     guildCreate: [guild: Guild];
     guildDelete: [guild: Guild];
+    guildUpdate: [oldGuild: Guild, newGuild: Guild];
     emojiCreate: [emoji: GuildEmoji];
     emojiDelete: [emoji: GuildEmoji];
     emojiUpdate: [oldEmoji: GuildEmoji, newEmoji: GuildEmoji];
-    stickerCreate: [sticker: GuildSticker];
-    stickerDelete: [sticker: GuildSticker];
-    stickerUpdate: [oldSticker: GuildSticker, newSticker: GuildSticker];
+    stickerCreate: [sticker: Sticker];
+    stickerDelete: [sticker: Sticker];
+    stickerUpdate: [oldSticker: Sticker, newSticker: Sticker];
+    roleCreate: [role: Role];
+    roleDelete: [role: Role];
+    roleUpdate: [oldRole: Role, newRole: Role];
     raw: [eventName: keyof typeof GatewayDispatchEvents, data: any];
     shardSpawn: [shard: WebSocketShard];
     shardReady: [shard: WebSocketShard];
