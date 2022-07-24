@@ -41,7 +41,7 @@ export class RequestManager {
         this.offset = offset ?? 250;
         this.baseURL = baseURL;
         this.authPrefix = authPrefix ?? 'Bot';
-        this.retries = retries ?? 0;
+        this.retries = retries ?? 2;
         this.baseHeaders = baseHeaders ?? {
             'content-type': 'application/json',
         };
