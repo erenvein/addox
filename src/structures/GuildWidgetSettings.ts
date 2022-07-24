@@ -1,4 +1,4 @@
-import type { Client, APIGuildWidgetSettings, Snowflake } from '../';
+import type { Client, APIGuildWidgetSettings, Snowflake } from '../index';
 
 import { BaseStructure } from './BaseStructure';
 
@@ -15,7 +15,7 @@ export class GuildWidgetSettings extends BaseStructure {
         this._patch(data);
     }
 
-    public _patch(data: APIGuildWidgetSettings) {
+    public override _patch(data: APIGuildWidgetSettings) {
         this.channelId = data.channel_id;
         this.enabled = data.enabled;
 

@@ -5,7 +5,7 @@ import {
     type FetchGuildOptions,
     type Guild,
     SnowflakeUtil,
-} from '../';
+} from '../index';
 import { BaseStructure } from './BaseStructure';
 
 export class UnavailableGuild extends BaseStructure {
@@ -18,7 +18,7 @@ export class UnavailableGuild extends BaseStructure {
         this._patch(data);
     }
 
-    public _patch(data: APIUnavailableGuild) {
+    public override _patch(data: APIUnavailableGuild) {
         this.id = data.id;
         this.available = !data.unavailable;
 

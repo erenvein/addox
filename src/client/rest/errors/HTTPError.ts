@@ -1,10 +1,10 @@
-import type { RequestMethods } from '../../../';
+import type { RequestMethods } from '../../../index';
 
 export class HTTPError extends Error {
     public status: number;
     public method: RequestMethods;
     public url: string;
-    public message: string;
+    public override message: string;
 
     public constructor(status: number, method: RequestMethods, url: string, message: string) {
         super(message);

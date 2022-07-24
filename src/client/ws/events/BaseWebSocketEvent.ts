@@ -1,4 +1,4 @@
-import type { WebSocketEvents, WebSocketShard } from '../../..';
+import type { WebSocketEvents, WebSocketShard } from '../../../index';
 
 export class BaseWebSocketEvent {
     public name: WebSocketEvents;
@@ -7,6 +7,7 @@ export class BaseWebSocketEvent {
         this.name = name;
     }
 
+    //@ts-ignore
     public handle(...args: any[]) {
         throw new ReferenceError('This Method Not Implemented!');
     }

@@ -1,4 +1,4 @@
-import type { Client } from '..';
+import type { Client } from '../index';
 
 export class BaseStructure {
     public client: Client;
@@ -7,6 +7,7 @@ export class BaseStructure {
         this.client = client;
     }
 
+    // @ts-ignore
     public _patch(data: any): this {
         throw new ReferenceError('This Method Not Implemented!');
     }

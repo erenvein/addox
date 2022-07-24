@@ -5,7 +5,7 @@ import {
     type Snowflake,
     Collection,
     SnowflakeUtil,
-} from '../';
+} from '../index';
 
 import { BaseStructure } from './BaseStructure';
 
@@ -24,7 +24,7 @@ export class StickerPack extends BaseStructure {
         this._patch(data);
     }
 
-    public _patch(data: APIStickerPack) {
+    public override _patch(data: APIStickerPack) {
         this.bannerAssetId = data.banner_asset_id ?? null;
         this.coverStickerId = data.cover_sticker_id ?? null;
         this.description = data.description;
@@ -54,6 +54,6 @@ export class StickerPack extends BaseStructure {
     }
 
     public async fetch() {
-        return await this.client.caches.stickers.fetchPack();
+        return await this.client.caches.stickers.fetchPack(this.id) as StickerPack;
     }
 }

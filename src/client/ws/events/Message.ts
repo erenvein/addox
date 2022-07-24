@@ -1,11 +1,11 @@
-import { BaseWebSocketEvent, GatewayOpcodes, BaseWebSocketHandler } from '../../..';
+import { BaseWebSocketEvent, GatewayOpcodes, BaseWebSocketHandler } from '../../../index';
 
 export default class WebSocketMessageEvent extends BaseWebSocketEvent {
     public constructor() {
         super('message');
     }
 
-    public async handle(data: any) {
+    public override async handle(data: any) {
         const resolved = this.shard.deserialize(data);
 
         if (!resolved) return;

@@ -1,11 +1,11 @@
-import { BaseWebSocketHandler, GatewayGuildRoleUpdateDispatch, Role } from '../../..';
+import { BaseWebSocketHandler, GatewayGuildRoleUpdateDispatch, Role } from '../../../index';
 
 export default class GuildRoleUpdateHandler extends BaseWebSocketHandler {
     public constructor() {
         super('GuildRoleUpdate');
     }
 
-    public handle({ d }: GatewayGuildRoleUpdateDispatch) {
+    public override handle({ d }: GatewayGuildRoleUpdateDispatch) {
         let guild = this.shard.guilds.get(d.guild_id);
 
         if (guild) {

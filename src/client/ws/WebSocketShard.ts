@@ -14,7 +14,7 @@ import {
     WebSocketShardStatus,
     Sleep,
     PresenceDataResolver,
-} from '../..';
+} from '../../index';
 import { readdirSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { TextDecoder } from 'node:util';
@@ -61,7 +61,7 @@ export class WebSocketShard extends EventEmitter {
     public id: number;
     public eventsAppended: boolean = false;
     public uptime: number = -1;
-    public status: WebSocketShardStatus = 'IDLE';
+    public status: WebSocketShardStatus = 'Idle';
     public packetQueue: number = 0;
     public guilds = new Collection<string, Guild>();
 
@@ -89,13 +89,13 @@ export class WebSocketShard extends EventEmitter {
         if (
             this.socket &&
             this.uptime > 0 &&
-            this.status === 'READY' &&
+            this.status === 'Ready' &&
             this.socket?.readyState === WebSocket.OPEN
         ) {
-            return Promise.resolve();
+            return;
         }
 
-        this.status = 'CONNECTING';
+        this.status = 'Connecting';
 
         this.socket = new WebSocket(this.endpoint, { handshakeTimeout: 30000 });
 
@@ -182,7 +182,7 @@ export class WebSocketShard extends EventEmitter {
     }
 
     public sendHeartbeat() {
-        if (this.status === 'READY') {
+        if (this.status === 'Ready') {
             this.lastHeartbeatAcked = false;
             this.lastHeartbeat = Date.now();
             this.send({ op: GatewayOpcodes.Heartbeat, d: this.sequence });

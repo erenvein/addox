@@ -5,7 +5,7 @@ import {
     type Snowflake,
     type PresenceClientStatusData,
     PresenceActivity,
-} from '../';
+} from '../index';
 
 import { BaseStructure } from './BaseStructure';
 
@@ -21,7 +21,7 @@ export class Presence extends BaseStructure {
         this._patch(data);
     }
 
-    public _patch(data: GatewayPresenceUpdate) {
+    public override _patch(data: GatewayPresenceUpdate) {
         this.status = data.status as PresenceStatus;
         this.userId = data.user.id;
         this.activities = [];

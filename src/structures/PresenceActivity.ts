@@ -10,7 +10,7 @@ import {
     ActivityType,
     ActivityPlatform,
     PresenceActivityFlagsBitField,
-} from '../';
+} from '../index';
 
 import { BaseStructure } from './BaseStructure';
 
@@ -40,7 +40,7 @@ export class PresenceActivity extends BaseStructure {
         this._patch(data);
     }
 
-    public _patch(data: GatewayActivity) {
+    public override _patch(data: GatewayActivity) {
         this.applicationId = data.application_id ?? null;
         this.assets = data.assets
             ? {

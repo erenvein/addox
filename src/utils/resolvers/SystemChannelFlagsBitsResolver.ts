@@ -1,4 +1,4 @@
-import { type SystemChannelFlagsBitsResolvable, GuildSystemChannelFlags } from '../..';
+import { type SystemChannelFlagsBitsResolvable, GuildSystemChannelFlags } from '../../index';
 
 export function SystemChannelFlagsBitsResolver(
     flags: SystemChannelFlagsBitsResolvable

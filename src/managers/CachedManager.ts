@@ -1,4 +1,4 @@
-import { Collection, type Client } from '..';
+import { Collection, type Client } from '../index';
 
 import { BaseManager } from './BaseManager';
 

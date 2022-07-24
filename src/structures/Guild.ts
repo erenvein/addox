@@ -24,7 +24,7 @@ import {
     Presence,
     GuildMember,
     User,
-} from '../';
+} from '../index';
 
 import { BaseGuild } from './BaseGuild';
 
@@ -76,7 +76,7 @@ export class Guild extends BaseGuild {
         this._patch(data);
     }
 
-    public _patch(data: APIGuildWithShard | GatewayGuildCreateDispatchDataWithShard) {
+    public override _patch(data: APIGuildWithShard | GatewayGuildCreateDispatchDataWithShard) {
         super._patch(data);
 
         this.afkChannelId = data.afk_channel_id;

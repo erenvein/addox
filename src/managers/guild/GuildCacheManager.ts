@@ -6,7 +6,7 @@ import {
     GuildStickerManager,
     GuildBanManager,
     GuildMemberManager,
-} from '../../';
+} from '../../index';
 
 import { BaseManager } from '../BaseManager';
 

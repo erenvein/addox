@@ -1,4 +1,4 @@
-import { type PermissionFlagsBitsResolvable, PermissionFlagsBits } from '../..';
+import { type PermissionFlagsBitsResolvable, PermissionFlagsBits } from '../../index';
 
 export function PermissionFlagsBitsResolver(
     permissions: PermissionFlagsBitsResolvable

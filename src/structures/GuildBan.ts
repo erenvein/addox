@@ -1,4 +1,4 @@
-import type { Client, APIBan, Guild, Snowflake } from '../';
+import type { Client, APIBan, Guild, Snowflake } from '../index';
 
 import { BaseStructure } from './BaseStructure';
 
@@ -15,7 +15,7 @@ export class GuildBan extends BaseStructure {
         this._patch(data);
     }
 
-    public _patch(data: APIBan) {
+    public override _patch(data: APIBan) {
         this.userId = data.user.id;
         this.reason = data.reason;
 

@@ -1,11 +1,11 @@
-import { BaseWebSocketHandler, GatewayGuildDeleteDispatch } from '../../..';
+import { BaseWebSocketHandler, GatewayGuildDeleteDispatch } from '../../../index';
 
 export default class GuildDeleteHandler extends BaseWebSocketHandler {
     public constructor() {
         super('GuildDelete');
     }
 
-    public handle({ d }: GatewayGuildDeleteDispatch) {
+    public override handle({ d }: GatewayGuildDeleteDispatch) {
         const guild = this.shard.guilds.get(d.id);
 
         this.shard.manager.client.caches.guilds.unavailables.delete(d.id);

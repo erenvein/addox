@@ -1,11 +1,11 @@
-import { BaseWebSocketHandler, GatewayPresenceUpdateDispatch } from '../../..';
+import { BaseWebSocketHandler, GatewayPresenceUpdateDispatch } from '../../../index';
 
 export default class PresenceUpdateHandler extends BaseWebSocketHandler {
     public constructor() {
         super('GuildUpdate');
     }
 
-    public handle({ d }: GatewayPresenceUpdateDispatch) {
+    public override handle({ d }: GatewayPresenceUpdateDispatch) {
         let _presence = this.shard.manager.client.caches.presences.get(d.user.id);
 
         if (_presence) {

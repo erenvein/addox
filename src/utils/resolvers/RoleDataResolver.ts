@@ -3,7 +3,7 @@ import {
     PermissionFlagsBitsResolver,
     PermissionFlagsBitField,
     ColorResolver,
-} from '../..';
+} from '../../index';
 
 export function RoleDataResolver(role: RoleData) {
     const res = role;

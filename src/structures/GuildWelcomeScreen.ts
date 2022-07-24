@@ -3,7 +3,7 @@ import {
     type Snowflake,
     type APIGuildWelcomeScreen,
     GuildWelcomeScreenChannel
-} from '../';
+} from '../index';
 
 import { BaseStructure } from './BaseStructure';
 
@@ -20,7 +20,7 @@ export class GuildWelcomeScreen extends BaseStructure {
         this._patch(data);
     }
 
-    public _patch(data: APIGuildWelcomeScreen) {
+    public override _patch(data: APIGuildWelcomeScreen) {
         this.description = data.description;
 
         this.welcomeChannels = [];

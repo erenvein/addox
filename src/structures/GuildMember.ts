@@ -6,7 +6,7 @@ import {
     type Snowflake,
     type RESTPutAPIGuildBanJSONBody,
     GuildMemberRoleManager,
-} from '../';
+} from '../index';
 
 import { BaseStructure } from './BaseStructure';
 
@@ -31,7 +31,7 @@ export class GuildMember extends BaseStructure {
         this._patch(data);
     }
 
-    public _patch(data: APIGuildMember) {
+    public override _patch(data: APIGuildMember) {
         this.id = data.user?.id!;
         this.avatar = data.avatar ?? null;
         this.communicationDisabledUntilTimestamp = data.communication_disabled_until

@@ -1,7 +1,7 @@
 export class Collection<K, V> extends Map<K, V> {
     accumulator(
         _rawGuilds: Collection<string, import('discord-api-types/v10').APIGuild>
-    ): import('..').WebSocketShard {
+    ): import('../index').WebSocketShard {
         throw new Error('Method not implemented.');
     }
     public find(fn: (value: V, key: K, collection: this) => boolean) {
@@ -122,9 +122,9 @@ export class Collection<K, V> extends Map<K, V> {
 
         for (const [key, value] of this.entries()) {
             if (fn(value, key, this)) {
-                result[0].set(key, value);
+                result[0]!.set(key, value);
             } else {
-                result[1].set(key, value);
+                result[1]!.set(key, value);
             }
         }
     }
@@ -136,6 +136,7 @@ export class Collection<K, V> extends Map<K, V> {
 
         return Array.from(
             { length: amount },
+            //@ts-ignore
             (): V => values[Math.floor(Math.random() * this.size)]
         );
     }
@@ -145,6 +146,7 @@ export class Collection<K, V> extends Map<K, V> {
 
         if (amount === 0) return keys[Math.floor(Math.random() * this.size)];
 
+        //@ts-ignore
         return Array.from({ length: amount }, (): K => keys[Math.floor(Math.random() * this.size)]);
     }
 

@@ -8,7 +8,7 @@ import {
     SystemChannelFlagsBitField,
     GuildVerificationLevel,
     RoleDataResolver,
-} from '../..';
+} from '../../index';
 
 export function GuildDataResolver(guild: EditGuildData | CreateGuildData) {
     const res = guild;

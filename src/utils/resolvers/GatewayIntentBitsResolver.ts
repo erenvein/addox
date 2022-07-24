@@ -1,4 +1,4 @@
-import { type GatewayIntentBitsResolvable, GatewayIntentBits } from '../..';
+import { type GatewayIntentBitsResolvable, GatewayIntentBits } from '../../index';
 
 export function GatewayIntentBitsResolver(intents: GatewayIntentBitsResolvable): number | number[] {
     let res = intents;

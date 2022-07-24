@@ -7,7 +7,7 @@ import {
     type Guild,
     type FetchOptions,
     type RESTPatchAPIGuildEmojiJSONBody,
-} from '../';
+} from '../index';
 
 import { BaseStructure } from './BaseStructure';
 
@@ -29,7 +29,7 @@ export class GuildEmoji extends BaseStructure {
         this._patch(data);
     }
 
-    public _patch(data: APIEmoji) {
+    public override _patch(data: APIEmoji) {
         this.id = data.id;
         this.name = data.name;
         this.roles = data.roles ?? [];
@@ -62,7 +62,7 @@ export class GuildEmoji extends BaseStructure {
         return await this.guild.caches.emojis.edit(this.id!, data);
     }
 
-    public toString() {
+    public override toString() {
         return `<${this.animated ? 'a' : ''}:${this.name}:${this.id}>`;
     }
 }

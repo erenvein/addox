@@ -6,7 +6,7 @@ import {
     type APIDMChannel,
     type FetchOptions,
     type CollectionLike,
-} from '../..';
+} from '../../index';
 
 import { CachedManager } from '../CachedManager';
 

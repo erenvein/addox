@@ -1,11 +1,11 @@
-import { type GatewayGuildMemberRemoveDispatch, GuildMember, BaseWebSocketHandler } from '../../..';
+import { type GatewayGuildMemberRemoveDispatch, BaseWebSocketHandler } from '../../../index';
 
 export default class GuildMemberRemoveHandler extends BaseWebSocketHandler {
     public constructor() {
         super('GuildMemberRemove');
     }
 
-    public handle({ d }: GatewayGuildMemberRemoveDispatch) {
+    public override handle({ d }: GatewayGuildMemberRemoveDispatch) {
         const guild = this.shard.guilds.get(d.guild_id);
 
         if (guild) {

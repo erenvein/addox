@@ -7,7 +7,7 @@ import {
     type FetchBanOptions,
     type RESTPutAPIGuildBanJSONBody,
     GuildBan,
-} from '../../';
+} from '../../index';
 
 import { CachedManager } from '../CachedManager';
 
@@ -75,14 +75,14 @@ export class GuildBanManager extends CachedManager<Snowflake, GuildBan> {
     ) {
         const ban = await this.client.rest.put<APIBan>(`/guilds/${this.guild.id}/bans/${id}`, {
             body: data,
-            reason: reason,
+            reason: reason as string,
         });
 
         return this.cache._add(ban.user.id, new GuildBan(this.client, this.guild, ban));
     }
 
     public async remove(id: Snowflake, reason?: string) {
-        await this.client.rest.delete(`/guilds/${this.guild.id}/bans/${id}`, { reason: reason });
+        await this.client.rest.delete(`/guilds/${this.guild.id}/bans/${id}`, { reason: reason as string });
         this.cache.delete(id);
     }
 }

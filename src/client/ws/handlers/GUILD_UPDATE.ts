@@ -3,14 +3,14 @@ import {
     GatewayGuildUpdateDispatch,
     type APIGuildWithShard,
     Guild,
-} from '../../..';
+} from '../../../index';
 
 export default class GuildUpdateHandler extends BaseWebSocketHandler {
     public constructor() {
         super('GuildUpdate');
     }
 
-    public handle({ d }: GatewayGuildUpdateDispatch) {
+    public override handle({ d }: GatewayGuildUpdateDispatch) {
         let _guild = this.shard.guilds.get(d.id);
 
         (d as unknown as APIGuildWithShard).shard_id = this.shard.id;

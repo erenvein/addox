@@ -7,7 +7,7 @@ import {
     Collection,
     RequestOptions,
     Sleep,
-} from '../..';
+} from '../../index';
 import { AsyncQueue } from '@sapphire/async-queue';
 import fetch from 'node-fetch';
 import FormData from 'form-data';
@@ -96,7 +96,7 @@ export class RequestManager {
 
             if (options.files?.length) {
                 for (let i = 0; i < options.files.length; i++) {
-                    const file = options.files[i];
+                    const file = options.files[i]!;
 
                     formData.append(file.key ?? `files[${i}]`, file.data, file.name);
                 }
@@ -119,6 +119,7 @@ export class RequestManager {
             options.headers['content-type'] = 'application/json';
         }
 
+        //@ts-ignore
         if (options.method === 'Get') options.body = undefined;
 
         const fullRoute = this.baseURL + route;

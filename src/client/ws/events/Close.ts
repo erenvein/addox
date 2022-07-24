@@ -1,15 +1,15 @@
-import { BaseWebSocketEvent, GatewayCloseCodes, DiscordSocketError } from '../../..';
+import { BaseWebSocketEvent, GatewayCloseCodes, DiscordSocketError } from '../../../index';
 
 export default class WebSocketCloseEvent extends BaseWebSocketEvent {
     public constructor() {
         super('close');
     }
 
-    public handle(code: number, reason: Buffer) {
+    public override handle(code: number, reason: Buffer) {
         const resolved = Buffer.from(reason).toString('utf-8');
 
         this.shard.closeSequence = this.shard.sequence;
-        this.shard.status = 'CLOSED';
+        this.shard.status = 'Closed';
 
         switch (code) {
             // by owner

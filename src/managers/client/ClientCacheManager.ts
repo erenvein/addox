@@ -8,7 +8,7 @@ import {
     ClientUserManager,
     ClientStickerManager,
     Collection,
-} from '../../';
+} from '../../index';
 
 import { BaseManager } from '../BaseManager';
 

@@ -1,6 +1,6 @@
-import type { Snowflake, Guild, Client, APIGuildWidgetMember, PresenceStatus } from '../';
+import type { Snowflake, Guild, Client, APIGuildWidgetMember, PresenceStatus } from '../index';
 
-import { BaseStructure } from '../';
+import { BaseStructure } from '../index';
 
 export class GuildWidgetMember extends BaseStructure {
     public id!: Snowflake;
@@ -20,7 +20,7 @@ export class GuildWidgetMember extends BaseStructure {
         this._patch(data);
     }
 
-    public _patch(data: APIGuildWidgetMember) {
+    public override _patch(data: APIGuildWidgetMember) {
         this.id = data.id;
         this.activity = data.activity ?? null;
         this.avatar = data.avatar;

@@ -2,7 +2,7 @@ import { readFile } from 'node:fs/promises';
 import { parse, resolve } from 'node:path';
 import fetch from 'node-fetch';
 import { fromBuffer } from 'file-type';
-import type { ImageMimes, FileData } from '../..';
+import type { ImageMimes, FileData } from '../../index';
 
 export const HttpPattern = /^(https?)?:\/\//;
 

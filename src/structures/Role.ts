@@ -9,7 +9,7 @@ import {
     type RoleTags,
     HexDecimalToHex,
     PermissionFlagsBitField,
-} from '../';
+} from '../index';
 
 import { BaseStructure } from './BaseStructure';
 
@@ -34,7 +34,7 @@ export class Role extends BaseStructure {
         this._patch(data);
     }
 
-    public _patch(data: APIRole) {
+    public override _patch(data: APIRole) {
         this.id = data.id;
         this.name = data.name;
         this.color = data.color;

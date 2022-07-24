@@ -1,4 +1,4 @@
-import { BitField, UserFlagsBitsResolvable, UserFlagsBitsResolver } from '..';
+import { BitField, UserFlagsBitsResolvable, UserFlagsBitsResolver } from '../index';
 
 export class UserFlagsBitField extends BitField {
     public override set(bits: UserFlagsBitsResolvable) {

@@ -5,7 +5,7 @@ import {
     RequestManager,
     PartialRequestManagerOptions,
     RequestManagerOptions,
-} from '../';
+} from '../index';
 
 export class BaseClient extends EventEmitter {
     public rest: RequestManager;

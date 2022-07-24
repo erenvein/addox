@@ -5,14 +5,14 @@ import {
     Collection,
     Snowflake,
     Presence,
-} from '../../..';
+} from '../../../index';
 
 export default class GuildMembersChunkHandler extends BaseWebSocketHandler {
     public constructor() {
         super('GuildMembersChunk');
     }
 
-    public handle({ d }: GatewayGuildMembersChunkDispatch) {
+    public override handle({ d }: GatewayGuildMembersChunkDispatch) {
         const guild = this.shard.guilds.get(d.guild_id);
 
         if (guild) {

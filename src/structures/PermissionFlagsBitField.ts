@@ -1,6 +1,6 @@
 //@ts-nocheck
 
-import { BitField, PermissionFlagsBitsResolvable, PermissionFlagsBitsResolver } from '..';
+import { BitField, PermissionFlagsBitsResolvable, PermissionFlagsBitsResolver } from '../index';
 
 export class PermissionFlagsBitField extends BitField {
     public override set(bits: PermissionFlagsBitsResolvable) {

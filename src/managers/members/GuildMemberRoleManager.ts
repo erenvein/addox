@@ -1,4 +1,4 @@
-import type { Client, Snowflake, Guild, Role, GuildMember } from '../../';
+import type { Client, Snowflake, Guild, Role, GuildMember } from '../../index';
 
 import { CachedManager } from '../CachedManager';
 

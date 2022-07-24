@@ -1,4 +1,4 @@
-import { type PresenceData, ActivityType, PresenceActivityFlagsBitsResolver } from '../..';
+import { type PresenceData, ActivityType, PresenceActivityFlagsBitsResolver } from '../../index';
 
 export function PresenceDataResolver(presence: PresenceData) {
     const res = presence;

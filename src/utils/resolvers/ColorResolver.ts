@@ -1,4 +1,4 @@
-import { type ColorResolvable, Colors, HexToHexDecimal } from '../..';
+import { type ColorResolvable, Colors, HexToHexDecimal } from '../../index';
 
 export function ColorResolver(color: ColorResolvable): number {
     let res = color;

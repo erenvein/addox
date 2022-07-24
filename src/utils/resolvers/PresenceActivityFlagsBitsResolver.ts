@@ -1,4 +1,4 @@
-import { ActivityFlags, type PresenceActivityFlagsBitsResolvable } from '../..';
+import { ActivityFlags, type PresenceActivityFlagsBitsResolvable } from '../../index';
 
 export function PresenceActivityFlagsBitsResolver(
     flags: PresenceActivityFlagsBitsResolvable

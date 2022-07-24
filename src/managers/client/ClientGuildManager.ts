@@ -32,7 +32,7 @@ import {
     EditGuildData,
     UnavailableGuild,
     Collection,
-} from '../..';
+} from '../../index';
 
 import { BaseManager } from '../BaseManager';
 
@@ -97,7 +97,7 @@ export class ClientGuildManager extends BaseManager {
     public async edit(id: Snowflake, data: EditGuildData, reason?: string): Promise<Guild> {
         const guild = await this.client.rest.patch<APIGuild>(`/guilds/${id}`, {
             body: GuildDataResolver(data),
-            reason: reason,
+            reason: reason as string,
         });
 
         let _guild = this.cache.get(id)!;
@@ -140,7 +140,7 @@ export class ClientGuildManager extends BaseManager {
     ) {
         await this.client.rest.post(`/guilds/${id}/prune`, {
             body: { days, include_roles, compute_prune_count },
-            reason: reason,
+            reason: reason as string,
         });
     }
 
@@ -201,7 +201,7 @@ export class ClientGuildManager extends BaseManager {
             `/guilds/${id}/widget`,
             {
                 body: data,
-                reason: reason,
+                reason: reason as string,
             }
         );
 
@@ -217,7 +217,7 @@ export class ClientGuildManager extends BaseManager {
             `/guilds/${id}/welcome-screen`,
             {
                 body: data,
-                reason: reason,
+                reason: reason as string,
             }
         );
 

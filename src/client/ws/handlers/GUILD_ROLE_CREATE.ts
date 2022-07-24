@@ -1,11 +1,11 @@
-import { BaseWebSocketHandler, GatewayGuildRoleDeleteDispatch, Role } from '../../..';
+import { BaseWebSocketHandler, GatewayGuildRoleDeleteDispatch } from '../../../index';
 
 export default class GuildRoleDeleteHandler extends BaseWebSocketHandler {
     public constructor() {
         super('GuildRoleDelete');
     }
 
-    public handle({ d }: GatewayGuildRoleDeleteDispatch) {
+    public override handle({ d }: GatewayGuildRoleDeleteDispatch) {
         const guild = this.shard.guilds.get(d.guild_id);
 
         if (guild) {

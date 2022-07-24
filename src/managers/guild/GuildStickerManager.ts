@@ -9,9 +9,7 @@ import {
     type RESTPatchAPIGuildStickerJSONBody,
     DataResolver,
     Sticker,
-} from '../../';
-
-import { createReadStream } from 'node:fs';
+} from '../../index';
 
 import { CachedManager } from '../CachedManager';
 
@@ -78,13 +76,13 @@ export class GuildStickerManager extends CachedManager<Snowflake, Sticker> {
                     description: data.description,
                     tags: data.tags,
                 },
-                reason: reason,
+                reason: reason as string,
                 files: [
                     {
                         key: 'file',
                         name: resolvedFile.name,
                         data: resolvedFile.data,
-                        type: resolvedFile.type,
+                        type: resolvedFile.type as string,
                     },
                 ],
                 appendBodyToFormData: true,
@@ -96,7 +94,7 @@ export class GuildStickerManager extends CachedManager<Snowflake, Sticker> {
 
     public async delete(id: Snowflake, reason?: string) {
         await this.client.rest.delete(`/guilds/${this.guild.id}/stickers/${id}`, {
-            reason: reason,
+            reason: reason as string,
         });
         this.cache.delete(id);
     }
@@ -104,7 +102,7 @@ export class GuildStickerManager extends CachedManager<Snowflake, Sticker> {
     public async edit(id: Snowflake, data: RESTPatchAPIGuildStickerJSONBody, reason?: string) {
         const sticker = await this.client.rest.patch<APISticker>(
             `/guilds/${this.guild.id}/stickers/${id}`,
-            { body: data, reason: reason }
+            { body: data, reason: reason as string }
         );
 
         let _sticker = this.cache.get(id);

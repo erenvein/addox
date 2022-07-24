@@ -6,7 +6,7 @@ import {
     SnowflakeUtil,
     UserPremiumType,
     type ImageOptions,
-} from '../';
+} from '../index';
 
 import { BaseStructure } from './BaseStructure';
 
@@ -33,7 +33,7 @@ export class User extends BaseStructure {
         this._patch(data);
     }
 
-    public _patch(data: APIUser) {
+    public override _patch(data: APIUser) {
         this.id = data.id;
         this.username = data.username;
         this.discriminator = data.discriminator;

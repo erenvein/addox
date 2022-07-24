@@ -1,11 +1,11 @@
-import type { RequestMethods } from '../../../';
+import type { RequestMethods } from '../../../index';
 
 export class DiscordAPIError extends Error {
     public status: number;
     public code: number;
     public method: RequestMethods;
     public url: string;
-    public message: string;
+    public override message: string;
 
     public constructor(
         status: number,

@@ -1,4 +1,4 @@
-import type { PresenceData, ClientUserEditData, APIUser } from '..';
+import type { PresenceData, ClientUserEditData, APIUser } from '../index';
 
 import { User } from '../structures/User';
 

@@ -7,7 +7,7 @@ import {
     StickerType,
     StickerFormatType,
     User,
-} from '..';
+} from '../index';
 
 import { BaseStructure } from './BaseStructure';
 
@@ -30,7 +30,7 @@ export class Sticker extends BaseStructure {
         this._patch(data);
     }
 
-    public _patch(data: APISticker) {
+    public override _patch(data: APISticker) {
         this.id = data.id;
         this.packId = data.pack_id ?? null;
         this.name = data.name;

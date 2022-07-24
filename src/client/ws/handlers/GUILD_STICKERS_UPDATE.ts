@@ -1,11 +1,11 @@
-import { BaseWebSocketHandler, GatewayGuildStickersUpdateDispatch, Sticker } from '../../..';
+import { BaseWebSocketHandler, GatewayGuildStickersUpdateDispatch, Sticker } from '../../../index';
 
 export default class GuildStickersUpdateHandler extends BaseWebSocketHandler {
     public constructor() {
         super('GuildStickersUpdate');
     }
 
-    public handle({ d }: GatewayGuildStickersUpdateDispatch) {
+    public override handle({ d }: GatewayGuildStickersUpdateDispatch) {
         const guild = this.shard.guilds.get(d.guild_id)!;
 
         const deletions = new Set(guild.caches.stickers.cache.values());

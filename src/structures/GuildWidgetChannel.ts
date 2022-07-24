@@ -1,4 +1,4 @@
-import type { Client, Guild, APIGuildWidgetChannel, APIPartialChannel } from '../';
+import type { Client, Guild, APIGuildWidgetChannel, APIPartialChannel } from '../index';
 
 import { BaseChannel } from './BaseChannel';
 
@@ -11,7 +11,7 @@ export class GuildWidgetChannel extends BaseChannel {
     }
 
     // @ts-ignore
-    public _patch(data: APIGuildWidgetChannel) {
+    public override _patch(data: APIGuildWidgetChannel) {
         super._patch(data as unknown as APIPartialChannel);
 
         this.rawPosition = data.position;

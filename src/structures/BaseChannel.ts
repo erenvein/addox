@@ -2,10 +2,9 @@ import {
     type Client,
     type Snowflake,
     type Guild,
-    type FetchOptions,
     type APIPartialChannel,
     SnowflakeUtil,
-} from '../';
+} from '../index';
 
 import { BaseStructure } from './BaseStructure';
 
@@ -22,7 +21,7 @@ export class BaseChannel extends BaseStructure {
         this._patch(data);
     }
 
-    public _patch(data: APIPartialChannel) {
+    public override _patch(data: APIPartialChannel) {
         this.id = data.id;
         this.name = data.name ?? null;
 

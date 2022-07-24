@@ -9,7 +9,7 @@ import {
     type RoleData,
     type Collection,
     RoleDataResolver,
-} from '../../';
+} from '../../index';
 
 import { CachedManager } from '../CachedManager';
 
@@ -32,7 +32,10 @@ export class GuildRoleManager extends CachedManager<Snowflake, Role> {
                 return _role;
             }
 
-            const roles = (await this.fetch(null, { force })) as Collection<Snowflake, Role>;
+            const roles = (await this.fetch(null, { force: force as boolean })) as Collection<
+                Snowflake,
+                Role
+            >;
 
             const role = roles.get(id)!;
 
@@ -58,21 +61,23 @@ export class GuildRoleManager extends CachedManager<Snowflake, Role> {
     public async create(data: RoleData, reason?: string) {
         const role = await this.client.rest.post<APIRole>(`/guilds/${this.guild.id}/roles`, {
             body: RoleDataResolver(data),
-            reason: reason,
+            reason: reason as string,
         });
 
         return this.cache._add(role.id, new Role(this.client, this.guild, role));
     }
 
     public async delete(id: Snowflake, reason?: string) {
-        await this.client.rest.delete(`/guilds/${this.guild.id}/roles/${id}`, { reason: reason });
+        await this.client.rest.delete(`/guilds/${this.guild.id}/roles/${id}`, {
+            reason: reason as string,
+        });
         this.cache.delete(id);
     }
 
     public async edit(id: Snowflake, data: RoleData, reason?: string) {
         const role = await this.client.rest.patch<APIRole>(`/guilds/${this.guild.id}/roles/${id}`, {
             body: RoleDataResolver(data),
-            reason: reason,
+            reason: reason as string,
         });
 
         let _role = this.cache.get(id)!;

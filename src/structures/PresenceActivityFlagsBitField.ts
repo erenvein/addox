@@ -1,6 +1,10 @@
 //@ts-nocheck
 
-import { BitField, PresenceActivityFlagsBitsResolvable, PresenceActivityFlagsBitsResolver } from '..';
+import {
+    BitField,
+    PresenceActivityFlagsBitsResolvable,
+    PresenceActivityFlagsBitsResolver,
+} from '../index';
 
 export class PresenceActivityFlagsBitField extends BitField {
     public override set(bits: PresenceActivityFlagsBitsResolvable) {

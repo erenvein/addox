@@ -37,7 +37,7 @@ import type {
     GuildBan,
     Presence,
     GuildMember,
-} from './';
+} from './index';
 
 import type { Stream } from 'node:stream';
 
@@ -196,7 +196,7 @@ export interface PresenceData {
 
 export type GatewayCloseCodesResolvable = number | keyof typeof GatewayCloseCodes;
 
-export type WebSocketShardStatus = 'IDLE' | 'READY' | 'CONNECTING' | 'RECONNECTING' | 'CLOSED';
+export type WebSocketShardStatus = 'Idle' | 'Ready' | 'Connecting' | 'Reconnecting' | 'Closed';
 
 export interface APIGuildWithShard extends APIGuild {
     shard_id?: number;

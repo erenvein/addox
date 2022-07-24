@@ -5,7 +5,7 @@ import {
     ClientUser,
     ClientEvents,
     ClientCacheManager,
-} from '../';
+} from '../index';
 
 export declare interface Client {
     on<K extends keyof ClientEvents>(event: K, listener: (...args: ClientEvents[K]) => void): this;

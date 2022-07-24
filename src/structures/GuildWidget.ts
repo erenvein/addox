@@ -6,7 +6,7 @@ import {
     GuildWidgetChannel,
     GuildWidgetMember,
     type Guild,
-} from '../';
+} from '../index';
 
 import { BaseStructure } from './BaseStructure';
 
@@ -27,7 +27,7 @@ export class GuildWidget extends BaseStructure {
         this._patch(data);
     }
 
-    public _patch(data: APIGuildWidget) {
+    public override _patch(data: APIGuildWidget) {
         this.id = data.id;
         this.name = data.name;
         this.instantInvite = data.instant_invite;

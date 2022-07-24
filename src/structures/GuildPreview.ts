@@ -7,7 +7,7 @@ import {
     GuildEmoji,
     Sticker,
     Collection,
-} from '../';
+} from '../index';
 
 import { BaseStructure } from './BaseStructure';
 
@@ -30,7 +30,7 @@ export class GuildPreview extends BaseStructure {
         this._patch(data);
     }
 
-    public _patch(data: APIGuildPreview) {
+    public override _patch(data: APIGuildPreview) {
         this.id = data.id;
         this.name = data.name;
         this.icon = data.icon;

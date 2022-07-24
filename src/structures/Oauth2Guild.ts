@@ -3,7 +3,7 @@ import {
     type RESTAPIPartialCurrentUserGuild,
     PermissionFlagsBitField,
     type APIGuild,
-} from '../';
+} from '../index';
 
 import { BaseGuild } from './BaseGuild';
 

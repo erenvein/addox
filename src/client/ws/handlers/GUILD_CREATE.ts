@@ -5,14 +5,14 @@ import {
     Guild,
     UnavailableGuild,
     BaseWebSocketHandler,
-} from '../../..';
+} from '../../../index';
 
 export default class GuildCreateHandler extends BaseWebSocketHandler {
     public constructor() {
         super('GuildCreate');
     }
 
-    public handle({ d }: GatewayGuildCreateDispatch) {
+    public override handle({ d }: GatewayGuildCreateDispatch) {
         if (d.unavailable) {
             this.shard.manager.client.caches.guilds.unavailables.set(
                 d.id,

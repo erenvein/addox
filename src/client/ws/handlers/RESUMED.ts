@@ -1,11 +1,11 @@
-import { BaseWebSocketHandler } from '../../../';
+import { BaseWebSocketHandler } from '../../../index';
 
 export default class ResumedHandler extends BaseWebSocketHandler {
     public constructor() {
         super('Resumed');
     }
 
-    public handle() {
+    public override handle() {
         this.shard.heartbeatAck();
         this.shard.sendHeartbeat();
 

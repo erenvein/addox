@@ -6,7 +6,7 @@ import {
     APIStickerPack,
     StickerPack,
     type CollectionLike,
-} from '../..';
+} from '../../index';
 
 import { BaseManager } from '../BaseManager';
 

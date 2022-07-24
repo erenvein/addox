@@ -9,7 +9,7 @@ import {
     type RESTPostAPIGuildEmojiJSONBody,
     type RESTPatchAPIGuildEmojiJSONBody,
     DataResolver,
-} from '../../';
+} from '../../index';
 
 import { CachedManager } from '../CachedManager';
 
@@ -72,21 +72,21 @@ export class GuildEmojiManager extends CachedManager<Snowflake, GuildEmoji> {
 
         const emoji = await this.client.rest.post<APIEmoji>(`/guilds/${this.guild.id}/emojis`, {
             body: data,
-            reason: reason,
+            reason: reason as string,
         });
 
         return this.cache._add(emoji.id!, new GuildEmoji(this.client, this.guild, emoji));
     }
 
     public async delete(id: Snowflake, reason?: string) {
-        await this.client.rest.delete(`/guilds/${this.guild.id}/emojis/${id}`, { reason: reason });
+        await this.client.rest.delete(`/guilds/${this.guild.id}/emojis/${id}`, { reason: reason as string });
         this.cache.delete(id);
     }
 
     public async edit(id: Snowflake, data: RESTPatchAPIGuildEmojiJSONBody, reason?: string) {
         const emoji = await this.client.rest.patch<APIEmoji>(
             `/guilds/${this.guild.id}/emojis/${id}`,
-            { body: data, reason: reason }
+            { body: data, reason: reason as string }
         );
 
         let _emoji = this.cache.get(id);

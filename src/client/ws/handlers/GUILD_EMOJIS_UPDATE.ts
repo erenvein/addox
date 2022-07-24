@@ -1,11 +1,11 @@
-import { BaseWebSocketHandler, GatewayGuildEmojisUpdateDispatch, GuildEmoji } from '../../..';
+import { BaseWebSocketHandler, GatewayGuildEmojisUpdateDispatch, GuildEmoji } from '../../../index';
 
 export default class GuildEmojisUpdateHandler extends BaseWebSocketHandler {
     public constructor() {
         super('GuildEmojisUpdate');
     }
 
-    public handle({ d }: GatewayGuildEmojisUpdateDispatch) {
+    public override handle({ d }: GatewayGuildEmojisUpdateDispatch) {
         const guild = this.shard.guilds.get(d.guild_id)!;
 
         const deletions = new Set(guild.caches.emojis.cache.values());

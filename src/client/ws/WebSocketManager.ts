@@ -13,7 +13,7 @@ import {
     APIGatewayBotInfo,
     ReconnectableWebSocketCloseCodes,
     Sleep,
-} from '../../';
+} from '../../index';
 
 export class WebSocketManager {
     public shards = new Collection<number, WebSocketShard>();
@@ -70,9 +70,9 @@ export class WebSocketManager {
     }
 
     public get ping() {
-        return (
+        return Math.ceil( 
             this.shards.reduce((accumulator, shard) => (accumulator as any) + shard.ping, 0) /
-            this.shards.size
+                this.shards.size
         );
     }
 
@@ -138,8 +138,8 @@ export class WebSocketManager {
     public async spawnShards(): Promise<boolean> {
         if (!this.shardQueue!.size) return false;
 
-        const [shard] = this.shardQueue!;
-
+        const [_shard] = this.shardQueue!;
+        const shard = _shard as WebSocketShard;
         this.spawnStreak++;
 
         this.shardQueue?.delete(shard);
@@ -167,7 +167,7 @@ export class WebSocketManager {
 
                 if (ReconnectableWebSocketCloseCodes.has(code) && this.autoReconnect) {
                     this.client.emit('shardReconnect', shard);
-                    shard.status = 'RECONNECTING';
+                    shard.status = 'Reconnecting';
 
                     shard.cleanup();
 

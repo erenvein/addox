@@ -1,4 +1,4 @@
-import { type UserFlagsBitsResolvable, UserFlags } from '../..';
+import { type UserFlagsBitsResolvable, UserFlags } from '../../index';
 
 export function UserFlagsBitsResolver(flags: UserFlagsBitsResolvable): number | number[] {
     let res = flags;

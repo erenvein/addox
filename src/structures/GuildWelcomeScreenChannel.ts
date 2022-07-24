@@ -1,4 +1,4 @@
-import type { Client, APIGuildWelcomeScreenChannel, Snowflake } from '../';
+import type { Client, APIGuildWelcomeScreenChannel, Snowflake } from '../index';
 
 import { BaseStructure } from './BaseStructure';
 
@@ -17,7 +17,7 @@ export class GuildWelcomeScreenChannel extends BaseStructure {
         this._patch(data);
     }
 
-    public _patch(data: APIGuildWelcomeScreenChannel) {
+    public override _patch(data: APIGuildWelcomeScreenChannel) {
         this.id = data.channel_id;
         this.description = data.description;
         this.emojiId = data.emoji_id;

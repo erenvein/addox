@@ -7,7 +7,7 @@ import {
     type FetchGuildOptions,
     GuildFeature,
     SnowflakeUtil,
-} from '../';
+} from '../index';
 
 import { BaseStructure } from './BaseStructure';
 
@@ -23,7 +23,7 @@ export class BaseGuild extends BaseStructure {
         this._patch(data);
     }
 
-    public _patch(data: APIGuild) {
+    public override _patch(data: APIGuild) {
         this.id = data.id;
         this.name = data.name;
         this.features = data.features.map((feature) => (GuildFeature as any)[feature]);

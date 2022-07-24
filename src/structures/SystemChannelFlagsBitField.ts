@@ -1,6 +1,6 @@
 //@ts-nocheck
 
-import { BitField, SystemChannelFlagsBitsResolvable, SystemChannelFlagsBitsResolver } from '..';
+import { BitField, SystemChannelFlagsBitsResolvable, SystemChannelFlagsBitsResolver } from '../index';
 
 export class SystemChannelFlagsBitField extends BitField {
     public override set(bits: SystemChannelFlagsBitsResolvable) {

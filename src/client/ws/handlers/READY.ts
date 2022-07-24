@@ -3,17 +3,17 @@ import {
     ClientUser,
     GatewayReadyDispatch,
     UnavailableGuild,
-} from '../../../';
+} from '../../../index';
 
 export default class ReadyHandler extends BaseWebSocketHandler {
     public constructor() {
         super('Ready');
     }
 
-    public handle({ d }: GatewayReadyDispatch) {
+    public override handle({ d }: GatewayReadyDispatch) {
         this.shard.uptime = Date.now();
         this.shard.sessionId = d.session_id;
-        this.shard.status = 'READY';
+        this.shard.status = 'Ready';
 
         if (this.shard.manager.client.user) {
             this.shard.manager.client.user._patch(d.user);
