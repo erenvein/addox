@@ -40,6 +40,11 @@ export { GuildWelcomeScreenChannel } from './structures/GuildWelcomeScreenChanne
 export { Sticker } from './structures/Sticker';
 export { StickerPack } from './structures/StickerPack';
 export { UnavailableGuild } from './structures/UnavailableGuild';
+export { Presence } from './structures/Presence';
+export { PresenceActivity } from './structures/PresenceActivity';
+export { PresenceActivityFlagsBitField } from './structures/PresenceActivityFlagsBitField';
+export { GuildBan } from './structures/GuildBan';
+export { GuildMember } from './structures/GuildMember';
 
 // MANAGERS
 export { CachedManager } from './managers/CachedManager';
@@ -48,15 +53,17 @@ export { ClientCacheManager } from './managers/client/ClientCacheManager';
 export { ClientGuildManager } from './managers/client/ClientGuildManager';
 export { ClientUserManager } from './managers/client/ClientUserManager';
 export { ClientStickerManager } from './managers/client/ClientStickerManager';
-export { ClientEmojiManager } from './managers/client/ClientEmojiManager';
-export { ClientRoleManager } from './managers/client/ClientRoleManager';
 export { GuildEmojiManager } from './managers/guild/GuildEmojiManager';
 export { GuildRoleManager } from './managers/guild/GuildRoleManager';
 export { GuildCacheManager } from './managers/guild/GuildCacheManager';
 export { GuildStickerManager } from './managers/guild/GuildStickerManager';
+export { GuildBanManager } from './managers/guild/GuildBanManager';
+export { GuildMemberManager } from './managers/guild/GuildMemberManager';
+export { GuildMemberRoleManager } from './managers/members/GuildMemberRoleManager';
 
 // UTILS
 export { PresenceDataResolver } from './utils/resolvers/PresenceDataResolver';
+export { PresenceActivityFlagsBitsResolver } from './utils/resolvers/PresenceActivityFlagsBitsResolver';
 export { GatewayIntentBitsResolver } from './utils/resolvers/GatewayIntentBitsResolver';
 export { SystemChannelFlagsBitsResolver } from './utils/resolvers/SystemChannelFlagsBitsResolver';
 export { ColorResolver } from './utils/resolvers/ColorResolver';

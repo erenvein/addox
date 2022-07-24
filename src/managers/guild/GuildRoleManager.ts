@@ -40,8 +40,15 @@ export class GuildRoleManager extends CachedManager<Snowflake, Role> {
         } else {
             const roles = await this.client.rest.get<APIRole[]>(`/guilds/${this.guild.id}/roles`);
 
+            this.cache.clear();
+
             for (const role of roles) {
-                this.cache.set(role.id, new Role(this.client, this.guild, role));
+                let _role = this.cache.get(role.id!)!;
+
+                if (_role) {
+                    _role = _role._patch(role);
+                }
+                this.cache.set(role.id, _role ?? new Role(this.client, this.guild, role));
             }
 
             return this.cache;

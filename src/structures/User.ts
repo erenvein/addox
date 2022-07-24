@@ -73,6 +73,10 @@ export class User extends BaseStructure {
         }.png`;
     }
 
+    public get presence() {
+        return this.client.caches.presences.get(this.id);
+    }
+
     public avatarURL({ dynamic, size, format }: ImageOptions = { dynamic: true, size: 1024 }) {
         return this.avatar
             ? `https://cdn.discordapp.com/avatars/${this.id}/${this.avatar}.${

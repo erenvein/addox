@@ -79,8 +79,8 @@ export class RequestManager {
             options.headers['X-Audit-Log-Reason'] = encodeURIComponent(options.reason);
         }
 
-        if (this.agent.length) {
-            options.headers['User-Agent'] = this.agent;
+        if (this.agent.length || options.agent?.length) {
+            options.headers['User-Agent'] = options.agent ?? this.agent;
         }
 
         if (options.query) {
@@ -102,17 +102,18 @@ export class RequestManager {
                 }
             }
 
-            if (options.appendBodyToFormData) {
-                for (const [key, value] of Object.entries(options.body ?? {})) {
-                    formData.append(key, value);
+            if (options.body) {
+                if (options.appendBodyToFormData) {
+                    for (const [key, value] of Object.entries(options.body)) {
+                        formData.append(key, value);
+                    }
+                } else {
+                    formData.append('payload_json', JSON.stringify(options.body));
                 }
-            } else if (options.files?.length) {
-                formData.append('payload_json', JSON.stringify(options.body ?? {}));
             }
 
+            options.headers = formData.getHeaders(options.headers);
             options.body = formData;
-
-            options.headers = Object.assign({}, options.headers, formData.getHeaders());
         } else if (options.body) {
             options.body = JSON.stringify(options.body);
             options.headers['content-type'] = 'application/json';

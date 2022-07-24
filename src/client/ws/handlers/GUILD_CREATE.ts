@@ -1,8 +1,10 @@
 import {
-    BaseWebSocketHandler,
-    GatewayGuildCreateDispatch,
+    type GatewayGuildCreateDispatch,
     type APIGuildWithShard,
+    type APIUnavailableGuild,
     Guild,
+    UnavailableGuild,
+    BaseWebSocketHandler,
 } from '../../..';
 
 export default class GuildCreateHandler extends BaseWebSocketHandler {
@@ -11,11 +13,18 @@ export default class GuildCreateHandler extends BaseWebSocketHandler {
     }
 
     public handle({ d }: GatewayGuildCreateDispatch) {
-        (d as unknown as APIGuildWithShard).shard_id = this.shard.id;
+        if (d.unavailable) {
+            this.shard.manager.client.caches.guilds.unavailables.set(
+                d.id,
+                new UnavailableGuild(this.shard.manager.client, d as APIUnavailableGuild)
+            );
+        } else {
+            (d as unknown as APIGuildWithShard).shard_id = this.shard.id;
 
-        const guild = new Guild(this.shard.manager.client, d);
+            const guild = new Guild(this.shard.manager.client, d);
 
-        this.shard.guilds.set(d.id, guild);
-        this.shard.manager.client.emit('guildCreate', guild);
+            this.shard.guilds.set(d.id, guild);
+            this.shard.manager.client.emit('guildCreate', guild);
+        }
     }
 }

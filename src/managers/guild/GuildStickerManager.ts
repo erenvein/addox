@@ -48,6 +48,8 @@ export class GuildStickerManager extends CachedManager<Snowflake, Sticker> {
                 `/guilds/${this.guild.id}/stickers`
             );
 
+            this.cache.clear();
+
             for (const sticker of stickers) {
                 let _sticker = this.cache.get(sticker.id!);
 

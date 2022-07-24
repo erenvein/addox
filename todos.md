@@ -1,5 +1,3 @@
--   Presences
--   Bans
 -   Channels
 -   Stage Instances
 -   Invites
@@ -7,7 +5,6 @@
 -   Guild Scheduled Events
 -   Voice States
 -   Guild Welcome Screen
--   Guild Members
 -   Audit Logs
 -   Threads
 -   Webhooks

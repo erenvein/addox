@@ -31,7 +31,12 @@ import type {
     GuildFeature,
     GuildVerificationLevel,
     RESTPostAPIGuildsJSONBody,
+    GatewayPresenceClientStatus,
     Role,
+    RESTPatchAPIGuildMemberJSONBody,
+    GuildBan,
+    Presence,
+    GuildMember,
 } from './';
 
 import type { Stream } from 'node:stream';
@@ -142,13 +147,15 @@ export interface ImageOptions {
     dynamic?: boolean;
 }
 
-export type ActivityTypeResolvable = keyof typeof ActivityType | number;
+export type PresenceActivityTypeResolvable = keyof typeof ActivityType | number;
 
-export type ActivityFlagsResolvable = keyof typeof ActivityFlags | number;
+export type PresenceActivityFlagsBitsResolvable =
+    | ArrayLike<keyof typeof ActivityFlags>
+    | ArrayLike<number>;
 
-export interface Activity {
+export interface PresenceActivity {
     name: string;
-    type?: ActivityTypeResolvable;
+    type?: PresenceActivityTypeResolvable;
     url?: string;
     created_at?: number;
     timestamps?: GatewayActivityTimestamps[];
@@ -160,17 +167,31 @@ export interface Activity {
     assets?: GatewayActivityAssets[];
     secrets?: GatewayActivitySecrets[];
     instance?: boolean;
-    flags?: ActivityFlagsResolvable;
+    flags?: PresenceActivityFlagsBitsResolvable;
     buttons?: GatewayActivityButton[];
 }
 
-export type PresenceStatus = 'online' | 'idle' | 'dnd' | 'invisible' | 'offline';
+export interface PresenceActivitySecrets {
+    join?: string;
+    spectate?: string;
+    match?: string;
+}
+
+export interface PresenceActivityAssets {
+    largeImage: string | null;
+    largeText: string | null;
+    smallImage: string | null;
+    smallText: string | null;
+}
+
+export type PresenceStatus = 'online' | 'idle' | 'dnd' | 'offline';
 
 export interface PresenceData {
-    activities?: Activity[];
+    activities?: PresenceActivity[];
     status?: PresenceStatus;
     afk?: boolean;
     since?: number;
+    client_status?: GatewayPresenceClientStatus;
 }
 
 export type GatewayCloseCodesResolvable = number | keyof typeof GatewayCloseCodes;
@@ -189,8 +210,20 @@ export interface ClientUserEditData {
     username?: string;
     avatar?: string;
 }
+
 export interface FetchGuildOptions extends FetchOptions {
     with_counts?: boolean;
+}
+
+export interface FetchBanOptions extends FetchOptions {
+    limit?: number;
+    before?: Snowflake;
+    after?: Snowflake;
+}
+
+export interface FetchMemberOptions extends FetchOptions {
+    limit?: number;
+    after?: Snowflake;
 }
 
 export interface FetchOptions {
@@ -246,6 +279,17 @@ export interface CreateGuildData extends RESTPostAPIGuildsJSONBody {
     roles?: RoleData[];
 }
 
+//@ts-ignore
+export interface EditGuildMemberData extends RESTPatchAPIGuildMemberJSONBody {
+    communication_disabled_until?: number;
+}
+
+export interface PresenceClientStatusData {
+    desktop?: PresenceStatus;
+    mobile?: PresenceStatus;
+    web?: PresenceStatus;
+}
+
 export interface ClientEvents {
     ready: [client: Client];
     guildCreate: [guild: Guild];
@@ -260,6 +304,22 @@ export interface ClientEvents {
     roleCreate: [role: Role];
     roleDelete: [role: Role];
     roleUpdate: [oldRole: Role, newRole: Role];
+    guildBanAdd: [ban: GuildBan];
+    guildBanRemove: [ban: GuildBan];
+    presenceUpdate: [oldPresence: Presence, newPresence: Presence];
+    guildMemberAdd: [member: GuildMember];
+    guildMemberRemove: [member: GuildMember];
+    guildMemberUpdate: [oldMember: GuildMember, newMember: GuildMember];
+    guildMembersChunk: [
+        guild: Guild,
+        members: Collection<Snowflake, GuildMember>,
+        data: {
+            chunkIndex: number | null;
+            chunkCount: number | null;
+            notFound: unknown[];
+            nonce: string | null;
+        }
+    ];
     raw: [eventName: keyof typeof GatewayDispatchEvents, data: any];
     shardSpawn: [shard: WebSocketShard];
     shardReady: [shard: WebSocketShard];

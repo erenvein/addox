@@ -26,7 +26,7 @@ export class GuildWidgetMember extends BaseStructure {
         this.avatar = data.avatar;
         this.avatarURL = data.avatar_url;
         this.discriminator = data.discriminator;
-        this.status = data.status;
+        this.status = data.status as PresenceStatus;
         this.username = data.username;
 
         return this;

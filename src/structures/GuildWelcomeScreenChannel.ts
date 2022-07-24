@@ -31,6 +31,6 @@ export class GuildWelcomeScreenChannel extends BaseStructure {
     }
 
     public get emoji() {
-        return this.client.caches.emojis.cache.get(this.emojiId!);
+        return this.client.caches.emojis.get(this.emojiId!);
     }
 }

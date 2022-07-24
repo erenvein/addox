@@ -2,6 +2,13 @@ import {
     type Client,
     type Snowflake,
     type APIGuildWithShard,
+    type ImageOptions,
+    type GuildFetchPruneOptions,
+    type RESTPostAPIGuildPruneJSONBody,
+    type RESTPatchAPIGuildWidgetSettingsJSONBody,
+    type RESTPatchAPIGuildWelcomeScreenJSONBody,
+    type EditGuildData,
+    type GatewayGuildCreateDispatchDataWithShard,
     GuildDefaultMessageNotifications,
     GuildCacheManager,
     GuildEmoji,
@@ -11,17 +18,12 @@ import {
     GuildNSFWLevel,
     GuildPremiumTier,
     Role,
-    type EditGuildData,
     SystemChannelFlagsBitField,
-    type GatewayGuildCreateDispatchDataWithShard,
     GuildVerificationLevel,
-    type ImageOptions,
-    type GuildFetchPruneOptions,
-    type RESTPostAPIGuildPruneJSONBody,
-    type User,
-    type RESTPatchAPIGuildWidgetSettingsJSONBody,
-    type RESTPatchAPIGuildWelcomeScreenJSONBody,
     Sticker,
+    Presence,
+    GuildMember,
+    User,
 } from '../';
 
 import { BaseGuild } from './BaseGuild';
@@ -157,11 +159,30 @@ export class Guild extends BaseGuild {
             }
         }
 
-        // PRESENCES
-        // - TODO
+        if ('presences' in data) {
+            for (const presence of data.presences) {
+                this.client.caches.presences.set(
+                    presence.user.id,
+                    new Presence(this.client, Object.assign(presence, { guild_id: this.id }))
+                );
+            }
+        }
 
-        // BANS
-        // - TODO
+        if ('members' in data) {
+            for (const member of data.members) {
+                if (member.user) {
+                    this.client.caches.users.cache.set(
+                        member.user.id,
+                        new User(this.client, member.user)
+                    );
+                }
+
+                this.caches.members.cache.set(
+                    member.user?.id!,
+                    new GuildMember(this.client, this, member)
+                );
+            }
+        }
 
         // CHANNELS
         // - TODO
@@ -182,9 +203,6 @@ export class Guild extends BaseGuild {
         // - TODO
 
         // WELCOME SCREEN
-        // - TODO
-
-        // MEMBERS
         // - TODO
 
         // THREADS

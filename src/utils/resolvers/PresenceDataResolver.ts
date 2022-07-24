@@ -1,4 +1,4 @@
-import { type PresenceData, ActivityType, ActivityFlags } from '../..';
+import { type PresenceData, ActivityType, PresenceActivityFlagsBitsResolver } from '../..';
 
 export function PresenceDataResolver(presence: PresenceData) {
     const res = presence;
@@ -10,7 +10,7 @@ export function PresenceDataResolver(presence: PresenceData) {
             }
 
             if (typeof activity.flags === 'string') {
-                activity.flags = ActivityFlags[activity.flags as keyof typeof ActivityFlags];
+                activity.flags = PresenceActivityFlagsBitsResolver(activity.flags);
             }
         }
     }

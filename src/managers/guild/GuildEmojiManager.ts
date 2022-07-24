@@ -49,6 +49,8 @@ export class GuildEmojiManager extends CachedManager<Snowflake, GuildEmoji> {
                 `/guilds/${this.guild.id}/emojis`
             );
 
+            this.cache.clear();
+
             for (const emoji of emojis) {
                 let _emoji = this.cache.get(emoji.id!);
 
