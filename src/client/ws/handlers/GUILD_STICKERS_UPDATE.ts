@@ -1,4 +1,4 @@
-import { BaseWebSocketHandler, GatewayGuildStickersUpdateDispatch, GuildSticker } from '../../..';
+import { BaseWebSocketHandler, GatewayGuildStickersUpdateDispatch, Sticker } from '../../..';
 
 export default class GuildStickersUpdateHandler extends BaseWebSocketHandler {
     public constructor() {
@@ -15,12 +15,12 @@ export default class GuildStickersUpdateHandler extends BaseWebSocketHandler {
 
             if (_sticker) {
                 deletions.delete(_sticker);
-                const __sticker =  new GuildSticker(this.shard.manager.client, sticker);
+                const __sticker =  new Sticker(this.shard.manager.client, sticker);
 
                 guild.caches.stickers.cache.set(__sticker.id, __sticker);
                 this.shard.manager.client.emit('stickerUpdate', _sticker, __sticker);
             } else {
-                const __sticker = new GuildSticker(this.shard.manager.client, sticker);
+                const __sticker = new Sticker(this.shard.manager.client, sticker);
 
                 guild.caches.stickers.cache.set(__sticker.id, __sticker);
                 this.shard.manager.client.emit('stickerCreate', __sticker);
