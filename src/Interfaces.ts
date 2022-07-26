@@ -67,6 +67,8 @@ import type {
     APIThreadChannel,
     APIGroupDMChannel,
     APIDMChannel,
+    RESTPatchAPIChannelMessageJSONBody,
+    APIMessageReference,
 } from './index';
 
 import type { BodyInit } from 'node-fetch';
@@ -436,6 +438,18 @@ export interface MessageReaction {
 export interface FetchReactionOptions {
     limit?: number;
     after?: Snowflake;
+}
+
+//@ts-ignore
+export interface EditMessageData extends RESTPatchAPIChannelMessageJSONBody {
+    files?: (Buffer | string)[];
+    flags?: MessageFlagsBitsResolvable;
+}
+
+export interface CreateMessageData extends EditMessageData {
+    message_reference?: APIMessageReference;
+    tts?: boolean;
+    stickers?: Snowflake[];
 }
 
 export interface ClientEvents {

@@ -97,4 +97,8 @@ export class GuildChannelManager extends CachedManager<Snowflake, GuildBasedChan
 
         // TODO
     }
+
+    public async setPosition() {
+        // TODO
+    }
 }

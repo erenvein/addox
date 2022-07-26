@@ -3,9 +3,10 @@ import {
     type Snowflake,
     type FetchOptions,
     SnowflakeUtil,
-    APIAnyChannel,
+    type APIAnyChannel,
     ChannelType,
     ChannelFlagsBitField,
+    type EditChannelData,
 } from '../index';
 
 import { BaseStructure } from './BaseStructure';
@@ -49,5 +50,9 @@ export class BaseChannel extends BaseStructure {
 
     public async fetch(options?: FetchOptions) {
         return await this.client.caches.channels.fetch(this.id, options);
+    }
+
+    public async edit(data: EditChannelData, reason?: string) {
+        return await this.client.caches.channels.edit(this.id, data, reason);
     }
 }

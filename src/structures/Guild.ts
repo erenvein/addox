@@ -227,30 +227,28 @@ export class Guild extends BaseGuild {
     }
 
     public get owner() {
-        return this.client.caches.users.cache.get(this.ownerId);
+        return this.caches.members.cache.get(this.ownerId);
     }
 
-    /* TODO
-
-    /public get afkChannel() {
-        return this.caches.channels.cache.get(this.afkChannelId);
+    public get afkChannel() {
+        return this.caches.channels.cache.get(this.afkChannelId!);
     }
 
     public get systemChannel() {
-        return this.caches.channels.cache.get(this.systemChannelId);
+        return this.caches.channels.cache.get(this.systemChannelId!);
     }
 
     public get publicUpdatesChannel() {
-        return this.caches.channels.cache.get(this.publicUpdatesChannelId);
+        return this.caches.channels.cache.get(this.publicUpdatesChannelId!);
     }
 
     public get rulesChannel() {
-        return this.caches.channels.cache.get(this.rulesChannelId);
+        return this.caches.channels.cache.get(this.rulesChannelId!);
     }
 
     public get widgetChannel() {
-        return this.caches.channels.cache.get(this.widgetChannelId);
-    }*/
+        return this.caches.channels.cache.get(this.widgetChannelId!);
+    }
 
     public splashURL({ dynamic, size, format }: ImageOptions = { dynamic: true, size: 1024 }) {
         return this.splash
@@ -287,7 +285,7 @@ export class Guild extends BaseGuild {
     }
 
     public async fetchOwner() {
-        return (await this.client.caches.users.fetch(this.ownerId)) as User;
+        return await this.caches.members.fetch(this.ownerId) as GuildMember;
     }
 
     public async fetchPruneCount(options?: GuildFetchPruneOptions) {

@@ -1,3 +1,3 @@
-export function Sleep(ms: number) {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-}
+import { setTimeout } from 'node:timers/promises';
+
+export const Sleep = async (ms: number) => await setTimeout(ms);

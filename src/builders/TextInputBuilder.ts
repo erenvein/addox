@@ -24,8 +24,8 @@ export class TextInputBuilder extends BaseBuilder {
         this.required = data?.required ?? false;
         this.custom_id = data?.custom_id ?? null;
         this.placeholder = data?.placeholder ?? null;
-        this.min_length = data?.min_length ?? 1;
-        this.max_length = data?.max_length ?? 1;
+        this.min_length = data?.min_length ?? 0;
+        this.max_length = data?.max_length ?? 4000;
         this.value = data?.value ?? null;
         this.style = data?.style ?? TextInputStyle.Short;
         this.label = data?.label ?? '';
