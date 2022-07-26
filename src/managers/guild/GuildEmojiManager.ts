@@ -8,6 +8,7 @@ import {
     type FetchOptions,
     type RESTPostAPIGuildEmojiJSONBody,
     type RESTPatchAPIGuildEmojiJSONBody,
+    Collection,
     DataResolver,
 } from '../../index';
 
@@ -15,6 +16,7 @@ import { CachedManager } from '../CachedManager';
 
 export class GuildEmojiManager extends CachedManager<Snowflake, GuildEmoji> {
     public guild: Guild;
+
     public constructor(client: Client, guild: Guild) {
         super(client);
 
@@ -49,7 +51,7 @@ export class GuildEmojiManager extends CachedManager<Snowflake, GuildEmoji> {
                 `/guilds/${this.guild.id}/emojis`
             );
 
-            this.cache.clear();
+            const result = new Collection<Snowflake, GuildEmoji>();
 
             for (const emoji of emojis) {
                 let _emoji = this.cache.get(emoji.id!);
@@ -60,6 +62,9 @@ export class GuildEmojiManager extends CachedManager<Snowflake, GuildEmoji> {
 
                 this.cache.set(emoji.id!, _emoji ?? new GuildEmoji(this.client, this.guild, emoji));
             }
+
+            this.cache.clear();
+            this.cache.concat(result);
 
             return this.cache;
         }
@@ -79,7 +84,9 @@ export class GuildEmojiManager extends CachedManager<Snowflake, GuildEmoji> {
     }
 
     public async delete(id: Snowflake, reason?: string) {
-        await this.client.rest.delete(`/guilds/${this.guild.id}/emojis/${id}`, { reason: reason as string });
+        await this.client.rest.delete(`/guilds/${this.guild.id}/emojis/${id}`, {
+            reason: reason as string,
+        });
         this.cache.delete(id);
     }
 

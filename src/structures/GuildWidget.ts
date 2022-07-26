@@ -5,7 +5,6 @@ import {
     Collection,
     GuildWidgetChannel,
     GuildWidgetMember,
-    type Guild,
 } from '../index';
 
 import { BaseStructure } from './BaseStructure';

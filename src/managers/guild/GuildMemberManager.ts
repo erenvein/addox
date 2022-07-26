@@ -8,12 +8,14 @@ import {
     type EditGuildMemberData,
     type RESTPutAPIGuildMemberJSONBody,
     GuildMember,
+    Collection,
 } from '../../index';
 
 import { CachedManager } from '../CachedManager';
 
 export class GuildMemberManager extends CachedManager<Snowflake, GuildMember> {
     public guild: Guild;
+
     public constructor(client: Client, guild: Guild) {
         super(client);
 
@@ -53,7 +55,7 @@ export class GuildMemberManager extends CachedManager<Snowflake, GuildMember> {
                 { query: { limit, after } }
             );
 
-            this.cache.clear();
+            const result = new Collection<Snowflake, GuildMember>();
 
             for (const member of members) {
                 let _member = this.cache.get(member.user?.id!)!;
@@ -62,11 +64,14 @@ export class GuildMemberManager extends CachedManager<Snowflake, GuildMember> {
                     _member = _member._patch(member);
                 }
 
-                this.cache.set(
+                result.set(
                     member.user?.id!,
                     _member ?? new GuildMember(this.client, this.guild, member)
                 );
             }
+
+            this.cache.clear();
+            this.cache.concat(result);
 
             return this.cache;
         }
@@ -85,7 +90,9 @@ export class GuildMemberManager extends CachedManager<Snowflake, GuildMember> {
     }
 
     public async kick(id: Snowflake, reason?: string) {
-        await this.client.rest.delete(`/guilds/${this.guild.id}/members/${id}`, { reason: reason as string });
+        await this.client.rest.delete(`/guilds/${this.guild.id}/members/${id}`, {
+            reason: reason as string,
+        });
         this.cache.delete(id);
     }
 

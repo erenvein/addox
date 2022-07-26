@@ -22,11 +22,9 @@ export class GuildWidgetSettings extends BaseStructure {
         return this;
     }
 
-    /* TODO
-    
     public get channel() {
-        return this.client.caches.channels.cache.get(this.channelId!);
-    }*/
+        return this.guild?.caches.channels.cache.get(this.channelId!);
+    }
 
     public get guild() {
         return this.client.caches.guilds.cache.get(this.guildId)!;

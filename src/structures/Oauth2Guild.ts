@@ -7,7 +7,7 @@ import {
 
 import { BaseGuild } from './BaseGuild';
 
-export class Oauth2Guild extends BaseGuild {
+export class OAuth2Guild extends BaseGuild {
     public owner!: boolean;
     public permissions!: PermissionFlagsBitField;
 

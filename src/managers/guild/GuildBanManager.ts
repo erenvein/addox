@@ -6,6 +6,7 @@ import {
     type APIBan,
     type FetchBanOptions,
     type RESTPutAPIGuildBanJSONBody,
+    Collection,
     GuildBan,
 } from '../../index';
 
@@ -13,6 +14,7 @@ import { CachedManager } from '../CachedManager';
 
 export class GuildBanManager extends CachedManager<Snowflake, GuildBan> {
     public guild: Guild;
+
     public constructor(client: Client, guild: Guild) {
         super(client);
 
@@ -52,7 +54,7 @@ export class GuildBanManager extends CachedManager<Snowflake, GuildBan> {
                 query: { limit, before, after },
             });
 
-            this.cache.clear();
+            const result = new Collection<Snowflake, GuildBan>();
 
             for (const ban of bans) {
                 let _ban = this.cache.get(ban.user.id!)!;
@@ -61,8 +63,11 @@ export class GuildBanManager extends CachedManager<Snowflake, GuildBan> {
                     _ban = _ban._patch(ban);
                 }
 
-                this.cache.set(ban.user.id, _ban ?? new GuildBan(this.client, this.guild, ban));
+                result.set(ban.user.id, _ban ?? new GuildBan(this.client, this.guild, ban));
             }
+
+            this.cache.clear();
+            this.cache.concat(result);
 
             return this.cache;
         }
@@ -82,7 +87,9 @@ export class GuildBanManager extends CachedManager<Snowflake, GuildBan> {
     }
 
     public async remove(id: Snowflake, reason?: string) {
-        await this.client.rest.delete(`/guilds/${this.guild.id}/bans/${id}`, { reason: reason as string });
+        await this.client.rest.delete(`/guilds/${this.guild.id}/bans/${id}`, {
+            reason: reason as string,
+        });
         this.cache.delete(id);
     }
 }

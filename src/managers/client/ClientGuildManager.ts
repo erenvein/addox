@@ -25,7 +25,7 @@ import {
     GuildWidget,
     GuildPreview,
     Guild,
-    Oauth2Guild,
+    OAuth2Guild,
     GuildWelcomeScreen,
     GuildDataResolver,
     GuildMFALevel,
@@ -50,7 +50,7 @@ export class ClientGuildManager extends BaseManager {
     public async fetch(
         id?: Snowflake | null,
         { with_counts, force }: FetchGuildOptions = { with_counts: true, force: false }
-    ): Promise<CollectionLike<Snowflake, Guild | Oauth2Guild[]>> {
+    ): Promise<CollectionLike<Snowflake, Guild | OAuth2Guild[]>> {
         if (id) {
             let _guild = this.cache.get(id)!;
 
@@ -72,7 +72,7 @@ export class ClientGuildManager extends BaseManager {
                 '/users/@me/guilds'
             );
 
-            return guilds.map((guild) => new Oauth2Guild(this.client, guild));
+            return guilds.map((guild) => new OAuth2Guild(this.client, guild));
         }
     }
 

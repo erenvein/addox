@@ -195,6 +195,16 @@ export class Collection<K, V> extends Map<K, V> {
     }
 
     public concat(...collections: Collection<K, V>[]) {
+        for (const collection of [this, ...collections]) {
+            for (const [key, value] of collection.entries()) {
+                this.set(key, value);
+            }
+        }
+
+        return this;
+    }
+
+    public concated(...collections: Collection<K, V>[]) {
         const concated = new Collection<K, V>();
 
         for (const collection of [this, ...collections]) {

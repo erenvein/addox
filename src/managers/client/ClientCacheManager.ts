@@ -8,6 +8,7 @@ import {
     ClientUserManager,
     ClientStickerManager,
     Collection,
+    ClientChannelManager,
 } from '../../index';
 
 import { BaseManager } from '../BaseManager';
@@ -16,6 +17,7 @@ export class ClientCacheManager extends BaseManager {
     public guilds: ClientGuildManager;
     public users: ClientUserManager;
     public stickers: ClientStickerManager;
+    public channels: ClientChannelManager;
     public presences: Collection<Snowflake, Presence>;
 
     public constructor(client: Client) {
@@ -24,6 +26,7 @@ export class ClientCacheManager extends BaseManager {
         this.guilds = new ClientGuildManager(client);
         this.users = new ClientUserManager(client);
         this.stickers = new ClientStickerManager(client);
+        this.channels = new ClientChannelManager(client);
         this.presences = new Collection();
     }
 

@@ -7,6 +7,7 @@ import {
     type RESTPostAPIGuildPruneJSONBody,
     type RESTPatchAPIGuildWidgetSettingsJSONBody,
     type RESTPatchAPIGuildWelcomeScreenJSONBody,
+    type GuildBasedChannelResolvable,
     type EditGuildData,
     type GatewayGuildCreateDispatchDataWithShard,
     GuildDefaultMessageNotifications,
@@ -43,9 +44,9 @@ export class Guild extends BaseGuild {
     public explicitContentFilter!: keyof typeof GuildExplicitContentFilter;
     public hubType!: keyof typeof GuildHubType | null;
     public iconHash!: string | null;
-    public maxMembers!: number | null;
-    public maxPresences!: number | null;
-    public maxVideoChannelUsers!: number | null;
+    public maximumMembers!: number | null;
+    public maximumPresences!: number | null;
+    public maximumVideoChannelUsers!: number | null;
     public mfaLevel!: keyof typeof GuildMFALevel;
     public nsfwLevel!: keyof typeof GuildNSFWLevel;
     public ownerId!: Snowflake;
@@ -97,9 +98,9 @@ export class Guild extends BaseGuild {
             ? (GuildHubType[data.hub_type] as keyof typeof GuildHubType)
             : null;
         this.iconHash = data.icon_hash ?? null;
-        this.maxMembers = data.max_members ?? null;
-        this.maxPresences = data.max_presences ?? null;
-        this.maxVideoChannelUsers = data.max_video_channel_users ?? null;
+        this.maximumMembers = data.max_members ?? null;
+        this.maximumPresences = data.max_presences ?? null;
+        this.maximumVideoChannelUsers = data.max_video_channel_users ?? null;
         this.mfaLevel = GuildMFALevel[data.mfa_level] as keyof typeof GuildMFALevel;
         this.nsfwLevel = GuildNSFWLevel[data.nsfw_level] as keyof typeof GuildNSFWLevel;
         this.ownerId = data.owner_id;
@@ -184,8 +185,19 @@ export class Guild extends BaseGuild {
             }
         }
 
-        // CHANNELS
-        // - TODO
+        if ('channels' in data) {
+            for (const channel of data.channels) {
+                this.caches.channels.cache.set(
+                    channel.id,
+                    this.client.caches.channels.cache._add(
+                        channel.id,
+                        this.client.caches.channels._createChannel(
+                            channel
+                        ) as GuildBasedChannelResolvable
+                    ) as GuildBasedChannelResolvable
+                );
+            }
+        }
 
         // STAGE INSTANCES
         // - TODO

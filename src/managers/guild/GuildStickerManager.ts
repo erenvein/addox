@@ -9,12 +9,14 @@ import {
     type RESTPatchAPIGuildStickerJSONBody,
     DataResolver,
     Sticker,
+    Collection,
 } from '../../index';
 
 import { CachedManager } from '../CachedManager';
 
 export class GuildStickerManager extends CachedManager<Snowflake, Sticker> {
     public guild: Guild;
+
     public constructor(client: Client, guild: Guild) {
         super(client);
 
@@ -46,7 +48,7 @@ export class GuildStickerManager extends CachedManager<Snowflake, Sticker> {
                 `/guilds/${this.guild.id}/stickers`
             );
 
-            this.cache.clear();
+            const result = new Collection<Snowflake, Sticker>();
 
             for (const sticker of stickers) {
                 let _sticker = this.cache.get(sticker.id!);
@@ -55,8 +57,11 @@ export class GuildStickerManager extends CachedManager<Snowflake, Sticker> {
                     _sticker = _sticker._patch(sticker);
                 }
 
-                this.cache.set(sticker.id!, _sticker ?? new Sticker(this.client, sticker));
+                result.set(sticker.id!, _sticker ?? new Sticker(this.client, sticker));
             }
+
+            this.cache.clear();
+            this.cache.concat(result);
 
             return this.cache;
         }

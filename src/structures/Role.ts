@@ -7,6 +7,7 @@ import {
     type FetchOptions,
     type RoleData,
     type RoleTags,
+    type ImageOptions,
     HexDecimalToHex,
     PermissionFlagsBitField,
 } from '../index';
@@ -90,5 +91,13 @@ export class Role extends BaseStructure {
 
     public async setPosition(position: number, reason?: string) {
         return await this.guild.caches.roles.setPosition(this.id, position, reason);
+    }
+
+    public iconURL({ dynamic, size, format }: ImageOptions = { dynamic: true, size: 1024 }) {
+        return this.icon
+            ? `https://cdn.discordapp.com/role-icons/${this.id}/${this.icon}.${
+                  dynamic && this.icon.startsWith('a_') ? 'gif' : format ?? 'png'
+              }?size=${size ?? 1024}`
+            : null;
     }
 }

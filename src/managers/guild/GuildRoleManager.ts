@@ -7,7 +7,7 @@ import {
     type APIRole,
     type FetchOptions,
     type RoleData,
-    type Collection,
+    Collection,
     RoleDataResolver,
 } from '../../index';
 
@@ -15,6 +15,7 @@ import { CachedManager } from '../CachedManager';
 
 export class GuildRoleManager extends CachedManager<Snowflake, Role> {
     public guild: Guild;
+
     public constructor(client: Client, guild: Guild) {
         super(client);
 
@@ -22,7 +23,7 @@ export class GuildRoleManager extends CachedManager<Snowflake, Role> {
     }
 
     public async fetch(
-        id?: Snowflake | null,
+        id?: Snowflake,
         { force }: FetchOptions = { force: false }
     ): Promise<CollectionLike<Snowflake, Role>> {
         if (id) {
@@ -32,18 +33,16 @@ export class GuildRoleManager extends CachedManager<Snowflake, Role> {
                 return _role;
             }
 
-            const roles = (await this.fetch(null, { force: force as boolean })) as Collection<
+            const roles = (await this.fetch(undefined, { force: force as boolean })) as Collection<
                 Snowflake,
                 Role
             >;
 
-            const role = roles.get(id)!;
-
-            return this.cache._add(role.id, role);
+            return roles.get(id)!;
         } else {
             const roles = await this.client.rest.get<APIRole[]>(`/guilds/${this.guild.id}/roles`);
 
-            this.cache.clear();
+            const result = new Collection<Snowflake, Role>();
 
             for (const role of roles) {
                 let _role = this.cache.get(role.id!)!;
@@ -51,8 +50,12 @@ export class GuildRoleManager extends CachedManager<Snowflake, Role> {
                 if (_role) {
                     _role = _role._patch(role);
                 }
-                this.cache.set(role.id, _role ?? new Role(this.client, this.guild, role));
+                
+                result.set(role.id, _role ?? new Role(this.client, this.guild, role));
             }
+
+            this.cache.clear();
+            this.cache.concat(result);
 
             return this.cache;
         }

@@ -37,9 +37,37 @@ import type {
     GuildBan,
     Presence,
     GuildMember,
+    ChannelFlags,
+    MessageActivityType,
+    ChannelType,
+    VideoQualityMode,
+    APITextInputComponent,
+    APISelectMenuComponent,
+    APIButtonComponent,
+    ButtonStyle,
+    APISelectMenuOption,
+    TextInputStyle,
+    ButtonBuilder,
+    TextInputBuilder,
+    SelectMenuBuilder,
+    MessageFlags,
+    VoiceChannel,
+    DMChannel,
+    GroupDMChannel,
+    ThreadChannel,
+    NewsChannel,
+    TextChannel,
+    CategoryChannel,
+    StageChannel,
+    Message,
+    APITextChannel,
+    APIVoiceChannel,
+    APIGuildCategoryChannel,
+    APINewsChannel,
+    APIThreadChannel,
+    APIGroupDMChannel,
+    APIDMChannel,
 } from './index';
-
-import type { Stream } from 'node:stream';
 
 import type { BodyInit } from 'node-fetch';
 
@@ -86,6 +114,8 @@ export type SystemChannelFlagsBitsResolvable =
     | ArrayLike<number>
     | ArrayLike<keyof typeof GuildSystemChannelFlags>;
 
+export type ChannelFlagsBitsResolvable = ArrayLike<number> | ArrayLike<keyof typeof ChannelFlags>;
+
 export interface RequestManagerOptions {
     offset?: number;
     rejectOnRateLimit?: boolean;
@@ -99,14 +129,14 @@ export interface RequestManagerOptions {
 
 export interface FileData {
     name: string;
-    data: Buffer | Stream | string;
+    data: Buffer | string;
     type?: string;
 }
 
 export interface RawFileData {
     key?: string;
     name: string;
-    data: Buffer | Stream | string;
+    data: Buffer | string;
     type?: string;
 }
 
@@ -290,6 +320,124 @@ export interface PresenceClientStatusData {
     web?: PresenceStatus;
 }
 
+export interface EditGroupDMChannelData {
+    name?: string;
+    icon?: Buffer | string;
+}
+
+export type ChannelTypeResolvable = keyof typeof ChannelType | number;
+
+export type VoiceQualityModeResolvable = keyof typeof VideoQualityMode | number;
+
+export type ChannelOverwriteTypeResolvable = 'Role' | 'Member' | number;
+
+export interface ChannelOverwriteData {
+    id: Snowflake;
+    type: ChannelOverwriteTypeResolvable;
+    allow?: PermissionFlagsBitsResolvable;
+    deny?: PermissionFlagsBitsResolvable;
+}
+
+export interface EditGuildChannelData {
+    name: string;
+    type?: ChannelTypeResolvable;
+    topic?: string;
+    bitrate?: number;
+    user_limit?: number;
+    rate_limit_per_user?: number;
+    position?: number;
+    permission_overwrites?: ChannelOverwriteData[];
+    parent_id?: Snowflake;
+    nsfw?: boolean;
+    rtc_region?: string;
+    video_quality_mode?: VoiceQualityModeResolvable;
+    default_auto_archive_duration?: number;
+}
+
+export type EditChannelData = EditGuildChannelData | EditGroupDMChannelData;
+
+export interface CreateGuildChannelData extends EditGuildChannelData {
+    type?: ChannelTypeResolvable;
+}
+
+export interface MessageActivity {
+    type: keyof typeof MessageActivityType;
+    partyId: string | null;
+}
+
+export type APIAnyComponent = APIButtonComponent | APISelectMenuComponent | APITextInputComponent;
+
+export type AnyComponent = ButtonBuilder | SelectMenuBuilder | TextInputBuilder;
+
+export type ButtonStyleResolvable = keyof typeof ButtonStyle | number;
+
+//@ts-ignore
+export interface SelectMenuOption extends APISelectMenuOption {
+    emoji?: string;
+}
+
+export type TextInputStyleResolvable = keyof typeof TextInputStyle | number;
+
+export type MessageFlagsBitsResolvable = keyof typeof MessageFlags | number;
+
+export type TextBasedChannelResolvable =
+    | TextChannel
+    | DMChannel
+    | GroupDMChannel
+    | NewsChannel
+    | ThreadChannel;
+
+export type DMBasedChannelResolvable = DMChannel | GroupDMChannel;
+
+export type GuildTextBasedChannelResolvable = TextChannel | NewsChannel | ThreadChannel;
+
+export type VoiceBasedChannelResolvable = VoiceChannel | StageChannel;
+
+export type GuildBasedChannelResolvable =
+    | VoiceBasedChannelResolvable
+    | GuildTextBasedChannelResolvable
+    | CategoryChannel;
+
+export type AnyChannel = GuildBasedChannelResolvable | DMBasedChannelResolvable;
+
+export type APITextBasedChannelResolvable =
+    | APITextChannel
+    | APINewsChannel
+    | APIThreadChannel
+    | APIDMChannel
+    | APIGroupDMChannel;
+
+export type APIDMBasedChannelResolvable = APIDMChannel | APIGroupDMChannel;
+
+export type APIGuildTextBasedChannelResolvable = APITextChannel | APINewsChannel | APIThreadChannel;
+
+export type APIVoiceBasedChannelResolvable = APIVoiceChannel;
+
+export type APIGuildBasedChannelResolvable =
+    | APIVoiceBasedChannelResolvable
+    | APIGuildTextBasedChannelResolvable
+    | APIGuildCategoryChannel;
+
+export type APIAnyChannel =
+    | APITextChannel
+    | APIDMChannel
+    | APIGroupDMChannel
+    | APINewsChannel
+    | APIThreadChannel
+    | APIVoiceChannel
+    | APIGuildCategoryChannel;
+
+export interface MessageReaction {
+    count: number;
+    me: boolean;
+    emoji: string;
+}
+
+export interface FetchReactionOptions {
+    limit?: number;
+    after?: Snowflake;
+}
+
 export interface ClientEvents {
     ready: [client: Client];
     guildCreate: [guild: Guild];
@@ -320,6 +468,9 @@ export interface ClientEvents {
             nonce: string | null;
         }
     ];
+    messageCreate: [message: Message];
+    messageDelete: [message: Message];
+    messageUpdate: [oldMessage: Message, newMessage: Message];
     raw: [eventName: keyof typeof GatewayDispatchEvents, data: any];
     shardSpawn: [shard: WebSocketShard];
     shardReady: [shard: WebSocketShard];

@@ -1,9 +1,11 @@
 import {
     type Client,
     type Snowflake,
-    type Guild,
-    type APIPartialChannel,
+    type FetchOptions,
     SnowflakeUtil,
+    APIAnyChannel,
+    ChannelType,
+    ChannelFlagsBitField,
 } from '../index';
 
 import { BaseStructure } from './BaseStructure';
@@ -11,19 +13,20 @@ import { BaseStructure } from './BaseStructure';
 export class BaseChannel extends BaseStructure {
     public id!: Snowflake;
     public name!: string | null;
-    public guild: Guild;
+    public type!: keyof typeof ChannelType;
+    public flags!: ChannelFlagsBitField;
 
-    public constructor(client: Client, guild: Guild, data: APIPartialChannel) {
+    public constructor(client: Client, data: APIAnyChannel) {
         super(client);
-
-        this.guild = guild;
 
         this._patch(data);
     }
 
-    public override _patch(data: APIPartialChannel) {
+    public override _patch(data: APIAnyChannel) {
         this.id = data.id;
         this.name = data.name ?? null;
+        this.type = ChannelType[data.type] as keyof typeof ChannelType;
+        this.flags = new ChannelFlagsBitField(data.flags ?? 0);
 
         return this;
     }
@@ -37,16 +40,14 @@ export class BaseChannel extends BaseStructure {
     }
 
     public get url() {
-        return `https://discordapp.com/guilds/${this.guild.id}/channels/${this.id}`;
+        return `https://discordapp.com/channels/${this.id}`;
     }
 
-    /* TODO
-    
-    public get position() {
-        return this.guild.caches.channels.keyArray().indexOf(this.id);
+    public async delete() {
+        return await this.client.caches.channels.delete(this.id);
     }
 
     public async fetch(options?: FetchOptions) {
-        return await this.guild.caches.channels.fetch(this.id, options);
-    }*/
+        return await this.client.caches.channels.fetch(this.id, options);
+    }
 }

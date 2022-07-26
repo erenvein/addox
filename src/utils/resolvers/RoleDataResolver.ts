@@ -5,6 +5,8 @@ import {
     ColorResolver,
 } from '../../index';
 
+export const RolePattern = /<@&(\d{17,19})>/;
+
 export function RoleDataResolver(role: RoleData) {
     const res = role;
 

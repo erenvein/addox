@@ -5,7 +5,10 @@ import {
     type EditGuildMemberData,
     type Snowflake,
     type RESTPutAPIGuildBanJSONBody,
-    GuildMemberRoleManager,
+    type ImageOptions,
+    GuildMemberCacheManager,
+    PermissionFlagsBitField,
+    PermissionFlagsBitsResolver,
 } from '../index';
 
 import { BaseStructure } from './BaseStructure';
@@ -20,7 +23,8 @@ export class GuildMember extends BaseStructure {
     public nick!: string | null;
     public pending!: boolean;
     public premiumSinceTimestamp!: number;
-    public roles!: GuildMemberRoleManager;
+    public caches!: GuildMemberCacheManager;
+    #permissions!: number | null;
     public guild: Guild;
 
     public constructor(client: Client, guild: Guild, data: APIGuildMember) {
@@ -45,7 +49,11 @@ export class GuildMember extends BaseStructure {
         this.premiumSinceTimestamp = data.premium_since
             ? new Date(data.premium_since).getTime()
             : 0;
-        this.roles = new GuildMemberRoleManager(this.client, this.guild, this);
+        this.caches = new GuildMemberCacheManager(this.client, this.guild, this);
+
+        //@ts-ignore
+        this.#permissions = data.permissions ?? null;
+
         return this;
     }
 
@@ -75,5 +83,25 @@ export class GuildMember extends BaseStructure {
 
     public async unban(reason?: string) {
         return await this.guild.caches.bans.remove(this.id, reason);
+    }
+
+    public avatarURL({ dynamic, size, format }: ImageOptions = { dynamic: true, size: 1024 }) {
+        return this.avatar
+            ? `https://cdn.discordapp.com/guilds/${this.guild.id}/users/${this.id}/avatars/${
+                  this.avatar
+              }.${dynamic && this.avatar.startsWith('a_') ? 'gif' : format ?? 'png'}?size=${
+                  size ?? 1024
+              }`
+            : null;
+    }
+
+    public get permissions() {
+        const perms = this.#permissions;
+
+        if (perms) {
+            return new PermissionFlagsBitField(perms);
+        } else {
+            return this.caches.roles.permissions;
+        }
     }
 }
