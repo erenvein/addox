@@ -70,7 +70,7 @@ export class WebSocketManager {
     }
 
     public get ping() {
-        return Math.ceil( 
+        return Math.ceil(
             this.shards.reduce((accumulator, shard) => (accumulator as any) + shard.ping, 0) /
                 this.shards.size
         );
@@ -138,8 +138,7 @@ export class WebSocketManager {
     public async spawnShards(): Promise<boolean> {
         if (!this.shardQueue!.size) return false;
 
-        const [_shard] = this.shardQueue!;
-        const shard = _shard as WebSocketShard;
+        const [shard] = this.shardQueue!;
         this.spawnStreak++;
 
         this.shardQueue?.delete(shard);
