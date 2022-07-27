@@ -101,4 +101,64 @@ export class GuildChannelManager extends CachedManager<Snowflake, GuildBasedChan
     public async setPosition() {
         // TODO
     }
+
+    public async editOverwrite() {
+        // TODO
+    }
+
+    public async createOverwrite() {
+        // TODO
+    }
+
+    public async fetchInvites() {
+        // TODO
+    }
+
+    public async createInvite() {
+        // TODO
+    }
+
+    public async followNewsChannel() {
+        // TODO
+    }
+
+    public async sendTyping() {
+        // TODO
+    }
+
+    public async startThread() {
+        // TODO
+    }
+
+    public async joinThread() {
+        // TODO
+    }
+
+    public async leaveThread() {
+        // TODO
+    }
+
+    public async addThreadMember() {
+        // TODO
+    }
+
+    public async removeThreadMember() {
+        // TODO
+    }
+
+    public async fetchThreadMember() {
+        // TODO
+    }
+
+    public async fetchPublicArchivedThreads() {
+        // TODO
+    }
+
+    public async fetchPrivateArchivedThreads() {
+        // TODO
+    }
+
+    public async fetchJoinedThreads() {
+        // TODO
+    }
 }
