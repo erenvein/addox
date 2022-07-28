@@ -21,7 +21,7 @@ export class GuildBan extends BaseStructure {
         if ('reason' in data) {
             this.reason = data.reason;
         } else {
-            this.reason = null;
+            this.reason ??= null;
         }
 
         return this;

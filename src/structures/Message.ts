@@ -144,7 +144,7 @@ export class Message extends BaseStructure {
         if ('guild_id' in data) {
             this.guildId = data.guild_id ?? null;
         } else {
-            this.guildId = null;
+            this.guildId ??= null;
         }
 
         if ('member' in data) {
@@ -154,10 +154,10 @@ export class Message extends BaseStructure {
                     new GuildMember(this.client, this.guild, data.member as APIGuildMember)
                 );
             } else {
-                this.member = null;
+                this.member ??= null;
             }
         } else {
-            this.member = null;
+            this.member ??= null;
         }
 
         return this;

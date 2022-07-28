@@ -122,22 +122,32 @@ export class Guild extends BaseGuild {
 
         if ('unavailable' in data) {
             this.available = !data.unavailable;
+        } else {
+            this.available = true;
         }
 
         if ('shard_id' in data) {
-            this.shardId = data.shard_id!;
+            this.shardId = data.shard_id ?? null;
+        } else {
+            this.shardId ??= null;
         }
 
         if ('member_count' in data) {
             this.memberCount = data.member_count;
+        } else {
+            this.memberCount ??= 0;
         }
 
         if ('large' in data) {
             this.large = data.large;
+        } else {
+            this.large ??= false;
         }
 
         if ('joined_at' in data) {
             this.joinedAt = new Date(Date.parse(data.joined_at));
+        } else {
+            this.joinedAt ??= new Date();
         }
 
         this.caches = new GuildCacheManager(this.client, this);
