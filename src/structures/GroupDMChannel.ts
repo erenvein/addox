@@ -1,8 +1,8 @@
-import { APIGroupDMChannel, Client, Snowflake, deleteProperty } from '../index';
+import type { APIGroupDMChannel, Client, Snowflake } from '../index';
 
 import { BaseTextChannel } from './BaseTextChannel';
 
-class GroupDMChannel extends BaseTextChannel {
+export class GroupDMChannel extends BaseTextChannel {
     public applicationId!: string | null;
     public icon!: string | null;
     public ownerId!: Snowflake | null;
@@ -25,7 +25,3 @@ class GroupDMChannel extends BaseTextChannel {
         return this;
     }
 }
-
-GroupDMChannel.prototype = deleteProperty<GroupDMChannel>(GroupDMChannel.prototype, 'url');
-
-export { GroupDMChannel };

@@ -5,6 +5,7 @@ import {
     ChannelType,
     VideoQualityMode,
     CreateGuildChannelData,
+    OverwriteType,
 } from '../../index';
 
 export const ChannelPattern = /<#(!)?(\d{17,19})>/;
@@ -28,6 +29,11 @@ export async function ChannelDataResolver(channel: EditChannelData | CreateGuild
 
             if ('deny' in overwrite) {
                 overwrite.deny = new PermissionFlagsBitField().set(overwrite.deny!);
+            }
+
+            if ('type' in overwrite) {
+                if (typeof overwrite.type === 'string')
+                    overwrite.type = OverwriteType[overwrite.type!];
             }
         }
     }

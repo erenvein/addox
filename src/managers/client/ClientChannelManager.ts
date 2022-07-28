@@ -232,24 +232,7 @@ export class ClientChannelManager extends CachedManager<Snowflake, AnyChannel> {
         return _message;
     }
 
-    public async bulkDelete(channelId: Snowflake, size: number) {
-        const messages = await this.client.rest.post<APIMessage[]>(
-            `/channels/${channelId}/messages/bulk-delete`,
-            {
-                body: {
-                    messages: Array.from({ length: size }, () => ({})),
-                },
-            }
-        );
-
-        const _channel = this.cache.get(channelId)!;
-
-        if (_channel) {
-            for (const message of messages) {
-                (_channel as any).caches.messages.cache.delete(message.id);
-            }
-        }
-
-        return messages;
+    public async triggerTyping(id: Snowflake) {
+        await this.client.rest.post(`/channels/${id}/typing`);
     }
 }

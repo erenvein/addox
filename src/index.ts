@@ -95,6 +95,11 @@ export { TextChannel } from './structures/TextChannel';
 export { ThreadChannel } from './structures/ThreadChannel';
 export { NewsChannel } from './structures/NewsChannel';
 export { StageChannel } from './structures/StageChannel';
+export { Invite } from './structures/Invite';
+export { InviteApplication } from './structures/InviteApplication';
+export { ApplicationFlagsBitField } from './structures/ApplicationFlagsBitField';
+export { Team } from './structures/Team';
+export { TeamMember } from './structures/TeamMember';
 
 // UTILS
 export { PresenceDataResolver } from './utils/resolvers/PresenceDataResolver';
@@ -111,6 +116,7 @@ export { HexDecimalToHex } from './utils/colors/HexDecimalToHex';
 export { HexToHexDecimal } from './utils/colors/HexToHexDecimal';
 export { DataResolver } from './utils/resolvers/DataResolver';
 export { MessageFlagsBitsResolver } from './utils/resolvers/MessageFlagsBitsResolver';
+export { ApplicationFlagsBitsResolver } from './utils/resolvers/ApplicationFlagsBitsResolver';
 export * from './utils/resolvers/EmojiResolver';
 export * from './utils/resolvers/RoleDataResolver';
 export * from './utils/resolvers/ChannelDataResolver';

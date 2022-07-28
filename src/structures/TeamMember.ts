@@ -1,0 +1,35 @@
+import {
+    type APITeamMember,
+    type Client,
+    type Snowflake,
+    TeamMemberMembershipState,
+} from '../index';
+
+import { BaseStructure } from './BaseStructure';
+
+export class TeamMember extends BaseStructure {
+    public membershipState!: keyof typeof TeamMemberMembershipState;
+    public permissions!: string[];
+    public teamId!: Snowflake;
+    public userId!: Snowflake;
+
+    public constructor(client: Client, data: APITeamMember) {
+        super(client);
+
+        this._patch(data);
+    }
+    
+    public override _patch(data: APITeamMember) {
+        this.membershipState = TeamMemberMembershipState[
+            data.membership_state
+        ] as keyof typeof TeamMemberMembershipState;
+        this.permissions = data.permissions;
+        this.teamId = data.team_id;
+
+        return this;
+    }
+
+    public get user() {
+        return this.client.caches.users.cache.get(this.userId);
+    }
+}

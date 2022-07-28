@@ -13,10 +13,10 @@ export default class MessageDeleteHandler extends BaseWebSocketHandler {
                 const channel = guild.caches.channels.cache.get(d.channel_id);
 
                 if (channel) {
-                    const message = channel.caches.messages.get(d.id);
+                    const message = (channel as any).caches.messages.get(d.id);
 
                     if (message) {
-                        channel.caches.messages.cache.delete(d.id);
+                        (channel as any).caches.messages.cache.delete(d.id);
                         this.shard.manager.client.emit('messageDelete', message);
                     }
                 }
@@ -25,10 +25,10 @@ export default class MessageDeleteHandler extends BaseWebSocketHandler {
             const channel = this.shard.manager.client.caches.channels.cache.get(d.channel_id);
 
             if (channel) {
-                const message = channel.caches.messages.get(d.id);
+                const message = (channel as any).caches.messages.get(d.id);
 
                 if (message) {
-                    channel.caches.messages.cache.delete(d.id);
+                    (channel as any).caches.messages.cache.delete(d.id);
                     this.shard.manager.client.emit('messageDelete', message);
                 }
             }

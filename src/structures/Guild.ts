@@ -258,6 +258,14 @@ export class Guild extends BaseGuild {
             : null;
     }
 
+    public iconURL({ dynamic, size, format }: ImageOptions = { dynamic: true, size: 1024 }) {
+        return this.icon
+            ? `https://cdn.discordapp.com/icons/${this.id}/${this.icon}.${
+                  dynamic && this.icon.startsWith('a_') ? 'gif' : format ?? 'png'
+              }?size=${size ?? 1024}`
+            : null;
+    }
+
     public discoverySplashURL(
         { dynamic, size, format }: ImageOptions = { dynamic: true, size: 1024 }
     ) {
@@ -285,7 +293,7 @@ export class Guild extends BaseGuild {
     }
 
     public async fetchOwner() {
-        return await this.caches.members.fetch(this.ownerId) as GuildMember;
+        return (await this.caches.members.fetch(this.ownerId)) as GuildMember;
     }
 
     public async fetchPruneCount(options?: GuildFetchPruneOptions) {

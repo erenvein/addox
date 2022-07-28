@@ -9,7 +9,10 @@ export default class MessageCreateHandler extends BaseWebSocketHandler {
     public override handle({ d }: GatewayMessageCreateDispatch) {
         const message = new Message(this.shard.manager.client, d);
 
-        message.channel.caches.messages.cache.set(message.id, message);
+        if (message.channel) {
+            (message.channel as any).caches.messages.cache.set(message.id, message);
+        }
+
         this.shard.manager.client.emit('messageCreate', message);
     }
 }

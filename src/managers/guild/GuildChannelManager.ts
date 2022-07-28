@@ -7,9 +7,15 @@ import {
     type APIChannel,
     type RESTGetAPIGuildThreadsResult,
     type FetchOptions,
+    type EditGuildChannelPositionsData,
     type CollectionLike,
+    type ChannelOverwriteData,
     Collection,
     ChannelDataResolver,
+    PermissionFlagsBitField,
+    OverwriteType,
+    Message,
+    APIMessage,
 } from '../../index';
 
 import { CachedManager } from '../CachedManager';
@@ -98,16 +104,78 @@ export class GuildChannelManager extends CachedManager<Snowflake, GuildBasedChan
         // TODO
     }
 
-    public async setPosition() {
-        // TODO
+    public async setPosition(id: Snowflake, data: EditGuildChannelPositionsData) {
+        await this.client.rest.patch(`/guilds/${this.guild.id}/channels/`, {
+            body: {
+                id,
+                position: data.position,
+                lock_permissions: data.sync_permissions,
+                parent_id: data.parent_id,
+            },
+        });
     }
 
-    public async editOverwrite() {
-        // TODO
+    public async editOverwrite(id: Snowflake, data: ChannelOverwriteData, reason?: string) {
+        if ('allow' in data) {
+            data.allow = new PermissionFlagsBitField().set(data.allow!);
+        }
+
+        if ('deny' in data) {
+            data.deny = new PermissionFlagsBitField().set(data.deny!);
+        }
+
+        if (typeof data.type === 'string') data.type = OverwriteType[data.type!];
+
+        await this.client.rest.put(`/channels/${id}/permissions/${data.id}`, {
+            body: {
+                allow: data.allow,
+                deny: data.deny,
+                type: data.type,
+            },
+            reason: reason,
+        });
     }
 
-    public async createOverwrite() {
-        // TODO
+    public async createOverwrite(id: Snowflake, data: ChannelOverwriteData, reason?: string) {
+        await this.editOverwrite(id, data, reason);
+    }
+
+    public async deleteOverwrite(channelId: Snowflake, overwriteId: Snowflake, reason?: string) {
+        await this.client.rest.delete(`/channels/${channelId}/permissions/${overwriteId}`, {
+            reason: reason,
+        });
+    }
+
+    public async bulkDelete(channelId: Snowflake, size: number) {
+        const _channel = this.cache.get(channelId)!;
+        const deletions = new Collection<Snowflake, Message>();
+
+        if (_channel) {
+            const messages = await this.client.rest.post<APIMessage[]>(
+                `/channels/${channelId}/messages/bulk-delete`,
+                {
+                    body: {
+                        messages: (_channel as any).caches.messages.cache
+                            .slice(0, size)
+                            .map((message: Message) => message.id),
+                    },
+                }
+            );
+
+            for (const message of messages) {
+                const _message = (_channel as any).caches.messages.cache.get(message.id);
+
+                if (_message) {
+                    deletions.set(message.id, _message);
+                }
+
+                (_channel as any).caches.messages.cache.delete(message.id);
+            }
+
+            return deletions;
+        } else {
+            return null;
+        }
     }
 
     public async fetchInvites() {
@@ -119,10 +187,6 @@ export class GuildChannelManager extends CachedManager<Snowflake, GuildBasedChan
     }
 
     public async followNewsChannel() {
-        // TODO
-    }
-
-    public async sendTyping() {
         // TODO
     }
 

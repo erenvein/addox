@@ -60,6 +60,7 @@ import type {
     CategoryChannel,
     StageChannel,
     Message,
+    ApplicationFlags,
     APITextChannel,
     APIVoiceChannel,
     APIGuildCategoryChannel,
@@ -451,6 +452,16 @@ export interface CreateMessageData extends EditMessageData {
     tts?: boolean;
     stickers?: Snowflake[];
 }
+
+export interface EditGuildChannelPositionsData {
+    position?: number;
+    sync_permissions?: boolean;
+    parent_id?: Snowflake;
+}
+
+export type ApplicationFlagsBitsResolvable =
+    | ArrayLike<keyof typeof ApplicationFlags>
+    | ArrayLike<number>;
 
 export interface ClientEvents {
     ready: [client: Client];
