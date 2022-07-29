@@ -100,6 +100,8 @@ export { InviteApplication } from './structures/InviteApplication';
 export { ApplicationFlagsBitField } from './structures/ApplicationFlagsBitField';
 export { Team } from './structures/Team';
 export { TeamMember } from './structures/TeamMember';
+export { GuildScheduledEvent } from './structures/GuildScheduledEvent';
+export { MessageReference } from './structures/MessageReference';
 
 // UTILS
 export { PresenceDataResolver } from './utils/resolvers/PresenceDataResolver';

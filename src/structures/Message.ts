@@ -24,6 +24,7 @@ import {
     MessageType,
     GuildMember,
     type TextBasedChannelResolvable,
+    MessageReference,
 } from '../index';
 
 import { BaseStructure } from './BaseStructure';
@@ -44,7 +45,7 @@ export class Message extends BaseStructure {
     public id!: Snowflake;
     public interaction!: MessageInteraction | null;
     public mentions!: MessageMentionManager;
-    public messageReference!: Message | null;
+    public messageReference!: MessageReference | null;
     public nonce!: string | number | null;
     public pinned!: boolean;
     public rawPosition!: number | null;
@@ -115,11 +116,9 @@ export class Message extends BaseStructure {
             data.mention_everyone,
             this.guild ?? null
         );
-        /*this.messageReference = data.message_reference
-            ? this.channel
-                ? this.channel.caches.messages.cache.get(data.message_reference.message_id)
-                : null
-            : null;*/
+        this.messageReference = data.message_reference?.message_id
+            ? new MessageReference(this.client, data.message_reference)
+            : null;
         this.nonce = data.nonce ?? null;
         this.pinned = data.pinned;
         this.rawPosition = data.position ?? null;
@@ -187,9 +186,9 @@ export class Message extends BaseStructure {
         ) as TextBasedChannelResolvable;
     }
 
-    /*public get position() {
-        return this.channel ? this.channel.caches.messages.keyArray().indexOf(this.id) : null;
-    }*/
+    public get position() {
+        return this.channel ? this.channel.caches.messages.cache.keyArray().indexOf(this.id) : null;
+    }
 
     public get url() {
         return `https://discordapp.com/channels/${this.guildId ?? '@me'}/${this.channelId}/${

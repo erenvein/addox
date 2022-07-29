@@ -18,13 +18,14 @@ export class TeamMember extends BaseStructure {
 
         this._patch(data);
     }
-    
+
     public override _patch(data: APITeamMember) {
         this.membershipState = TeamMemberMembershipState[
             data.membership_state
         ] as keyof typeof TeamMemberMembershipState;
         this.permissions = data.permissions;
         this.teamId = data.team_id;
+        this.userId = data.user.id;
 
         return this;
     }

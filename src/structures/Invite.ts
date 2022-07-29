@@ -1,13 +1,13 @@
 import {
-    APIInvite,
-    Client,
-    Snowflake,
+    type APIInvite,
+    type Client,
+    type Snowflake,
     User,
     InviteTargetType,
-    GatewayInviteCreateDispatchData,
+    type GatewayInviteCreateDispatchData,
     InviteApplication,
+    GuildScheduledEvent,
 } from '../index';
-
 import { BaseStructure } from './BaseStructure';
 
 export class Invite extends BaseStructure {
@@ -26,6 +26,7 @@ export class Invite extends BaseStructure {
     public maximumAge!: number | null;
     public maximumUses!: number | null;
     public targetApplication!: InviteApplication | null;
+    public guildScheduledEvent!: GuildScheduledEvent | null;
 
     public constructor(client: Client, data: GatewayInviteCreateDispatchData | APIInvite) {
         super(client);
@@ -121,8 +122,13 @@ export class Invite extends BaseStructure {
             ? new InviteApplication(this.client, data.target_application)
             : null;
 
-        // GUILD SCHEDULED EVENT
-        // - TODO
+        if ('guild_scheduled_event' in data) {
+            this.guildScheduledEvent = data.guild_scheduled_event
+                ? new GuildScheduledEvent(this.client, data.guild_scheduled_event)
+                : null;
+        } else {
+            this.guildScheduledEvent ??= null;
+        }
 
         return this;
     }

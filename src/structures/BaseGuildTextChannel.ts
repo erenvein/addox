@@ -1,20 +1,20 @@
-import type { Client, APIGuildTextBasedChannelResolvable, Snowflake, Guild } from '../index';
+import type { Client, APIGuildTextBasedChannelResolvable, Guild } from '../index';
 
-import { BaseGuildChannel } from './BaseGuildChannel';
+import { BaseTextChannel } from './BaseTextChannel';
 
-export class BaseGuildTextChannel extends BaseGuildChannel {
-    public lastMessageId!: Snowflake | null;
+export class BaseGuildTextChannel extends BaseTextChannel {
+    public guild: Guild;
 
     public constructor(client: Client, guild: Guild, data: APIGuildTextBasedChannelResolvable) {
-        super(client, guild, data);
+        super(client, data);
+
+        this.guild = guild;
 
         this._patch(data);
     }
 
     public override _patch(data: APIGuildTextBasedChannelResolvable) {
         super._patch(data);
-
-        this.lastMessageId = data.last_message_id ?? null;
 
         return this;
     }
