@@ -49,7 +49,7 @@ export class GuildMember extends BaseStructure {
         this.premiumSinceTimestamp = data.premium_since
             ? new Date(data.premium_since).getTime()
             : 0;
-        this.caches = new GuildMemberCacheManager(this.client, this.guild, this);
+        this.caches ??= new GuildMemberCacheManager(this.client, this.guild, this);
 
         //@ts-ignore
         this.#permissions = data.permissions ?? null;

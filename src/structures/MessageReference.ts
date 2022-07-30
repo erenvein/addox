@@ -30,7 +30,8 @@ export class MessageReference extends BaseStructure {
     }
 
     public get message() {
-        return this.channel?.caches.messages.cache.get(this.messageId!);
+        // @ts-ignore
+        return this.channel?.caches?.messages.cache.get(this.messageId!);
     }
 
     public get channel(): TextBasedChannelResolvable | undefined {

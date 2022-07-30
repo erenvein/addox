@@ -70,6 +70,10 @@ import type {
     APIDMChannel,
     RESTPatchAPIChannelMessageJSONBody,
     APIMessageReference,
+    InviteTargetType,
+    RESTPostAPIChannelInviteJSONBody,
+    APIEmbed,
+    EmbedBuilder,
 } from './index';
 
 import type { BodyInit } from 'node-fetch';
@@ -109,7 +113,7 @@ export type PermissionFlagsBitsResolvable =
 
 export type UserFlagsBitsResolvable = ArrayLike<number> | ArrayLike<keyof typeof UserFlags>;
 
-export type ColorResolvable = number | keyof typeof Colors;
+export type ColorResolvable = number | `#${string}` | keyof typeof Colors;
 
 export type WebSocketEvents = 'open' | 'message' | 'error' | 'close';
 
@@ -442,15 +446,23 @@ export interface FetchReactionOptions {
 }
 
 //@ts-ignore
+export interface EmbedData extends APIEmbed {
+    color?: ColorResolvable;
+}
+
+//@ts-ignore
 export interface EditMessageData extends RESTPatchAPIChannelMessageJSONBody {
     files?: (Buffer | string)[];
     flags?: MessageFlagsBitsResolvable;
+    embeds: (EmbedData | EmbedBuilder)[];
 }
 
+//@ts-ignore
 export interface CreateMessageData extends EditMessageData {
     message_reference?: APIMessageReference;
     tts?: boolean;
     stickers?: Snowflake[];
+    embeds: (EmbedData | EmbedBuilder)[];
 }
 
 export interface EditGuildChannelPositionsData {
@@ -462,6 +474,19 @@ export interface EditGuildChannelPositionsData {
 export type ApplicationFlagsBitsResolvable =
     | ArrayLike<keyof typeof ApplicationFlags>
     | ArrayLike<number>;
+
+export type InviteTargetTypeResolvable = keyof typeof InviteTargetType | number;
+
+//@ts-ignore
+export interface CreateInviteData extends RESTPostAPIChannelInviteJSONBody {
+    target_type?: InviteTargetTypeResolvable;
+}
+
+export interface FetchInviteOptions extends FetchOptions {
+    with_counts?: boolean;
+    with_expiration?: boolean;
+    scheduled_event_id?: Snowflake;
+}
 
 export interface ClientEvents {
     ready: [client: Client];

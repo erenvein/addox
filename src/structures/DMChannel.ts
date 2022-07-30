@@ -1,9 +1,10 @@
-import { type APIDMChannel, type Client, User } from '../index';
+import { type APIDMChannel, type Client, User, DMChannelCacheManager } from '../index';
 
 import { BaseTextChannel } from './BaseTextChannel';
 
 export class DMChannel extends BaseTextChannel {
     public recipient!: User;
+    public caches!: DMChannelCacheManager;
 
     public constructor(client: Client, data: APIDMChannel) {
         super(client, data);
@@ -27,6 +28,8 @@ export class DMChannel extends BaseTextChannel {
             this.recipient = _user;
             this.client.caches.users.cache.set(_user.id, _user);
         }
+
+        this.caches ??= new DMChannelCacheManager(this.client, this);
 
         return this;
     }

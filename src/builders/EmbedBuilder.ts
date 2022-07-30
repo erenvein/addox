@@ -1,12 +1,14 @@
-import type {
-    APIEmbed,
-    APIEmbedAuthor,
-    APIEmbedField,
-    APIEmbedFooter,
-    APIEmbedImage,
-    APIEmbedProvider,
-    APIEmbedThumbnail,
-    APIEmbedVideo,
+import {
+    type APIEmbed,
+    type APIEmbedAuthor,
+    type APIEmbedField,
+    type APIEmbedFooter,
+    type APIEmbedImage,
+    type APIEmbedProvider,
+    type APIEmbedThumbnail,
+    type APIEmbedVideo,
+    type ColorResolvable,
+    ColorResolver,
 } from '../index';
 
 import { BaseBuilder } from './BaseBuilder';
@@ -46,8 +48,8 @@ export class EmbedBuilder extends BaseBuilder {
         return this._change('author', author);
     }
 
-    public setColor(color: number) {
-        return this._change('color', color);
+    public setColor(color: ColorResolvable) {
+        return this._change('color', ColorResolver(color));
     }
 
     public setDescription(description: string) {
@@ -90,8 +92,15 @@ export class EmbedBuilder extends BaseBuilder {
         return this._change('thumbnail', thumbnail);
     }
 
-    public setTimestamp(timestamp: string) {
-        return this._change('timestamp', timestamp);
+    public setTimestamp(timestamp: number | string | Date) {
+        return this._change(
+            'timestamp',
+            timestamp instanceof Date
+                ? timestamp.toISOString()
+                : typeof timestamp === 'number'
+                ? new Date(timestamp).toISOString()
+                : timestamp
+        );
     }
 
     public setTitle(title: string) {

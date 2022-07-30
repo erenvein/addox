@@ -150,7 +150,7 @@ export class Guild extends BaseGuild {
             this.joinedAt ??= new Date();
         }
 
-        this.caches = new GuildCacheManager(this.client, this);
+        this.caches ??= new GuildCacheManager(this.client, this);
 
         if ('emojis' in data) {
             for (const emoji of data.emojis) {

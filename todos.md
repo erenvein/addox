@@ -1,6 +1,6 @@
--   Channels
 -   Stage Instances
 -   Invites
+-   Channels
 -   Integrations
 -   Guild Scheduled Events
 -   Voice States

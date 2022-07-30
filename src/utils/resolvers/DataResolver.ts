@@ -19,7 +19,7 @@ export class DataResolver {
             };
         } else if (DataResolver.HttpPattern.test(filePathOrUrlOrBuffer)) {
             const response = await fetch(filePathOrUrlOrBuffer);
-            const buffer = Buffer.from(await response.arrayBuffer());
+            const buffer = await response.buffer();
 
             return {
                 data: buffer,

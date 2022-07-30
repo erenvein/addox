@@ -98,7 +98,10 @@ export class RequestManager {
                 for (let i = 0; i < options.files.length; i++) {
                     const file = options.files[i]!;
 
-                    formData.append(file.key ?? `files[${i}]`, file.data, file.name);
+                    formData.append(file.key ?? `files[${i}]`, file.data, {
+                        filename: file.name,
+                        contentType: file.type,
+                    });
                 }
             }
 

@@ -1,15 +1,17 @@
-import type {
-    Client,
-    Guild,
-    APIGuildBasedChannelResolvable,
-    FetchOptions,
-    GuildBasedChannelResolvable,
+import {
+    type Client,
+    type Guild,
+    type APIGuildBasedChannelResolvable,
+    type FetchOptions,
+    type GuildBasedChannelResolvable,
+    GuildChannelCacheManager,
 } from '../index';
 
 import { BaseChannel } from './BaseChannel';
 
 export class BaseGuildChannel extends BaseChannel {
     public guild: Guild;
+    public caches!: GuildChannelCacheManager;
 
     public constructor(client: Client, guild: Guild, data: APIGuildBasedChannelResolvable) {
         super(client, data);
@@ -21,6 +23,8 @@ export class BaseGuildChannel extends BaseChannel {
 
     public override _patch(data: APIGuildBasedChannelResolvable) {
         super._patch(data);
+
+        this.caches ??= new GuildChannelCacheManager(this.client, this);
 
         return this;
     }

@@ -1,4 +1,3 @@
-import { Message } from './../../structures/Message';
 import {
     type Snowflake,
     type Client,
@@ -18,6 +17,8 @@ import {
     MessageFlagsBitField,
     deleteProperty,
     Collection,
+    ColorResolver,
+    Message,
 } from '../../index';
 
 import { CachedManager } from '../CachedManager';
@@ -77,7 +78,10 @@ export class ClientChannelManager extends CachedManager<Snowflake, AnyChannel> {
         return this.cache._add(channel.id, _channel ?? this._createChannel(channel));
     }
 
-    public async fetch(id: Snowflake, { force }: FetchOptions = { force: false }) {
+    public async fetch(
+        id: Snowflake,
+        { force }: FetchOptions = { force: false }
+    ): Promise<AnyChannel> {
         let _channel = this.cache.get(id)!;
 
         if (!force && _channel) {
@@ -151,8 +155,22 @@ export class ClientChannelManager extends CachedManager<Snowflake, AnyChannel> {
         messageId: Snowflake,
         data: EditMessageData
     ): Promise<Message> {
-        // @ts-ignore
-        data.files = data.files.map(async (file) => await DataResolver.resolveFile(file));
+        if (data.files) {
+            const files = [];
+
+            for await (const file of data.files) {
+                files.push(await DataResolver.resolveFile(file));
+            }
+
+            //@ts-ignore
+            data.files = files;
+        }
+
+        if (data.embeds) {
+            for (const embed of data.embeds) {
+                embed.color &&= ColorResolver(embed.color);
+            }
+        }
 
         if ('flags' in data) {
             data.flags = new MessageFlagsBitField().set(MessageFlagsBitsResolver(data.flags!));
@@ -187,8 +205,22 @@ export class ClientChannelManager extends CachedManager<Snowflake, AnyChannel> {
     }
 
     public async createMessage(channelId: Snowflake, data: CreateMessageData) {
-        // @ts-ignore
-        data.files = data.files.map(async (file) => await DataResolver.resolveFile(file));
+        if (data.files) {
+            const files = [];
+
+            for await (const file of data.files) {
+                files.push(await DataResolver.resolveFile(file));
+            }
+
+            //@ts-ignore
+            data.files = files;
+        }
+
+        if (data.embeds) {
+            for (const embed of data.embeds) {
+                embed.color &&= ColorResolver(embed.color);
+            }
+        }
 
         if ('flags' in data) {
             data.flags = new MessageFlagsBitField().set(MessageFlagsBitsResolver(data.flags!));
@@ -211,7 +243,7 @@ export class ClientChannelManager extends CachedManager<Snowflake, AnyChannel> {
         const _channel = this.cache.get(channelId)!;
 
         if (_channel) {
-            (_channel as any).caches.messages.cache.set(message.id, _message);
+            (_channel as any).caches?.messages?.cache.set(message.id, _message);
         }
 
         return _message;

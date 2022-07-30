@@ -43,8 +43,11 @@ export { ClientChannelManager } from './managers/client/ClientChannelManager';
 export { MessageMentionManager } from './managers/messages/MessageMentionManager';
 export { MessageReactionManager } from './managers/messages/MessageReactionManager';
 export { MessageCacheManager } from './managers/messages/MessageCacheManager';
-export { ChannelCacheManager } from './managers/channels/ChannelCacheManager';
 export { ChannelMessageManager } from './managers/channels/ChannelMessageManager';
+export { DMChannelCacheManager } from './managers/channels/DMChannelCacheManager';
+export { ChannelInviteManager } from './managers/channels/ChannelInviteManager';
+export { GuildChannelCacheManager } from './managers/channels/GuildChannelCacheManager';
+export { TextChannelCacheManager } from './managers/channels/TextChannelCacheManager';
 export { GuildMemberCacheManager } from './managers/members/GuildMemberCacheManager';
 
 // STRUCTURES

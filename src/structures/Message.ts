@@ -122,7 +122,7 @@ export class Message extends BaseStructure {
         this.nonce = data.nonce ?? null;
         this.pinned = data.pinned;
         this.rawPosition = data.position ?? null;
-        this.caches = new MessageCacheManager(this, data.reactions ?? [], this.client);
+        this.caches ??= new MessageCacheManager(this, data.reactions ?? [], this.client);
         this.stickers = [];
         this.threadId = data.thread?.id ?? null;
         this.createdTimestamp = new Date(data.timestamp).getTime();
@@ -187,7 +187,8 @@ export class Message extends BaseStructure {
     }
 
     public get position() {
-        return this.channel ? this.channel.caches.messages.cache.keyArray().indexOf(this.id) : null;
+        // @ts-ignore
+        return this.channel ? this.channel.caches?.messages.cache.keyArray().indexOf(this.id) : null;
     }
 
     public get url() {
