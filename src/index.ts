@@ -49,6 +49,7 @@ export { ChannelInviteManager } from './managers/channels/ChannelInviteManager';
 export { GuildChannelCacheManager } from './managers/channels/GuildChannelCacheManager';
 export { TextChannelCacheManager } from './managers/channels/TextChannelCacheManager';
 export { GuildMemberCacheManager } from './managers/members/GuildMemberCacheManager';
+export { GuildScheduledEventManager } from './managers/guild/GuildScheduledEventManager';
 
 // STRUCTURES
 export { BitField } from './structures/base/BitField';
@@ -62,7 +63,7 @@ export { BaseStructure } from './structures/base/BaseStructure';
 export { OAuth2Guild } from './structures/guild/OAuth2Guild';
 export { BaseGuild } from './structures/channels/BaseGuild';
 export { GuildEmoji } from './structures/guild/GuildEmoji';
-export { Role } from './structures/Role';
+export { Role } from './structures/guild/Role';
 export { BaseChannel } from './structures/channels/BaseChannel';
 export { GuildWidgetChannel } from './structures/guild/GuildWidgetChannel';
 export { GuildWidgetMember } from './structures/guild/GuildWidgetMember';
@@ -122,6 +123,7 @@ export { HexToHexDecimal } from './utils/colors/HexToHexDecimal';
 export { DataResolver } from './utils/resolvers/DataResolver';
 export { MessageFlagsBitsResolver } from './utils/resolvers/MessageFlagsBitsResolver';
 export { ApplicationFlagsBitsResolver } from './utils/resolvers/ApplicationFlagsBitsResolver';
+export { GuildScheduledEventDataResolver } from "./utils/resolvers/GuildScheduledEventDataResolver";
 export * from './utils/resolvers/EmojiResolver';
 export * from './utils/resolvers/RoleDataResolver';
 export * from './utils/resolvers/ChannelDataResolver';

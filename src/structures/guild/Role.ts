@@ -10,9 +10,9 @@ import {
     type ImageOptions,
     HexDecimalToHex,
     PermissionFlagsBitField,
-} from '../index';
+} from '../../index';
 
-import { BaseStructure } from './base/BaseStructure';
+import { BaseStructure } from '../base/BaseStructure';
 
 export class Role extends BaseStructure {
     public id!: Snowflake;

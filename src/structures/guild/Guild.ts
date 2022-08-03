@@ -172,7 +172,7 @@ export class Guild extends BaseGuild {
 
         if ('presences' in data) {
             for (const presence of data.presences) {
-                this.client.caches.presences.set(
+                this.caches.presences.set(
                     presence.user.id,
                     new Presence(this.client, Object.assign(presence, { guild_id: this.id }))
                 );

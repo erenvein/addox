@@ -3,7 +3,9 @@ import {
     type APIGuildScheduledEvent,
     type APIGuildScheduledEventEntityMetadata,
     type Snowflake,
+    type EditGuildScheduledEventData,
     type ImageOptions,
+    type FetchGuildScheduledEventOptions,
     GuildScheduledEventEntityType,
     GuildScheduledEventPrivacyLevel,
     GuildScheduledEventStatus,
@@ -101,11 +103,19 @@ export class GuildScheduledEvent extends BaseStructure {
     }
 
     public async delete() {
-        // TODO
+        await this.guild!.caches.scheduledEvents.delete(this.id);
     }
 
-    public async edit() {
-        // TODO
+    public async edit(data: EditGuildScheduledEventData, reason?: string) {
+        return await this.guild!.caches.scheduledEvents.edit(this.id, data, reason);
+    }
+
+    public async fetch(options?: FetchGuildScheduledEventOptions) {
+        return await this.guild!.caches.scheduledEvents.fetch(this.id, options);
+    }
+
+    public async fetchUsers() {
+        return await this.guild!.caches.scheduledEvents.fetchUsers(this.id);
     }
 
     public async createInvite() {

@@ -1,12 +1,16 @@
 import {
     type Client,
     type Guild,
+    type Snowflake,
+    type Presence,
     GuildEmojiManager,
     GuildRoleManager,
     GuildStickerManager,
     GuildBanManager,
     GuildMemberManager,
     GuildChannelManager,
+    GuildScheduledEventManager,
+    Collection,
 } from '../../index';
 
 import { BaseManager } from '../BaseManager';
@@ -19,6 +23,8 @@ export class GuildCacheManager extends BaseManager {
     public bans: GuildBanManager;
     public members: GuildMemberManager;
     public channels: GuildChannelManager;
+    public scheduledEvents: GuildScheduledEventManager;
+    public presences: Collection<Snowflake, Presence>;
 
     public constructor(client: Client, guild: Guild) {
         super(client);
@@ -31,5 +37,7 @@ export class GuildCacheManager extends BaseManager {
         this.bans = new GuildBanManager(client, guild);
         this.members = new GuildMemberManager(client, guild);
         this.channels = new GuildChannelManager(client, guild);
+        this.scheduledEvents = new GuildScheduledEventManager(client, guild);
+        this.presences = new Collection();
     }
 }

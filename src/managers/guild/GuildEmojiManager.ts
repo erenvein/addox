@@ -6,8 +6,8 @@ import {
     type CollectionLike,
     type APIEmoji,
     type FetchOptions,
-    type RESTPostAPIGuildEmojiJSONBody,
-    type RESTPatchAPIGuildEmojiJSONBody,
+    type CreateEmojiData,
+    type EditEmojiData,
     Collection,
     DataResolver,
 } from '../../index';
@@ -70,7 +70,7 @@ export class GuildEmojiManager extends CachedManager<Snowflake, GuildEmoji> {
         }
     }
 
-    public async create(data: RESTPostAPIGuildEmojiJSONBody, reason?: string) {
+    public async create(data: CreateEmojiData, reason?: string) {
         const resolvedImage = await DataResolver.resolveImage(data.image as string, 'image/jpeg');
 
         data.image = resolvedImage;
@@ -90,7 +90,7 @@ export class GuildEmojiManager extends CachedManager<Snowflake, GuildEmoji> {
         this.cache.delete(id);
     }
 
-    public async edit(id: Snowflake, data: RESTPatchAPIGuildEmojiJSONBody, reason?: string) {
+    public async edit(id: Snowflake, data: EditEmojiData, reason?: string) {
         const emoji = await this.client.rest.patch<APIEmoji>(
             `/guilds/${this.guild.id}/emojis/${id}`,
             { body: data, reason: reason as string }

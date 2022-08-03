@@ -18,7 +18,6 @@ export class ClientCacheManager extends BaseManager {
     public users: ClientUserManager;
     public stickers: ClientStickerManager;
     public channels: ClientChannelManager;
-    public presences: Collection<Snowflake, Presence>;
 
     public constructor(client: Client) {
         super(client);
@@ -27,7 +26,6 @@ export class ClientCacheManager extends BaseManager {
         this.users = new ClientUserManager(client);
         this.stickers = new ClientStickerManager(client);
         this.channels = new ClientChannelManager(client);
-        this.presences = new Collection();
     }
 
     public get emojis() {
@@ -41,6 +39,13 @@ export class ClientCacheManager extends BaseManager {
         return this.client.caches.guilds.cache.reduce(
             (accumulator, guild) => (accumulator as any).concat(guild.caches.roles.cache),
             new Collection<Snowflake, Role>()
+        );
+    }
+
+    public get presences() {
+        return this.client.caches.guilds.cache.reduce(
+            (accumulator, guild) => (accumulator as any).concat(guild.caches.presences),
+            new Collection<Snowflake, Presence>()
         );
     }
 }

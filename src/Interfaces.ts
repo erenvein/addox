@@ -19,6 +19,7 @@ import type {
     Collection,
     Guild,
     GatewayDispatchEvents,
+    User,
     GuildEmoji,
     GatewayActivityAssets,
     GuildSystemChannelFlags,
@@ -74,6 +75,12 @@ import type {
     RESTPostAPIChannelInviteJSONBody,
     APIEmbed,
     EmbedBuilder,
+    RESTPostAPIGuildScheduledEventJSONBody,
+    GuildScheduledEventPrivacyLevel,
+    GuildScheduledEventEntityType,
+    RESTPostAPIGuildEmojiJSONBody,
+    RESTPatchAPIGuildScheduledEventJSONBody,
+    GuildScheduledEventStatus,
 } from './index';
 
 import type { BodyInit } from 'node-fetch';
@@ -486,6 +493,56 @@ export interface FetchInviteOptions extends FetchOptions {
     with_counts?: boolean;
     with_expiration?: boolean;
     scheduled_event_id?: Snowflake;
+}
+
+export interface FetchGuildScheduledEventOptions extends FetchOptions {
+    with_user_count?: boolean;
+}
+
+export type GuildScheduledEventPrivacyLevelResolvable =
+    | keyof typeof GuildScheduledEventPrivacyLevel
+    | number;
+
+export type GuildScheduledEventEntityTypeResolvable =
+    | keyof typeof GuildScheduledEventEntityType
+    | number;
+
+export type GuildScheduledEventStatusResolvable = keyof typeof GuildScheduledEventStatus | number;
+
+//@ts-ignore
+export interface CreateGuildScheduledEventData extends RESTPostAPIGuildScheduledEventJSONBody {
+    privacy_level?: GuildScheduledEventPrivacyLevelResolvable;
+    scheduled_start_time: number;
+    scheduled_end_time?: number;
+    entity_type: GuildScheduledEventEntityTypeResolvable;
+    image?: string | Buffer;
+}
+
+//@ts-ignore
+export interface EditGuildScheduledEventData extends RESTPatchAPIGuildScheduledEventJSONBody {
+    privacy_level?: GuildScheduledEventPrivacyLevelResolvable;
+    scheduled_start_time?: number;
+    scheduled_end_time?: number;
+    entity_type?: GuildScheduledEventEntityTypeResolvable;
+    image?: string | Buffer;
+    status?: GuildScheduledEventStatusResolvable;
+}
+
+//@ts-ignore
+export interface CreateEmojiData extends RESTPostAPIGuildEmojiJSONBody {
+    image: string | Buffer;
+    roles?: Snowflake[];
+}
+
+export interface EditEmojiData {
+    name?: string;
+    roles?: Snowflake[];
+}
+
+export interface GuildScheduledEventUserData {
+    guildScheduledEventId: Snowflake;
+    user: User;
+    member: GuildMember | null;
 }
 
 export interface ClientEvents {
