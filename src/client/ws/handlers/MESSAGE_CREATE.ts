@@ -1,4 +1,4 @@
-import { Message } from './../../../structures/Message';
+import { Message } from '../../../structures/channels/Message';
 import { type GatewayMessageCreateDispatch, BaseWebSocketHandler } from '../../../index';
 
 export default class MessageCreateHandler extends BaseWebSocketHandler {

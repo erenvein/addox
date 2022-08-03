@@ -129,7 +129,7 @@ export class WebSocketManager {
         this.shardList = null;
         this.#token = null;
 
-        this.shards.forEach((shard) => shard.close(1000));
+        this.shards.forEach((shard) => shard.close(1000, true, true));
 
         this.shards.clear();
         this.shardQueue?.clear();
@@ -230,7 +230,7 @@ export class WebSocketManager {
 
         const shard = this.shards.get(id)!;
 
-        shard.close(1000, false);
+        shard.close(1000, false, true);
 
         this.shards.delete(id);
         this.shardQueue?.add(shard);

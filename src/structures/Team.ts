@@ -7,7 +7,7 @@ import {
     TeamMember,
 } from '../index';
 
-import { BaseStructure } from './BaseStructure';
+import { BaseStructure } from './base/BaseStructure';
 
 export class Team extends BaseStructure {
     public icon!: string | null;

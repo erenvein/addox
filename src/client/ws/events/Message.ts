@@ -31,7 +31,7 @@ export default class WebSocketMessageEvent extends BaseWebSocketEvent {
                     return;
                 }
 
-                this.shard.close(1000);
+                this.shard.close(1000, true, false);
                 this.shard.identify();
                 break;
             case GatewayOpcodes.Reconnect:

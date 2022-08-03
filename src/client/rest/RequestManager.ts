@@ -14,7 +14,7 @@ import FormData from 'form-data';
 
 export class RequestManager {
     public queue = new AsyncQueue();
-    public token: string | undefined;
+    public token: string | null | undefined;
     public rejectOnRateLimit: boolean;
     public offset: number;
     public baseURL: string;
@@ -152,7 +152,7 @@ export class RequestManager {
             } else if (status === 400) {
                 throw new HTTPError(status, options.method, fullRoute, 'Bad Request');
             } else if (status === 401) {
-                this.token = undefined;
+                this.token = null;
 
                 throw new HTTPError(status, options.method, fullRoute, 'Unauthorized');
             } else if (status === 402) {

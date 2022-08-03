@@ -5,7 +5,7 @@ import {
     TeamMemberMembershipState,
 } from '../index';
 
-import { BaseStructure } from './BaseStructure';
+import { BaseStructure } from './base/BaseStructure';
 
 export class TeamMember extends BaseStructure {
     public membershipState!: keyof typeof TeamMemberMembershipState;

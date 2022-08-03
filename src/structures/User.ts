@@ -8,7 +8,7 @@ import {
     type ImageOptions,
 } from '../index';
 
-import { BaseStructure } from './BaseStructure';
+import { BaseStructure } from './base/BaseStructure';
 
 export class User extends BaseStructure {
     public id!: Snowflake;

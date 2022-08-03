@@ -9,7 +9,7 @@ import {
     User,
 } from '../index';
 
-import { BaseStructure } from './BaseStructure';
+import { BaseStructure } from './base/BaseStructure';
 
 export class Sticker extends BaseStructure {
     public id!: Snowflake;

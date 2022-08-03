@@ -7,7 +7,7 @@ import {
     SnowflakeUtil,
 } from '../index';
 
-import { BaseStructure } from './BaseStructure';
+import { BaseStructure } from './base/BaseStructure';
 
 export class StickerPack extends BaseStructure {
     public bannerAssetId!: Snowflake | null;

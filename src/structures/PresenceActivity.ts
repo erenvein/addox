@@ -12,7 +12,7 @@ import {
     PresenceActivityFlagsBitField,
 } from '../index';
 
-import { BaseStructure } from './BaseStructure';
+import { BaseStructure } from './base/BaseStructure';
 
 export class PresenceActivity extends BaseStructure {
     public applicationId!: Snowflake | null;

@@ -142,17 +142,24 @@ export class WebSocketShard extends EventEmitter {
         }
     }
 
-    public close(code?: GatewayCloseCodesResolvable, emit: boolean = true) {
+    public close(
+        code?: GatewayCloseCodesResolvable,
+        emit: boolean = true,
+        cleanup: boolean = true
+    ) {
         if (typeof code === 'string') {
             code = GatewayCloseCodes[code];
         }
 
+        if (cleanup) {
+            this.cleanup();
+        }
+
         this.socket?.close(emit ? code : undefined);
-        this.cleanup();
     }
 
     public async reconnect(emit: boolean = true) {
-        this.close(GatewayCloseCodes.UnknownError, emit);
+        this.close(GatewayCloseCodes.UnknownError, emit, true);
         await this.connect();
     }
 

@@ -7,7 +7,7 @@ import {
     PresenceActivity,
 } from '../index';
 
-import { BaseStructure } from './BaseStructure';
+import { BaseStructure } from './base/BaseStructure';
 
 export class Presence extends BaseStructure {
     public status!: PresenceStatus;

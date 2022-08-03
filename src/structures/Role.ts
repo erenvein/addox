@@ -12,7 +12,7 @@ import {
     PermissionFlagsBitField,
 } from '../index';
 
-import { BaseStructure } from './BaseStructure';
+import { BaseStructure } from './base/BaseStructure';
 
 export class Role extends BaseStructure {
     public id!: Snowflake;
