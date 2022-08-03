@@ -3,8 +3,9 @@
     "version": "1.0.0",
     "description": "A Discord API Wrapper",
     "main": "dist/index.js",
+    "types": "dist/index.d.ts",
     "repository": {
-        "url": "https://github.com/deliever42/discord-api-wrapper",
+        "url": "https://github.com/deliever42/discord-api-wrapper.git",
         "type": "git"
     },
     "author": "deliever42",
@@ -29,7 +30,6 @@
         "discord-api-types": "^0.36.3",
         "file-type": "16.5.4",
         "form-data": "^4.0.0",
-        "global": "^4.4.0",
         "node-fetch": "2.6.7",
         "tslib": "^2.4.0",
         "ws": "^8.8.1"
