@@ -6,7 +6,7 @@ import {
     SnowflakeUtil,
     type Guild,
     type FetchOptions,
-    type RESTPatchAPIGuildEmojiJSONBody,
+    type EditEmojiData,
 } from '../../index';
 
 import { BaseStructure } from '../base/BaseStructure';
@@ -58,8 +58,8 @@ export class GuildEmoji extends BaseStructure {
         return await this.guild.caches.emojis.delete(this.id!);
     }
 
-    public async edit(data: RESTPatchAPIGuildEmojiJSONBody) {
-        return await this.guild.caches.emojis.edit(this.id!, data);
+    public async edit(data: EditEmojiData, reason?: string) {
+        return await this.guild.caches.emojis.edit(this.id!, data, reason);
     }
 
     public override toString() {

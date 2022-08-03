@@ -1,6 +1,6 @@
 import { config } from 'dotenv';
 import { resolve } from 'node:path';
-import { Client, GatewayIntentBits, EmbedBuilder } from '../src/index';
+import { Client } from '../src/index';
 
 config({ path: resolve(__dirname, '.env') });
 
@@ -10,9 +10,7 @@ const client = new Client({
             status: 'dnd',
             activities: [{ name: 'annen ile', type: 'Playing' }],
         },
-        intents: Object.values(GatewayIntentBits)
-            .filter((bit) => typeof bit === 'number')
-            .reduce((accumulator, bit) => accumulator | (bit as number), 0),
+        intents: 131071,
         shardCount: 1,
     },
     rest: {

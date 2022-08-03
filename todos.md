@@ -2,7 +2,6 @@
 -   Invites
 -   Channels
 -   Integrations
--   Guild Scheduled Events
 -   Voice States
 -   Guild Welcome Screen
 -   Audit Logs
