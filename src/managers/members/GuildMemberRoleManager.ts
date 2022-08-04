@@ -8,7 +8,7 @@ import {
     UserFlags,
 } from '../../index';
 
-import { CachedManager } from '../CachedManager';
+import { CachedManager } from '../base/CachedManager';
 
 export class GuildMemberRoleManager extends CachedManager<Snowflake, Role> {
     public guild: Guild;

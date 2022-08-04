@@ -10,7 +10,7 @@ import {
     Collection,
 } from '../../index';
 
-import { CachedManager } from '../CachedManager';
+import { CachedManager } from '../base/CachedManager';
 
 export class ChannelInviteManager extends CachedManager<Snowflake, Invite> {
     public channel: GuildBasedChannelResolvable;

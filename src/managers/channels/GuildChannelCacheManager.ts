@@ -1,6 +1,6 @@
 import { type Client, ChannelInviteManager, GuildBasedChannelResolvable } from '../../index';
 
-import { BaseManager } from '../BaseManager';
+import { BaseManager } from '../base/BaseManager';
 
 export class GuildChannelCacheManager extends BaseManager {
     public channel: GuildBasedChannelResolvable;

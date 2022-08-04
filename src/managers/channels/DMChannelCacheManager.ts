@@ -1,6 +1,6 @@
 import { type Client, type DMChannel, ChannelMessageManager } from '../../index';
 
-import { BaseManager } from '../BaseManager';
+import { BaseManager } from '../base/BaseManager';
 
 export class DMChannelCacheManager extends BaseManager {
     public channel: DMChannel;

@@ -1,6 +1,6 @@
 import { GuildMemberRoleManager, type Client, type Guild, type GuildMember } from '../../index';
 
-import { BaseManager } from '../BaseManager';
+import { BaseManager } from '../base/BaseManager';
 
 export class GuildMemberCacheManager extends BaseManager {
     public guild: Guild;

@@ -15,7 +15,7 @@ import {
     GuildScheduledEvent,
 } from '../../index';
 
-import { CachedManager } from '../CachedManager';
+import { CachedManager } from '../base/CachedManager';
 
 export class GuildScheduledEventManager extends CachedManager<Snowflake, GuildScheduledEvent> {
     public guild: Guild;

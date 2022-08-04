@@ -310,6 +310,10 @@ export class Guild extends BaseGuild {
         return this.joinedAt.getTime();
     }
 
+    public get fetchMe() {
+        return this.caches.members.fetch(this.client.user!.id) as unknown as GuildMember;
+    }
+
     public async leave() {
         return await this.client.caches.guilds.leave(this.id);
     }

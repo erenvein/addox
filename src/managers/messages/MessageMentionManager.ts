@@ -10,7 +10,7 @@ import {
     GuildMember,
 } from '../../index';
 
-import { BaseManager } from '../BaseManager';
+import { BaseManager } from '../base/BaseManager';
 
 export class MessageMentionManager extends BaseManager {
     public users: Collection<Snowflake, User>;

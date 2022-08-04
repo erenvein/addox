@@ -12,7 +12,7 @@ import {
     Collection,
 } from '../../index';
 
-import { CachedManager } from '../CachedManager';
+import { CachedManager } from '../base/CachedManager';
 
 export class MessageReactionManager extends CachedManager<Snowflake, MessageReaction> {
     public message: Message;

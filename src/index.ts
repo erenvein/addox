@@ -25,12 +25,20 @@ export { SelectMenuBuilder } from './builders/SelectMenuBuilder';
 export { EmbedBuilder } from './builders/EmbedBuilder';
 
 // #MANAGERS
-export { CachedManager } from './managers/CachedManager';
-export { BaseManager } from './managers/BaseManager';
+
+// -BASE
+export { CachedManager } from './managers/base/CachedManager';
+export { BaseManager } from './managers/base/BaseManager';
+
+// - CLIENT
 export { ClientCacheManager } from './managers/client/ClientCacheManager';
 export { ClientGuildManager } from './managers/client/ClientGuildManager';
 export { ClientUserManager } from './managers/client/ClientUserManager';
 export { ClientStickerManager } from './managers/client/ClientStickerManager';
+export { ClientChannelManager } from './managers/client/ClientChannelManager';
+export { ClientStageInstanceManager } from './managers/client/ClientStageInstanceManager';
+
+// - GUILD
 export { GuildEmojiManager } from './managers/guild/GuildEmojiManager';
 export { GuildRoleManager } from './managers/guild/GuildRoleManager';
 export { GuildCacheManager } from './managers/guild/GuildCacheManager';
@@ -38,19 +46,24 @@ export { GuildStickerManager } from './managers/guild/GuildStickerManager';
 export { GuildBanManager } from './managers/guild/GuildBanManager';
 export { GuildMemberManager } from './managers/guild/GuildMemberManager';
 export { GuildChannelManager } from './managers/guild/GuildChannelManager';
-export { GuildMemberRoleManager } from './managers/members/GuildMemberRoleManager';
-export { ClientChannelManager } from './managers/client/ClientChannelManager';
+export { GuildScheduledEventManager } from './managers/guild/GuildScheduledEventManager';
+
+// - MESSAGES
 export { MessageMentionManager } from './managers/messages/MessageMentionManager';
 export { MessageReactionManager } from './managers/messages/MessageReactionManager';
 export { MessageCacheManager } from './managers/messages/MessageCacheManager';
+
+// - CHANNELS
 export { ChannelMessageManager } from './managers/channels/ChannelMessageManager';
 export { DMChannelCacheManager } from './managers/channels/DMChannelCacheManager';
 export { ChannelInviteManager } from './managers/channels/ChannelInviteManager';
 export { GuildChannelCacheManager } from './managers/channels/GuildChannelCacheManager';
 export { TextChannelCacheManager } from './managers/channels/TextChannelCacheManager';
+export { GroupDMChannelRecipientManager } from './managers/channels/GroupDMChannelRecipientManager';
+
+// - MEMBERS
 export { GuildMemberCacheManager } from './managers/members/GuildMemberCacheManager';
-export { GuildScheduledEventManager } from './managers/guild/GuildScheduledEventManager';
-export { ClientStageInstanceManager } from './managers/client/ClientStageInstanceManager';
+export { GuildMemberRoleManager } from './managers/members/GuildMemberRoleManager';
 
 // #STRUCTURES
 

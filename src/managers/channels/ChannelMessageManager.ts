@@ -1,6 +1,6 @@
 import type { Message, Snowflake, Client, TextBasedChannelResolvable } from '../../index';
 
-import { CachedManager } from '../CachedManager';
+import { CachedManager } from '../base/CachedManager';
 
 export class ChannelMessageManager extends CachedManager<Snowflake, Message> {
     public channel: TextBasedChannelResolvable;

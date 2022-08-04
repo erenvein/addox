@@ -12,7 +12,7 @@ import {
     ClientStageInstanceManager
 } from '../../index';
 
-import { BaseManager } from '../BaseManager';
+import { BaseManager } from '../base/BaseManager';
 
 export class ClientCacheManager extends BaseManager {
     public guilds: ClientGuildManager;

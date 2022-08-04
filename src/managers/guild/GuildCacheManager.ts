@@ -13,7 +13,7 @@ import {
     Collection,
 } from '../../index';
 
-import { BaseManager } from '../BaseManager';
+import { BaseManager } from '../base/BaseManager';
 
 export class GuildCacheManager extends BaseManager {
     public guild: Guild;

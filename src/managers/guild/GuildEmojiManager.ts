@@ -12,7 +12,7 @@ import {
     DataResolver,
 } from '../../index';
 
-import { CachedManager } from '../CachedManager';
+import { CachedManager } from '../base/CachedManager';
 
 export class GuildEmojiManager extends CachedManager<Snowflake, GuildEmoji> {
     public guild: Guild;

@@ -21,7 +21,7 @@ import {
     Message,
 } from '../../index';
 
-import { CachedManager } from '../CachedManager';
+import { CachedManager } from '../base/CachedManager';
 
 export class ClientChannelManager extends CachedManager<Snowflake, AnyChannel> {
     public constructor(client: Client) {

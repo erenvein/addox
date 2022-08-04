@@ -8,7 +8,7 @@ import {
     type CollectionLike,
 } from '../../index';
 
-import { CachedManager } from '../CachedManager';
+import { CachedManager } from '../base/CachedManager';
 
 export class ClientUserManager extends CachedManager<Snowflake, User> {
     public constructor(client: Client) {

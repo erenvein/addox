@@ -1,6 +1,6 @@
 import { type Client, type Message, MessageReactionManager, type APIReaction } from '../../index';
 
-import { BaseManager } from '../BaseManager';
+import { BaseManager } from '../base/BaseManager';
 
 export class MessageCacheManager extends BaseManager {
     public message: Message;

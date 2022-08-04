@@ -1,4 +1,4 @@
-import type { Client } from '../index';
+import type { Client } from '../../index';
 
 export class BaseManager {
     public client: Client;

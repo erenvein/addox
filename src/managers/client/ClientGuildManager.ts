@@ -34,7 +34,7 @@ import {
     Collection,
 } from '../../index';
 
-import { BaseManager } from '../BaseManager';
+import { BaseManager } from '../base/BaseManager';
 
 export class ClientGuildManager extends BaseManager {
     public unavailables = new Collection<Snowflake, UnavailableGuild>();

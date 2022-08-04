@@ -18,7 +18,7 @@ import {
     APIMessage,
 } from '../../index';
 
-import { CachedManager } from '../CachedManager';
+import { CachedManager } from '../base/CachedManager';
 
 export class GuildChannelManager extends CachedManager<Snowflake, GuildBasedChannelResolvable> {
     public guild: Guild;

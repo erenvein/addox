@@ -8,7 +8,7 @@ import {
     type CollectionLike,
 } from '../../index';
 
-import { BaseManager } from '../BaseManager';
+import { BaseManager } from '../base/BaseManager';
 
 export class ClientStickerManager extends BaseManager {
     public constructor(client: Client) {

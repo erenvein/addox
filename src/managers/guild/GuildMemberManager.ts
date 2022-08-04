@@ -11,7 +11,7 @@ import {
     Collection,
 } from '../../index';
 
-import { CachedManager } from '../CachedManager';
+import { CachedManager } from '../base/CachedManager';
 
 export class GuildMemberManager extends CachedManager<Snowflake, GuildMember> {
     public guild: Guild;

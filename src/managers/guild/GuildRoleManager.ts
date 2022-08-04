@@ -11,7 +11,7 @@ import {
     RoleDataResolver,
 } from '../../index';
 
-import { CachedManager } from '../CachedManager';
+import { CachedManager } from '../base/CachedManager';
 
 export class GuildRoleManager extends CachedManager<Snowflake, Role> {
     public guild: Guild;

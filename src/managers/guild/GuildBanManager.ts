@@ -10,7 +10,7 @@ import {
     GuildBan,
 } from '../../index';
 
-import { CachedManager } from '../CachedManager';
+import { CachedManager } from '../base/CachedManager';
 
 export class GuildBanManager extends CachedManager<Snowflake, GuildBan> {
     public guild: Guild;

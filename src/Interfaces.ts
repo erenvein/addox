@@ -560,6 +560,11 @@ export interface EditStageInstanceData extends RESTPatchAPIStageInstanceJSONBody
     privacy_level?: StageInstancePrivacyLevelResolvable;
 }
 
+export interface GroupDMAddRecipientData {
+    access_token: string;
+    nick: string;
+}
+
 export interface ClientEvents {
     ready: [client: Client];
     guildCreate: [guild: Guild];

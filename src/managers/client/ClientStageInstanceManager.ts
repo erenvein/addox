@@ -9,7 +9,7 @@ import {
     StageInstance,
 } from '../../index';
 
-import { CachedManager } from '../CachedManager';
+import { CachedManager } from '../base/CachedManager';
 
 export class ClientStageInstanceManager extends CachedManager<Snowflake, StageInstance> {
     public constructor(client: Client) {
