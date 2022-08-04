@@ -25,6 +25,9 @@ import {
     Presence,
     GuildMember,
     User,
+    StageInstance,
+    GuildScheduledEvent,
+    GuildWelcomeScreen,
 } from '../../index';
 
 import { BaseGuild } from '../channels/BaseGuild';
@@ -67,6 +70,7 @@ export class Guild extends BaseGuild {
     public memberCount!: number;
     public large!: boolean;
     public joinedAt!: Date;
+    public welcomeScreen!: GuildWelcomeScreen | null;
 
     public constructor(
         client: Client,
@@ -209,8 +213,29 @@ export class Guild extends BaseGuild {
             }
         }
 
-        // STAGE INSTANCES
-        // - TODO
+        if ('stage_instances' in data) {
+            for (const stageInstance of data.stage_instances) {
+                this.client.caches.stageInstances.cache.set(
+                    stageInstance.id,
+                    new StageInstance(this.client, stageInstance)
+                );
+            }
+        }
+
+        if ('guild_scheduled_events' in data) {
+            for (const scheduledEvent of data.guild_scheduled_events) {
+                this.caches.scheduledEvents.cache.set(
+                    scheduledEvent.id,
+                    new GuildScheduledEvent(this.client, scheduledEvent)
+                );
+            }
+        }
+
+        if ('welcome_screen' in data) {
+            this.welcomeScreen = data.welcome_screen
+                ? new GuildWelcomeScreen(this.client, this.id, data.welcome_screen)
+                : null;
+        }
 
         // INVITES
         // - TODO
@@ -218,13 +243,7 @@ export class Guild extends BaseGuild {
         // INTEGRATIONS
         // - TODO
 
-        // GUILD SCHEDULED EVENTS
-        // - TODO
-
         // VOICE STATES
-        // - TODO
-
-        // WELCOME SCREEN
         // - TODO
 
         // THREADS

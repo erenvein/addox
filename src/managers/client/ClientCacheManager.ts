@@ -9,6 +9,7 @@ import {
     ClientStickerManager,
     Collection,
     ClientChannelManager,
+    ClientStageInstanceManager
 } from '../../index';
 
 import { BaseManager } from '../BaseManager';
@@ -18,6 +19,7 @@ export class ClientCacheManager extends BaseManager {
     public users: ClientUserManager;
     public stickers: ClientStickerManager;
     public channels: ClientChannelManager;
+    public stageInstances: ClientStageInstanceManager
 
     public constructor(client: Client) {
         super(client);
@@ -26,6 +28,7 @@ export class ClientCacheManager extends BaseManager {
         this.users = new ClientUserManager(client);
         this.stickers = new ClientStickerManager(client);
         this.channels = new ClientChannelManager(client);
+        this.stageInstances = new ClientStageInstanceManager(client);
     }
 
     public get emojis() {

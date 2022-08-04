@@ -1,9 +1,7 @@
--   Stage Instances
 -   Invites
 -   Channels
 -   Integrations
 -   Voice States
--   Guild Welcome Screen
 -   Audit Logs
 -   Threads
 -   Webhooks

@@ -50,6 +50,7 @@ export { GuildChannelCacheManager } from './managers/channels/GuildChannelCacheM
 export { TextChannelCacheManager } from './managers/channels/TextChannelCacheManager';
 export { GuildMemberCacheManager } from './managers/members/GuildMemberCacheManager';
 export { GuildScheduledEventManager } from './managers/guild/GuildScheduledEventManager';
+export { ClientStageInstanceManager } from "./managers/client/ClientStageInstanceManager";
 
 // STRUCTURES
 export { BitField } from './structures/base/BitField';
@@ -106,6 +107,7 @@ export { Team } from './structures/Team';
 export { TeamMember } from './structures/TeamMember';
 export { GuildScheduledEvent } from './structures/guild/GuildScheduledEvent';
 export { MessageReference } from './structures/channels/MessageReference';
+export { StageInstance } from './structures/StageInstance';
 
 // UTILS
 export { PresenceDataResolver } from './utils/resolvers/PresenceDataResolver';

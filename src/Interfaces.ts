@@ -81,6 +81,9 @@ import type {
     RESTPostAPIGuildEmojiJSONBody,
     RESTPatchAPIGuildScheduledEventJSONBody,
     GuildScheduledEventStatus,
+    RESTPostAPIStageInstanceJSONBody,
+    RESTPatchAPIStageInstanceJSONBody,
+    StageInstancePrivacyLevel,
 } from './index';
 
 import type { BodyInit } from 'node-fetch';
@@ -543,6 +546,18 @@ export interface GuildScheduledEventUserData {
     guildScheduledEventId: Snowflake;
     user: User;
     member: GuildMember | null;
+}
+
+export type StageInstancePrivacyLevelResolvable = keyof typeof StageInstancePrivacyLevel | number;
+
+//@ts-ignore
+export interface CreateStageInstanceData extends RESTPostAPIStageInstanceJSONBody {
+    privacy_level?: StageInstancePrivacyLevelResolvable;
+}
+
+//@ts-ignore
+export interface EditStageInstanceData extends RESTPatchAPIStageInstanceJSONBody {
+    privacy_level?: StageInstancePrivacyLevelResolvable;
 }
 
 export interface ClientEvents {

@@ -106,7 +106,7 @@ export class ClientGuildManager extends BaseManager {
             _guild = _guild._patch(guild);
         }
 
-        return _guild ?? new Guild(this.client, guild);
+        return this.cache._add(guild.id, _guild ?? new Guild(this.client, guild));
     }
 
     public async setMFALevel(id: Snowflake, level: GuildMFALevelResolvable) {
