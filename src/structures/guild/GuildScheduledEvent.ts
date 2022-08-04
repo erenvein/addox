@@ -6,6 +6,7 @@ import {
     type EditGuildScheduledEventData,
     type ImageOptions,
     type FetchGuildScheduledEventOptions,
+    type CreateInviteData,
     GuildScheduledEventEntityType,
     GuildScheduledEventPrivacyLevel,
     GuildScheduledEventStatus,
@@ -118,7 +119,7 @@ export class GuildScheduledEvent extends BaseStructure {
         return await this.guild!.caches.scheduledEvents.fetchUsers(this.id);
     }
 
-    public async createInvite() {
-        // TODO
+    public async createInvite(data: CreateInviteData, reason?: string) {
+        return await this.channel?.caches.invites.create(data,reason)!;
     }
 }
