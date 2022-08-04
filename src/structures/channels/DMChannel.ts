@@ -1,6 +1,6 @@
 import { type APIDMChannel, type Client, User, DMChannelCacheManager } from '../../index';
 
-import { BaseTextChannel } from './BaseTextChannel';
+import { BaseTextChannel } from '../base/BaseTextChannel';
 
 export class DMChannel extends BaseTextChannel {
     public recipient!: User;

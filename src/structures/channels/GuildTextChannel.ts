@@ -1,6 +1,6 @@
 import type { Client, APITextChannel } from '../../index';
 
-import { BaseTextChannel } from './BaseTextChannel';
+import { BaseTextChannel } from '../base/BaseTextChannel';
 
 export class GuildTextChannel extends BaseTextChannel {
     public constructor(client: Client, data: APITextChannel) {

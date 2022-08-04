@@ -7,6 +7,8 @@ import {
     type GatewayInviteCreateDispatchData,
     InviteApplication,
     GuildScheduledEvent,
+    InviteGuild,
+    GuildBasedChannelResolvable,
 } from '../../index';
 import { BaseStructure } from '../base/BaseStructure';
 
@@ -17,7 +19,8 @@ export class Invite extends BaseStructure {
     public code!: string;
     public expiresTimestamp!: number | null;
     public guildId!: Snowflake | null;
-    public inviter!: User | null;
+    public guild!: InviteGuild | null;
+    public author!: User | null;
     public targetType!: keyof typeof InviteTargetType | null;
     public targetUser!: User | null;
     public createdTimestamp!: number | null;
@@ -36,7 +39,7 @@ export class Invite extends BaseStructure {
 
     public _patch(data: GatewayInviteCreateDispatchData | APIInvite) {
         this.code = data.code;
-        this.inviter = data.inviter
+        this.author = data.inviter
             ? this.client.caches.users.cache._add(
                   data.inviter.id,
                   new User(this.client, data.inviter)
@@ -59,9 +62,9 @@ export class Invite extends BaseStructure {
         }
 
         if ('guild' in data) {
-            this.guildId = data.guild?.id ?? null;
+            this.guild = new InviteGuild(this.client, data.guild!);
         } else {
-            this.guildId ??= null;
+            this.guild ??= null;
         }
 
         if ('approximate_member_count' in data) {
@@ -146,14 +149,16 @@ export class Invite extends BaseStructure {
     }
 
     public get channel() {
-        return this.guild!.caches.channels.cache.get(this.channelId!);
-    }
-
-    public get guild() {
-        return this.client.caches.guilds.cache.get(this.guildId!);
+        return this.client!.caches.channels.cache.get(
+            this.channelId!
+        ) as GuildBasedChannelResolvable;
     }
 
     public get url() {
         return `https://discord.com/invite/${this.code}`;
+    }
+
+    public get expiresAt() {
+        return new Date(this.expiresTimestamp!);
     }
 }

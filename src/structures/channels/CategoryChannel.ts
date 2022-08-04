@@ -1,6 +1,6 @@
 import type { APIGuildCategoryChannel, Guild, Client } from '../../index';
 
-import { BaseGuildChannel } from './BaseGuildChannel';
+import { BaseGuildChannel } from '../base/BaseGuildChannel';
 
 export class CategoryChannel extends BaseGuildChannel {
     public constructor(client: Client, guild: Guild, data: APIGuildCategoryChannel) {

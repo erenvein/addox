@@ -5,7 +5,7 @@ import {
     type APIGuild,
 } from '../../index';
 
-import { BaseGuild } from '../channels/BaseGuild';
+import { BaseGuild } from '../base/BaseGuild';
 
 export class OAuth2Guild extends BaseGuild {
     public owner!: boolean;

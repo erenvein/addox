@@ -1,4 +1,3 @@
--   Invites
 -   Channels
 -   Integrations
 -   Voice States

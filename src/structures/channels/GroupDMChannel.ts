@@ -1,6 +1,6 @@
 import type { APIGroupDMChannel, Client, Snowflake } from '../../index';
 
-import { BaseTextChannel } from './BaseTextChannel';
+import { BaseTextChannel } from '../base/BaseTextChannel';
 
 export class GroupDMChannel extends BaseTextChannel {
     public applicationId!: string | null;

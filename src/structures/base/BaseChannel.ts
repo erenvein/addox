@@ -9,7 +9,7 @@ import {
     type EditChannelData,
 } from '../../index';
 
-import { BaseStructure } from '../base/BaseStructure';
+import { BaseStructure } from './BaseStructure';
 
 export class BaseChannel extends BaseStructure {
     public id!: Snowflake;

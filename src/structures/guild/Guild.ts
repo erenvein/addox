@@ -30,7 +30,7 @@ import {
     GuildWelcomeScreen,
 } from '../../index';
 
-import { BaseGuild } from '../channels/BaseGuild';
+import { BaseGuild } from '../base/BaseGuild';
 
 export class Guild extends BaseGuild {
     public caches!: GuildCacheManager;
@@ -236,9 +236,6 @@ export class Guild extends BaseGuild {
                 ? new GuildWelcomeScreen(this.client, this.id, data.welcome_screen)
                 : null;
         }
-
-        // INVITES
-        // - TODO
 
         // INTEGRATIONS
         // - TODO

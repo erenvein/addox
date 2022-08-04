@@ -1,6 +1,6 @@
 import type { APIVoiceBasedChannelResolvable, Guild, Client } from '../../index';
 
-import { BaseGuildChannel } from './BaseGuildChannel';
+import { BaseGuildChannel } from '../base/BaseGuildChannel';
 
 export class VoiceChannel extends BaseGuildChannel {
     public constructor(client: Client, guild: Guild, data: APIVoiceBasedChannelResolvable) {

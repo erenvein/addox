@@ -1,6 +1,6 @@
 import type { APIGuildTextBasedChannelResolvable, Guild, Client } from '../../index';
 
-import { BaseGuildTextChannel } from './BaseGuildTextChannel';
+import { BaseGuildTextChannel } from '../base/BaseGuildTextChannel';
 
 export class TextChannel extends BaseGuildTextChannel {
     public constructor(client: Client, guild: Guild, data: APIGuildTextBasedChannelResolvable) {

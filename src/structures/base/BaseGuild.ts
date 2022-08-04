@@ -7,9 +7,10 @@ import {
     type FetchGuildOptions,
     GuildFeature,
     SnowflakeUtil,
+    APIInviteGuild,
 } from '../../index';
 
-import { BaseStructure } from '../base/BaseStructure';
+import { BaseStructure } from './BaseStructure';
 
 export class BaseGuild extends BaseStructure {
     public id!: Snowflake;
@@ -17,13 +18,13 @@ export class BaseGuild extends BaseStructure {
     public icon!: string | null;
     public features!: (keyof typeof GuildFeature)[];
 
-    public constructor(client: Client, data: APIGuild) {
+    public constructor(client: Client, data: APIGuild | APIInviteGuild) {
         super(client);
 
         this._patch(data);
     }
 
-    public override _patch(data: APIGuild) {
+    public override _patch(data: APIGuild | APIInviteGuild) {
         this.id = data.id;
         this.name = data.name;
         this.features = data.features.map((feature) => (GuildFeature as any)[feature]);

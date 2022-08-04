@@ -115,14 +115,14 @@ export class WebSocketManager {
         return true;
     }
 
-    public broadcastEval<T>(script: string): T[] {
-        const result: T[] = [];
+    public async broadcastEval<T>(script: string) {
+        const promises: T[] = [];
 
         for (const shard of this.shards.values()) {
-            result.push(shard.eval<T>(script));
+            promises.push(shard.eval<T>(script));
         }
 
-        return result;
+        return await Promise.all(promises);
     }
 
     public destroy() {
@@ -222,6 +222,8 @@ export class WebSocketManager {
         if (this.spawnStreak >= maxConcurrency) {
             this.spawnStreak = 0;
             return await Sleep(5000);
+        } else {
+            return;
         }
     }
 
@@ -234,6 +236,7 @@ export class WebSocketManager {
 
         this.shards.delete(id);
         this.shardQueue?.add(shard);
+
         return await this.spawnShards();
     }
 

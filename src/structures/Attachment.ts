@@ -1,4 +1,4 @@
-import { type APIAttachment, type Snowflake, SnowflakeUtil } from '../../index';
+import { type APIAttachment, type Snowflake, SnowflakeUtil } from '../index';
 
 export class Attachment {
     public contentType!: string | null;
