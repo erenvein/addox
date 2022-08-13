@@ -24,4 +24,12 @@ export class ClientUser extends User {
 
         return this;
     }
+
+    public override async fetch(): Promise<ClientUser> {
+        const user = await this.client.rest.get<APIUser>(`/users/@me`);
+
+        this._patch(user);
+
+        return this;
+    }
 }

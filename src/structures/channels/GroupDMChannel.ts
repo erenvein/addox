@@ -4,6 +4,7 @@ import {
     type Snowflake,
     User,
     GroupDMChannelRecipientManager,
+    DMBasedChannelCacheManager
 } from '../../index';
 
 import { BaseTextChannel } from '../base/BaseTextChannel';
@@ -13,6 +14,7 @@ export class GroupDMChannel extends BaseTextChannel {
     public icon!: string | null;
     public ownerId!: Snowflake | null;
     public recipients!: GroupDMChannelRecipientManager;
+    public caches!: DMBasedChannelCacheManager
 
     public constructor(client: Client, data: APIGroupDMChannel) {
         //@ts-ignore
@@ -44,6 +46,8 @@ export class GroupDMChannel extends BaseTextChannel {
                 );
             }
         }
+
+        this.caches ??= new DMBasedChannelCacheManager(this.client, this);
 
         return this;
     }

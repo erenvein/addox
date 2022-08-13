@@ -188,7 +188,9 @@ export class Message extends BaseStructure {
 
     public get position() {
         // @ts-ignore
-        return this.channel ? this.channel.caches?.messages.cache.keyArray().indexOf(this.id) : null;
+        return this.channel
+            ? this.channel.caches?.messages.cache.keyArray().indexOf(this.id)
+            : null;
     }
 
     public get url() {

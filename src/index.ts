@@ -55,7 +55,7 @@ export { MessageCacheManager } from './managers/messages/MessageCacheManager';
 
 // - CHANNELS
 export { ChannelMessageManager } from './managers/channels/ChannelMessageManager';
-export { DMChannelCacheManager } from './managers/channels/DMChannelCacheManager';
+export { DMBasedChannelCacheManager } from './managers/channels/DMBasedChannelCacheManager';
 export { ChannelInviteManager } from './managers/channels/ChannelInviteManager';
 export { GuildChannelCacheManager } from './managers/channels/GuildChannelCacheManager';
 export { TextChannelCacheManager } from './managers/channels/TextChannelCacheManager';
