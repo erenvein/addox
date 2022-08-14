@@ -1,4 +1,3 @@
-import { EventEmitter } from 'node:events';
 import {
     DiscordAPIURL,
     DiscordAPIVersion,
@@ -7,14 +6,12 @@ import {
     RequestManagerOptions,
 } from '../index';
 
-export class BaseClient extends EventEmitter {
+export class BaseClient {
     public rest: RequestManager;
 
     public constructor(
         requestManagerOptions: PartialRequestManagerOptions | RequestManagerOptions
     ) {
-        super();
-
         this.rest = new RequestManager({
             ...requestManagerOptions,
             baseURL: `${DiscordAPIURL}/v${DiscordAPIVersion}`,

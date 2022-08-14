@@ -18,35 +18,41 @@ const client = new Client({
     },
 });
 
-client.on('ready', () => {
+client.ws.on('ready', () => {
     console.log('Online!');
 });
 
-client.on('shardError', (shard, error) => {
+client.ws.on('messageCreate', async (message) => {
+    if (message.content === '!ping') {
+        message.reply({ content: `Pong! :ping_pong: **${client.ws.ping}**ms` });
+    }
+});
+
+client.ws.on('shardError', (shard, error) => {
     throw error;
 });
 
-client.on('shardSpawn', (shard) => {
+client.ws.on('shardSpawn', (shard) => {
     console.log(`Shard ${shard.id + 1} spawned.`);
 });
 
-client.on('shardReady', async (shard) => {
+client.ws.on('shardReady', async (shard) => {
     console.log(`Shard ${shard.id + 1} ready.`);
 });
 
-client.on('shardClosed', (shard, code, reason) => {
+client.ws.on('shardClosed', (shard, code, reason) => {
     console.log(`Shard ${shard.id + 1} closed.\nReason: ${reason}\nCode: ${code}`);
 });
 
-client.on('shardReconnect', (shard) => {
+client.ws.on('shardReconnect', (shard) => {
     console.log(`Shard ${shard.id + 1} reconnecting.`);
 });
 
-client.on('shardResumed', (shard) => {
+client.ws.on('shardResumed', (shard) => {
     console.log(`Shard ${shard.id + 1} resumed.`);
 });
 
-client.on('shardDeath', (shard, code, reason) => {
+client.ws.on('shardDeath', (shard, code, reason) => {
     console.log(`Shard ${shard.id + 1} death.\nReason: ${reason}\nCode: ${code}`);
 });
 

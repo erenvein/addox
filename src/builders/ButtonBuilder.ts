@@ -51,26 +51,26 @@ export class ButtonBuilder extends BaseBuilder {
     }
 
     public setDisabled(disabled: boolean) {
-        return this._change('disabled', disabled);
+        return this.set('disabled', disabled);
     }
 
     public setEmoji(emoji: string) {
-        return this._change('emoji', EmojiResolver(emoji));
+        return this.set('emoji', EmojiResolver(emoji));
     }
 
     public setLabel(label: string) {
-        return this._change('label', label);
+        return this.set('label', label);
     }
 
     public setCustomId(customId: string) {
-        return this._change('custom_id', customId);
+        return this.set('custom_id', customId);
     }
 
     public setStyle(style: ButtonStyleResolvable) {
-        return this._change('style', typeof style === "string" ? ButtonStyle[style] : style);
+        return this.set('style', typeof style === "string" ? ButtonStyle[style] : style);
     }
 
     public setURL(url: string) {
-        return this._change('url', url);
+        return this.set('url', url);
     }
 }

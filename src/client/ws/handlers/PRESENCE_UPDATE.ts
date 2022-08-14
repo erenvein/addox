@@ -14,7 +14,7 @@ export default class PresenceUpdateHandler extends BaseWebSocketHandler {
             _presence = _presence._patch(d);
 
             this.shard.manager.client.caches.presences.set(presence.user?.id!, _presence);
-            this.shard.manager.client.emit('presenceUpdate', presence, _presence);
+            this.shard.manager.emit('presenceUpdate', presence, _presence);
         }
     }
 }

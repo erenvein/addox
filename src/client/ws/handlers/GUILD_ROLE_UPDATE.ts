@@ -17,12 +17,12 @@ export default class GuildRoleUpdateHandler extends BaseWebSocketHandler {
                 _role = _role._patch(d.role);
 
                 guild.caches.roles.cache.set(role.id, _role);
-                this.shard.manager.client.emit('roleUpdate', role, _role);
+                this.shard.manager.emit('roleUpdate', role, _role);
             } else {
                 const role = new Role(this.shard.manager.client, guild, d.role);
 
                 guild.caches.roles.cache.set(role.id, role);
-                this.shard.manager.client.emit('roleCreate', role);
+                this.shard.manager.emit('roleCreate', role);
             }
         }
     }

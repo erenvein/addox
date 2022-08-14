@@ -13,7 +13,7 @@ export class ActionRowBuilder extends BaseBuilder {
     }
 
     public setComponents(...components: APIAnyComponent[]) {
-        return this._change('components', components);
+        return this.set('components', components);
     }
 
     public addComponents(...components: APIAnyComponent[]) {

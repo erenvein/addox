@@ -32,34 +32,34 @@ export class TextInputBuilder extends BaseBuilder {
     }
 
     public setRequired(required: boolean) {
-        return this._change('required', required);
+        return this.set('required', required);
     }
 
     public setPlaceholder(placeholder: string) {
-        return this._change('placeholder', placeholder);
+        return this.set('placeholder', placeholder);
     }
 
     public setCustomId(customId: string) {
-        return this._change('custom_id', customId);
+        return this.set('custom_id', customId);
     }
 
     public setMaxLength(maxLength: number) {
-        return this._change('max_length', maxLength);
+        return this.set('max_length', maxLength);
     }
 
     public setMinLength(minLength: number) {
-        return this._change('min_length', minLength);
+        return this.set('min_length', minLength);
     }
 
     public setValue(value: string) {
-        return this._change('value', value);
+        return this.set('value', value);
     }
 
     public setStyle(style: TextInputStyleResolvable) {
-        return this._change('style', typeof style === 'string' ? TextInputStyle[style] : style);
+        return this.set('style', typeof style === 'string' ? TextInputStyle[style] : style);
     }
 
     public setLabel(label: string) {
-        return this._change('label', label);
+        return this.set('label', label);
     }
 }

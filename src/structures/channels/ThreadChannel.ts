@@ -12,6 +12,8 @@ export class ThreadChannel extends BaseGuildTextChannel {
     public override _patch(data: APIThreadChannel) {
         super._patch(data);
 
+        // TODO
+
         return this;
     }
 }

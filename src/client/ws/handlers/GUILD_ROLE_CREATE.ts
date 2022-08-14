@@ -12,7 +12,7 @@ export default class GuildRoleCreateHandler extends BaseWebSocketHandler {
             const role = new Role(this.shard.manager.client, guild, d.role);
 
             guild?.caches.roles.cache.set(role.id, role);
-            this.shard.manager.client.emit('roleCreate', role);
+            this.shard.manager.emit('roleCreate', role);
         }
     }
 }

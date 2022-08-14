@@ -2,19 +2,20 @@ import {
     type Client,
     type APIGuildTextBasedChannelResolvable,
     type Guild,
-    TextChannelCacheManager,
+    type Snowflake,
+    type CreateMessageData,
+    GuildTextBasedChannelCacheManager,
 } from '../../index';
 
-import { BaseTextChannel } from './BaseTextChannel';
+import { BaseGuildChannel } from './BaseGuildChannel';
 
-export class BaseGuildTextChannel extends BaseTextChannel {
-    public guild: Guild;
-    public caches!: TextChannelCacheManager;
+export class BaseGuildTextChannel extends BaseGuildChannel {
+    public declare caches: GuildTextBasedChannelCacheManager;
+    public nsfw!: boolean;
+    public lastMessageId!: Snowflake | null;
 
     public constructor(client: Client, guild: Guild, data: APIGuildTextBasedChannelResolvable) {
-        super(client, data);
-
-        this.guild = guild;
+        super(client, guild, data);
 
         this._patch(data);
     }
@@ -22,8 +23,19 @@ export class BaseGuildTextChannel extends BaseTextChannel {
     public override _patch(data: APIGuildTextBasedChannelResolvable) {
         super._patch(data);
 
-        this.caches ??= new TextChannelCacheManager(this.client, this);
+        this.lastMessageId = data.last_message_id ?? null;
+        this.nsfw = data.nsfw ?? false;
+
+        this.caches = new GuildTextBasedChannelCacheManager(this.client, this);
 
         return this;
+    }
+
+    public get lastMessage() {
+        return this.caches.messages.cache.get(this.lastMessageId!);
+    }
+
+    public async send(data: CreateMessageData) {
+        return this.caches.messages.create(data);
     }
 }

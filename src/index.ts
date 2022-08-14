@@ -55,11 +55,13 @@ export { MessageCacheManager } from './managers/messages/MessageCacheManager';
 
 // - CHANNELS
 export { ChannelMessageManager } from './managers/channels/ChannelMessageManager';
-export { DMBasedChannelCacheManager } from './managers/channels/DMBasedChannelCacheManager';
 export { ChannelInviteManager } from './managers/channels/ChannelInviteManager';
 export { GuildChannelCacheManager } from './managers/channels/GuildChannelCacheManager';
-export { TextChannelCacheManager } from './managers/channels/TextChannelCacheManager';
+export { TextBasedChannelCacheManager } from './managers/channels/TextBasedChannelCacheManager';
 export { GroupDMChannelRecipientManager } from './managers/channels/GroupDMChannelRecipientManager';
+export { ChannelPinManager } from './managers/channels/ChannelPinManager';
+export { GuildTextBasedChannelCacheManager } from './managers/channels/GuildTextBasedChannelCacheManager';
+export { GroupDMChannelCacheManager } from './managers/channels/GroupDMChannelCacheManager';
 
 // - MEMBERS
 export { GuildMemberCacheManager } from './managers/members/GuildMemberCacheManager';
@@ -73,6 +75,9 @@ export { Collection } from './structures/base/Collection';
 export { BaseChannel } from './structures/base/BaseChannel';
 export { BaseStructure } from './structures/base/BaseStructure';
 export { BaseGuild } from './structures/base/BaseGuild';
+export { BaseGuildChannel } from './structures/base/BaseGuildChannel';
+export { BaseTextChannel } from './structures/base/BaseTextChannel';
+export { BaseGuildTextChannel } from './structures/base/BaseGuildTextChannel';
 
 // - BITFIELD
 export { ThreadMemberFlagsBitField } from './structures/bitfield/ThreadMemberFlagsBitField';
@@ -106,28 +111,27 @@ export { Invite } from './structures/invites/Invite';
 export { InviteApplication } from './structures/invites/InviteApplication';
 export { InviteGuild } from './structures/invites/InviteGuild';
 
-// - ANY
-export { Sticker } from './structures/Sticker';
-export { StickerPack } from './structures/StickerPack';
-export { Presence } from './structures/Presence';
-export { User } from './structures/User';
-export { PresenceActivity } from './structures/PresenceActivity';
-export { BaseGuildChannel } from './structures/base/BaseGuildChannel';
-export { BaseTextChannel } from './structures/base/BaseTextChannel';
-export { DMChannel } from './structures/channels/DMChannel';
-export { GuildTextChannel } from './structures/channels/GuildTextChannel';
-export { Attachment } from './structures/Attachment';
-export { Message } from './structures/channels/Message';
-export { MessageInteraction } from './structures/channels/MessageInteraction';
-export { GroupDMChannel } from './structures/channels/GroupDMChannel';
-export { ThreadMember } from './structures/channels/ThreadMember';
-export { BaseGuildTextChannel } from './structures/base/BaseGuildTextChannel';
+// CHANNELS
 export { CategoryChannel } from './structures/channels/CategoryChannel';
 export { VoiceChannel } from './structures/channels/VoiceChannel';
 export { TextChannel } from './structures/channels/TextChannel';
 export { ThreadChannel } from './structures/channels/ThreadChannel';
 export { NewsChannel } from './structures/channels/NewsChannel';
 export { StageChannel } from './structures/channels/StageChannel';
+export { DMChannel } from './structures/channels/DMChannel';
+export { FollowedChannel } from './structures/channels/FollowedChannel';
+export { Message } from './structures/channels/Message';
+export { MessageInteraction } from './structures/channels/MessageInteraction';
+export { GroupDMChannel } from './structures/channels/GroupDMChannel';
+export { ThreadMember } from './structures/channels/ThreadMember';
+
+// - ANY
+export { Sticker } from './structures/Sticker';
+export { StickerPack } from './structures/StickerPack';
+export { Presence } from './structures/Presence';
+export { User } from './structures/User';
+export { PresenceActivity } from './structures/PresenceActivity';
+export { Attachment } from './structures/Attachment';
 export { Team } from './structures/Team';
 export { TeamMember } from './structures/TeamMember';
 export { MessageReference } from './structures/channels/MessageReference';

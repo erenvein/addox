@@ -12,7 +12,7 @@ export default class GuildDeleteHandler extends BaseWebSocketHandler {
 
         if (guild) {
             this.shard.guilds.delete(d.id);
-            this.shard.manager.client.emit('guildDelete', guild!);
+            this.shard.manager.emit('guildDelete', guild!);
         }
     }
 }

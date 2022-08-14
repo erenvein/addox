@@ -12,6 +12,8 @@ export class VoiceChannel extends BaseGuildChannel {
     public override _patch(data: APIVoiceBasedChannelResolvable) {
         super._patch(data);
 
+        // TODO
+
         return this;
     }
 }

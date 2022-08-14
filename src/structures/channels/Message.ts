@@ -2,19 +2,13 @@ import {
     type APIMessage,
     type Client,
     type Snowflake,
-    type AnyComponent,
-    type APIAnyComponent,
     type GatewayMessageCreateDispatchData,
     type APIGuildMember,
     MessageActivity,
     MessageActivityType,
     User,
     Attachment,
-    ComponentType,
     ActionRowBuilder,
-    ButtonBuilder,
-    SelectMenuBuilder,
-    TextInputBuilder,
     EmbedBuilder,
     MessageFlagsBitField,
     MessageInteraction,
@@ -25,6 +19,10 @@ import {
     GuildMember,
     type TextBasedChannelResolvable,
     MessageReference,
+    type EditMessageData,
+    type ReplyMessageOptions,
+    type GatewayMessageUpdateDispatchData,
+    SnowflakeUtil,
 } from '../../index';
 
 import { BaseStructure } from '../base/BaseStructure';
@@ -37,8 +35,8 @@ export class Message extends BaseStructure {
     public attachments!: Attachment[];
     public author!: User;
     public channelId!: Snowflake;
-    public components!: AnyComponent[];
-    public content!: string;
+    public components!: ActionRowBuilder[];
+    public content!: string | null;
     public editedTimestamp!: number | null;
     public embeds!: EmbedBuilder[];
     public flags!: MessageFlagsBitField;
@@ -52,57 +50,46 @@ export class Message extends BaseStructure {
     public caches!: MessageCacheManager;
     public stickers!: Sticker[];
     public threadId!: Snowflake | null;
-    public createdTimestamp!: number;
     public tts!: boolean;
     public type!: keyof typeof MessageType;
     public webhookId!: Snowflake | null;
     public member!: GuildMember | null;
 
-    public constructor(client: Client, data: APIMessage | GatewayMessageCreateDispatchData) {
+    public constructor(
+        client: Client,
+        data: APIMessage | GatewayMessageCreateDispatchData | GatewayMessageUpdateDispatchData
+    ) {
         super(client);
 
         this._patch(data);
     }
 
-    public override _patch(data: APIMessage | GatewayMessageCreateDispatchData) {
+    public override _patch(
+        data: APIMessage | GatewayMessageCreateDispatchData | GatewayMessageUpdateDispatchData
+    ) {
         this.activity = data.activity
             ? {
-                  type: MessageActivityType[data.type] as keyof typeof MessageActivityType,
+                  type: MessageActivityType[data.type!] as keyof typeof MessageActivityType,
                   partyId: data.activity.party_id ?? null,
               }
             : null;
         this.application = data.application;
         this.applicationId = data.application_id ?? null;
-        this.attachments = data.attachments.map((attachment) => new Attachment(attachment));
+        this.attachments = data.attachments
+            ? data.attachments.map((attachment) => new Attachment(attachment))
+            : [];
         this.author = this.client.caches.users.cache._add(
+            // @ts-ignore
             data.author.id,
+            // @ts-ignore
             new User(this.client, data.author)
         );
         this.channelId = data.channel_id;
-        // @ts-ignore
-        this.components = data.components
-            ? (data.components as unknown as APIAnyComponent[]).map((component) => {
-                  switch (component.type) {
-                      // @ts-ignore
-                      case ComponentType.ActionRow:
-                          return new ActionRowBuilder(component);
-                          break;
-                      case ComponentType.Button:
-                          return new ButtonBuilder(component);
-                          break;
-                      case ComponentType.SelectMenu:
-                          return new SelectMenuBuilder(component);
-                          break;
-                      case ComponentType.TextInput:
-                          return new TextInputBuilder(component);
-                  }
-              })
-            : [];
-        this.content = data.content;
+        this.content = data.content ?? null;
         this.editedTimestamp = data.edited_timestamp
             ? new Date(data.edited_timestamp).getTime()
             : null;
-        this.embeds = data.embeds.map((embed) => new EmbedBuilder(embed));
+        this.embeds = data.embeds ? data.embeds.map((embed) => new EmbedBuilder(embed)) : [];
         this.flags = new MessageFlagsBitField(data.flags);
         this.id = data.id;
         this.interaction = data.interaction
@@ -111,32 +98,32 @@ export class Message extends BaseStructure {
         this.mentions = new MessageMentionManager(
             this.client,
             data.mentions,
-            data.mention_roles,
+            data.mention_roles ?? [],
             data.mention_channels ?? [],
-            data.mention_everyone,
+            data.mention_everyone ?? false,
             this.guild ?? null
         );
         this.messageReference = data.message_reference?.message_id
             ? new MessageReference(this.client, data.message_reference)
             : null;
         this.nonce = data.nonce ?? null;
-        this.pinned = data.pinned;
+        this.pinned = data.pinned ?? false;
         this.rawPosition = data.position ?? null;
         this.caches ??= new MessageCacheManager(this, data.reactions ?? [], this.client);
-        this.stickers = [];
         this.threadId = data.thread?.id ?? null;
-        this.createdTimestamp = new Date(data.timestamp).getTime();
-        this.tts = data.tts;
-        this.type = MessageType[data.type] as keyof typeof MessageType;
+        this.components = data.components
+            ? data.components.map(({ components }) => new ActionRowBuilder(components))
+            : [];
+        this.tts = data.tts ?? false;
+        this.type = MessageType[data.type!] as keyof typeof MessageType;
         this.webhookId = data.webhook_id ?? null;
+        this.stickers = [];
 
-        if (data.sticker_items) {
-            for (const sticker of data.sticker_items) {
-                const _sticker = this.client.caches.stickers.cache.get(sticker.id);
+        for (const sticker of data.sticker_items ?? []) {
+            const _sticker = this.client.caches.stickers.cache.get(sticker.id);
 
-                if (_sticker) {
-                    this.stickers.push(_sticker);
-                }
+            if (_sticker) {
+                this.stickers.push(_sticker);
             }
         }
 
@@ -158,8 +145,13 @@ export class Message extends BaseStructure {
         } else {
             this.member ??= null;
         }
+        
 
         return this;
+    }
+
+    public get createdTimestamp() {
+        return SnowflakeUtil.timestampFrom(this.id);
     }
 
     public get createdAt() {
@@ -204,30 +196,38 @@ export class Message extends BaseStructure {
     }
 
     public async fetch() {
-        // TODO
+        return this.channel?.caches.messages.fetch(this.id) as Promise<Message>;
+    }
+
+    public async delete(reason?: string) {
+        return this.channel?.caches.messages.delete(this.id, reason);
+    }
+
+    public async edit(data: EditMessageData) {
+        return this.channel?.caches.messages.edit(this.id, data);
+    }
+
+    public async reply(data: ReplyMessageOptions, failIfNotExists?: boolean) {
+        return await this.channel?.caches.messages.create({
+            ...data,
+            message_reference: {
+                channel_id: this.channelId,
+                guild_id: this.guildId!,
+                message_id: this.id,
+                fail_if_not_exists: failIfNotExists,
+            },
+        });
+    }
+
+    public async pin(reason?: string) {
+        return this.channel?.caches.pins.create(this.id, reason);
+    }
+
+    public async unpin(reason?: string) {
+        return this.channel?.caches.pins.delete(this.id, reason);
     }
 
     public async fetchWebhook() {
-        // TODO
-    }
-
-    public async delete() {
-        // TODO
-    }
-
-    public async edit() {
-        // TODO
-    }
-
-    public async reply() {
-        // TODO
-    }
-
-    public async pin() {
-        // TODO
-    }
-
-    public async unpin() {
         // TODO
     }
 }

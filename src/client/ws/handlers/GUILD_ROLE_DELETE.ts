@@ -14,7 +14,7 @@ export default class GuildRoleDeleteHandler extends BaseWebSocketHandler {
 
             if (role) {
                 guild?.caches.roles.cache.delete(role.id);
-                this.shard.manager.client.emit('roleDelete', role);
+                this.shard.manager.emit('roleDelete', role);
             }
         }
     }

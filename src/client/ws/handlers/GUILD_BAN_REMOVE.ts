@@ -12,7 +12,7 @@ export default class GuildBanRemoveHandler extends BaseWebSocketHandler {
             const ban = guild.caches.bans.cache.get(d.user.id);
 
             if (ban) {
-                this.shard.manager.client.emit('guildBanRemove', ban);
+                this.shard.manager.emit('guildBanRemove', ban);
             }
         }
     }

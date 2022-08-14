@@ -21,12 +21,12 @@ export default class GuildUpdateHandler extends BaseWebSocketHandler {
             _guild = _guild._patch(d);
 
             this.shard.guilds.set(guild.id, _guild);
-            this.shard.manager.client.emit('guildUpdate', guild, _guild);
+            this.shard.manager.emit('guildUpdate', guild, _guild);
         } else {
             const guild = new Guild(this.shard.manager.client, d);
 
             this.shard.guilds.set(d.id, guild);
-            this.shard.manager.client.emit('guildCreate', guild);
+            this.shard.manager.emit('guildCreate', guild);
         }
     }
 }

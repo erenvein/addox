@@ -206,7 +206,8 @@ export class Guild extends BaseGuild {
                     this.client.caches.channels.cache._add(
                         channel.id,
                         this.client.caches.channels._createChannel(
-                            channel
+                            channel,
+                            this
                         ) as GuildBasedChannelResolvable
                     ) as GuildBasedChannelResolvable
                 );
@@ -320,10 +321,6 @@ export class Guild extends BaseGuild {
 
     public async edit(data: EditGuildData, reason?: string) {
         return await this.client.caches.guilds.edit(this.id, data, reason);
-    }
-
-    public async fetchOwner() {
-        return (await this.caches.members.fetch(this.ownerId)) as GuildMember;
     }
 
     public async fetchPruneCount(options?: GuildFetchPruneOptions) {

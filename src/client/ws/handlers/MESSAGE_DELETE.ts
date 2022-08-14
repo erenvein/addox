@@ -1,4 +1,8 @@
-import { type GatewayMessageDeleteDispatch, BaseWebSocketHandler } from '../../../index';
+import {
+    type GatewayMessageDeleteDispatch,
+    BaseWebSocketHandler,
+    type GuildTextBasedChannelResolvable,
+} from '../../../index';
 
 export default class MessageDeleteHandler extends BaseWebSocketHandler {
     public constructor() {
@@ -10,26 +14,30 @@ export default class MessageDeleteHandler extends BaseWebSocketHandler {
             const guild = this.shard.guilds.get(d.guild_id);
 
             if (guild) {
-                const channel = guild.caches.channels.cache.get(d.channel_id);
+                const channel = guild.caches.channels.cache.get(
+                    d.channel_id
+                ) as GuildTextBasedChannelResolvable;
 
                 if (channel) {
-                    const message = (channel as any).caches.messages.get(d.id);
+                    const message = channel.caches.messages.cache.get(d.id);
 
                     if (message) {
-                        (channel as any).caches.messages.cache.delete(d.id);
-                        this.shard.manager.client.emit('messageDelete', message);
+                        channel.caches.messages.cache.delete(d.id);
+                        this.shard.manager.emit('messageDelete', message);
                     }
                 }
             }
         } else {
-            const channel = this.shard.manager.client.caches.channels.cache.get(d.channel_id);
+            const channel = this.shard.manager.client.caches.channels.cache.get(
+                d.channel_id
+            ) as GuildTextBasedChannelResolvable;
 
             if (channel) {
-                const message = (channel as any).caches.messages.get(d.id);
+                const message = channel.caches.messages.cache.get(d.id);
 
                 if (message) {
-                    (channel as any).caches.messages.cache.delete(d.id);
-                    this.shard.manager.client.emit('messageDelete', message);
+                    channel.caches.messages.cache.delete(d.id);
+                    this.shard.manager.emit('messageDelete', message);
                 }
             }
         }

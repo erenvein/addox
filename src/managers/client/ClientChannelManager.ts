@@ -9,7 +9,6 @@ import {
     type CreateMessageData,
     type CollectionLike,
     ChannelType,
-    DMChannel,
     type FetchOptions,
     ChannelDataResolver,
     DataResolver,
@@ -19,6 +18,16 @@ import {
     Collection,
     ColorResolver,
     Message,
+    type TextBasedChannelResolvable,
+    GroupDMChannel,
+    TextChannel,
+    VoiceChannel,
+    DMChannel,
+    Guild,
+    CategoryChannel,
+    StageChannel,
+    ThreadChannel,
+    NewsChannel,
 } from '../../index';
 
 import { CachedManager } from '../base/CachedManager';
@@ -28,7 +37,7 @@ export class ClientChannelManager extends CachedManager<Snowflake, AnyChannel> {
         super(client);
     }
 
-    public _createChannel(data: APIChannel): AnyChannel | null {
+    public _createChannel(data: APIChannel, guild?: Guild): AnyChannel | null {
         let channel = null;
 
         switch (data.type) {
@@ -36,23 +45,36 @@ export class ClientChannelManager extends CachedManager<Snowflake, AnyChannel> {
                 channel = new DMChannel(this.client, data);
                 break;
             case ChannelType.GroupDM:
+                channel = new GroupDMChannel(this.client, data);
                 break;
-            case ChannelType.GuildCategory:
-                break;
-            case ChannelType.GuildForum:
-                break;
-            case ChannelType.GuildNews:
-                break;
-            case ChannelType.GuildNewsThread:
-            case ChannelType.GuildPrivateThread:
-            case ChannelType.GuildPublicThread:
-                break;
-            case ChannelType.GuildStageVoice:
-                break;
-            case ChannelType.GuildText:
-                break;
-            case ChannelType.GuildVoice:
-                break;
+        }
+
+        if (guild) {
+            switch (data.type) {
+                case ChannelType.GuildCategory:
+                    channel = new CategoryChannel(this.client, guild, data);
+                    break;
+                case ChannelType.GuildNews:
+                    channel = new NewsChannel(this.client, guild, data);
+                    break;
+                case ChannelType.GuildNewsThread:
+                case ChannelType.GuildPrivateThread:
+                case ChannelType.GuildPublicThread:
+                    channel = new ThreadChannel(this.client, guild, data);
+                    break;
+                case ChannelType.GuildStageVoice:
+                    channel = new StageChannel(this.client, guild, data);
+                    break;
+                case ChannelType.GuildText:
+                    channel = new TextChannel(this.client, guild, data);
+                    break;
+                case ChannelType.GuildVoice:
+                    channel = new VoiceChannel(this.client, guild, data);
+                    break;
+                case ChannelType.GuildForum:
+                    // TODO
+                    break;
+            }
         }
 
         return channel;
@@ -97,7 +119,7 @@ export class ClientChannelManager extends CachedManager<Snowflake, AnyChannel> {
         }
     }
 
-    public async fetchMessage(
+    public async fetchMessages(
         channelId: Snowflake,
         messageId?: Snowflake
     ): Promise<CollectionLike<Snowflake, Message>> {
@@ -226,6 +248,10 @@ export class ClientChannelManager extends CachedManager<Snowflake, AnyChannel> {
             data.flags = new MessageFlagsBitField().set(MessageFlagsBitsResolver(data.flags!));
         }
 
+        if (data.message_reference) {
+            data.message_reference.fail_if_not_exists ??= this.client.failIfNotExists;
+        }
+
         // @ts-ignore
         data.sticker_ids = data.stickers;
 
@@ -266,5 +292,33 @@ export class ClientChannelManager extends CachedManager<Snowflake, AnyChannel> {
 
     public async triggerTyping(id: Snowflake) {
         await this.client.rest.post(`/channels/${id}/typing`);
+    }
+
+    public async fetchPins(id: Snowflake) {
+        const pins = await this.client.rest.get<APIMessage[]>(`/channels/${id}/pins`);
+
+        const _channel = this.cache.get(id)! as TextBasedChannelResolvable;
+        const result = new Collection<Snowflake, Message>(
+            pins.map((message) => [message.id, new Message(this.client, message)])
+        );
+
+        if (_channel) {
+            _channel.caches.pins.cache.clear();
+            _channel.caches.pins.cache.concat(result);
+        }
+
+        return result;
+    }
+
+    public async pinMessage(channelId: Snowflake, messageId: Snowflake, reason?: string) {
+        return await this.client.rest.put(`/channels/${channelId}/pins/${messageId}`, {
+            reason: reason,
+        });
+    }
+
+    public async unpinMessage(channelId: Snowflake, messageId: Snowflake, reason?: string) {
+        return await this.client.rest.delete(`/channels/${channelId}/pins/${messageId}`, {
+            reason: reason,
+        });
     }
 }

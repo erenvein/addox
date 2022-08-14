@@ -1,10 +1,16 @@
-import { type APIDMChannel, type Client, User, DMBasedChannelCacheManager } from '../../index';
+import {
+    type APIDMChannel,
+    type Client,
+    type CreateMessageData,
+    User,
+    TextBasedChannelCacheManager,
+} from '../../index';
 
 import { BaseTextChannel } from '../base/BaseTextChannel';
 
 export class DMChannel extends BaseTextChannel {
     public recipient!: User;
-    public caches!: DMBasedChannelCacheManager;
+    public caches!: TextBasedChannelCacheManager;
 
     public constructor(client: Client, data: APIDMChannel) {
         super(client, data);
@@ -29,8 +35,16 @@ export class DMChannel extends BaseTextChannel {
             this.client.caches.users.cache.set(_user.id, _user);
         }
 
-        this.caches ??= new DMBasedChannelCacheManager(this.client, this);
+        this.caches ??= new TextBasedChannelCacheManager(this.client, this);
 
         return this;
+    }
+
+    public get lastMessage() {
+        return this.caches.messages.cache.get(this.lastMessageId!);
+    }
+
+    public async send(data: CreateMessageData) {
+        return this.caches.messages.create(data);
     }
 }

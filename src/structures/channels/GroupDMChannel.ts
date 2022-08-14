@@ -3,8 +3,8 @@ import {
     type Client,
     type Snowflake,
     User,
-    GroupDMChannelRecipientManager,
-    DMBasedChannelCacheManager
+    type CreateMessageData,
+    GroupDMChannelCacheManager,
 } from '../../index';
 
 import { BaseTextChannel } from '../base/BaseTextChannel';
@@ -13,8 +13,7 @@ export class GroupDMChannel extends BaseTextChannel {
     public applicationId!: string | null;
     public icon!: string | null;
     public ownerId!: Snowflake | null;
-    public recipients!: GroupDMChannelRecipientManager;
-    public caches!: DMBasedChannelCacheManager
+    public caches!: GroupDMChannelCacheManager;
 
     public constructor(client: Client, data: APIGroupDMChannel) {
         //@ts-ignore
@@ -23,7 +22,6 @@ export class GroupDMChannel extends BaseTextChannel {
         this._patch(data);
     }
 
-    //@ts-ignore
     public override _patch(data: APIGroupDMChannel) {
         super._patch(data);
 
@@ -31,13 +29,13 @@ export class GroupDMChannel extends BaseTextChannel {
         this.icon = data.icon ?? null;
         this.ownerId = data.owner_id ?? null;
 
-        this.recipients ??= new GroupDMChannelRecipientManager(this.client, this);
+        this.caches ??= new GroupDMChannelCacheManager(this.client, this);
 
         if ('recipients' in data) {
-            this.recipients.cache.clear();
+            this.caches.recipients.cache.clear();
 
             for (const recipient of data.recipients!) {
-                this.recipients.cache.set(
+                this.caches.recipients.cache.set(
                     recipient.id,
                     this.client.caches.users.cache._add(
                         recipient.id,
@@ -47,8 +45,14 @@ export class GroupDMChannel extends BaseTextChannel {
             }
         }
 
-        this.caches ??= new DMBasedChannelCacheManager(this.client, this);
-
         return this;
+    }
+
+    public get lastMessage() {
+        return this.caches.messages.cache.get(this.lastMessageId!);
+    }
+
+    public async send(data: CreateMessageData) {
+        return this.caches.messages.create(data);
     }
 }

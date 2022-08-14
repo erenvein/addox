@@ -13,7 +13,7 @@ export default class GuildMemberRemoveHandler extends BaseWebSocketHandler {
 
             if (member) {
                 guild.caches.members.cache.delete(member.id);
-                this.shard.manager.client.emit('guildMemberRemove', member);
+                this.shard.manager.emit('guildMemberRemove', member);
             }
         }
     }

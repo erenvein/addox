@@ -45,23 +45,23 @@ export class EmbedBuilder extends BaseBuilder {
     }
 
     public setAuthor(author: APIEmbedAuthor) {
-        return this._change('author', author);
+        return this.set('author', author);
     }
 
     public setColor(color: ColorResolvable) {
-        return this._change('color', ColorResolver(color));
+        return this.set('color', ColorResolver(color));
     }
 
     public setDescription(description: string) {
-        return this._change('description', description);
+        return this.set('description', description);
     }
 
     public setFields(...fields: APIEmbedField[]) {
-        return this._change('fields', fields);
+        return this.set('fields', fields);
     }
 
     public addFields(...fields: APIEmbedField[]) {
-        return this._change('fields', this.fields.concat(fields));
+        return this.set('fields', this.fields.concat(fields));
     }
 
     public removeFields(...fields: APIEmbedField[]) {
@@ -77,23 +77,23 @@ export class EmbedBuilder extends BaseBuilder {
     }
 
     public setFooter(footer: APIEmbedFooter) {
-        return this._change('footer', footer);
+        return this.set('footer', footer);
     }
 
     public setImage(image: APIEmbedImage) {
-        return this._change('image', image);
+        return this.set('image', image);
     }
 
     public setProvider(provider: APIEmbedProvider) {
-        return this._change('provider', provider);
+        return this.set('provider', provider);
     }
 
     public setThumbnail(thumbnail: APIEmbedThumbnail) {
-        return this._change('thumbnail', thumbnail);
+        return this.set('thumbnail', thumbnail);
     }
 
     public setTimestamp(timestamp: number | string | Date) {
-        return this._change(
+        return this.set(
             'timestamp',
             timestamp instanceof Date
                 ? timestamp.toISOString()
@@ -104,14 +104,14 @@ export class EmbedBuilder extends BaseBuilder {
     }
 
     public setTitle(title: string) {
-        return this._change('title', title);
+        return this.set('title', title);
     }
 
     public setURL(url: string) {
-        return this._change('url', url);
+        return this.set('url', url);
     }
 
     public setVideo(video: APIEmbedVideo) {
-        return this._change('video', video);
+        return this.set('video', video);
     }
 }

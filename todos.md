@@ -1,10 +1,10 @@
 -   Channels
+-   Webhooks
 -   Integrations
 -   Voice States
 -   Audit Logs
 -   Threads
--   Webhooks
--   Application Commands
+-   Interactions
 -   Auto Moderation
 -   Builders
 -   Voice

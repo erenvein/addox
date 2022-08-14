@@ -49,15 +49,15 @@ export class RequestManager {
         this.requestTimeout = requestTimeout ?? 15000;
     }
 
-    public get rateLimits(): Readonly<Collection<string, RateLimitData>> {
+    public get rateLimits(): Collection<string, RateLimitData> {
         return this.#rateLimits;
     }
 
-    public get retrys(): Readonly<Collection<string, number>> {
+    public get retrys(): Collection<string, number> {
         return this.#retrys;
     }
 
-    public get globalRateLimitData(): Readonly<RateLimitData> {
+    public get globalRateLimitData(): RateLimitData {
         return this.#globalRateLimitData;
     }
 

@@ -29,27 +29,27 @@ export class SelectMenuBuilder extends BaseBuilder {
     }
 
     public setDisabled(disabled: boolean) {
-        return this._change('disabled', disabled);
+        return this.set('disabled', disabled);
     }
 
     public setPlaceholder(placeholder: string) {
-        return this._change('placeholder', placeholder);
+        return this.set('placeholder', placeholder);
     }
 
     public setCustomId(customId: string) {
-        return this._change('custom_id', customId);
+        return this.set('custom_id', customId);
     }
 
     public setMinValues(minValues: number) {
-        return this._change('min_values', minValues);
+        return this.set('min_values', minValues);
     }
 
     public setMaxValues(maxValues: number) {
-        return this._change('max_values', maxValues);
+        return this.set('max_values', maxValues);
     }
 
     public setOptions(...options: SelectMenuOption[]) {
-        return this._change(
+        return this.set(
             'components',
             options.map((option) => {
                 // @ts-ignore

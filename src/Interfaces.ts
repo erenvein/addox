@@ -95,6 +95,7 @@ export type CollectionLike<K, V> = V | Collection<K, V>;
 export interface ClientOptions {
     ws: WebSocketOptions;
     rest?: PartialRequestManagerOptions;
+    failIfNotExists?: boolean;
 }
 
 export interface WebSocketProperties {
@@ -469,10 +470,14 @@ export interface EditMessageData extends RESTPatchAPIChannelMessageJSONBody {
 
 //@ts-ignore
 export interface CreateMessageData extends EditMessageData {
-    message_reference?: APIMessageReference;
+    message_reference?: MessageReferenceData;
     tts?: boolean;
     stickers?: Snowflake[];
-    embeds: (EmbedData | EmbedBuilder)[];
+    embeds?: (EmbedData | EmbedBuilder)[];
+}
+
+export interface MessageReferenceData extends APIMessageReference {
+    fail_if_not_exists?: boolean;
 }
 
 export interface EditGuildChannelPositionsData {
@@ -547,6 +552,8 @@ export interface GuildScheduledEventUserData {
     user: User;
     member: GuildMember | null;
 }
+
+export type ReplyMessageOptions = Omit<CreateMessageData, 'message_reference'>;
 
 export type StageInstancePrivacyLevelResolvable = keyof typeof StageInstancePrivacyLevel | number;
 

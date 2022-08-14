@@ -18,18 +18,18 @@ export default class GuildEmojisUpdateHandler extends BaseWebSocketHandler {
                 const __emoji = new GuildEmoji(this.shard.manager.client, guild, emoji);
 
                 guild.caches.emojis.cache.set(__emoji.id!, __emoji);
-                this.shard.manager.client.emit('emojiUpdate', _emoji, __emoji);
+                this.shard.manager.emit('emojiUpdate', _emoji, __emoji);
             } else {
                 const __emoji = new GuildEmoji(this.shard.manager.client, guild, emoji);
 
                 guild.caches.emojis.cache.set(__emoji.id!, __emoji);
-                this.shard.manager.client.emit('emojiCreate', __emoji);
+                this.shard.manager.emit('emojiCreate', __emoji);
             }
         }
 
         for (const emoji of deletions) {
             guild.caches.emojis.cache.delete(emoji.id!);
-            this.shard.manager.client.emit('emojiDelete', emoji);
+            this.shard.manager.emit('emojiDelete', emoji);
         }
     }
 }

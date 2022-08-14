@@ -1,7 +1,8 @@
 import {
     type GatewayGuildBanAddDispatch,
-    GuildBan,
+    User,
     BaseWebSocketHandler,
+    type GuildBan,
 } from '../../../index';
 
 export default class GuildBanAddHandler extends BaseWebSocketHandler {
@@ -12,10 +13,18 @@ export default class GuildBanAddHandler extends BaseWebSocketHandler {
     public override handle({ d }: GatewayGuildBanAddDispatch) {
         const guild = this.shard.guilds.get(d.guild_id);
 
+        this.shard.manager.client.caches.users.cache.set(
+            d.user.id,
+            new User(this.shard.manager.client, d.user)
+        );
+
         if (guild) {
             guild.caches.bans
                 .fetch(d.user.id)
-                .then((ban) => this.shard.manager.client.emit('guildBanAdd', ban as GuildBan));
+                .then((ban) => {
+                    this.shard.manager.emit('guildBanAdd', ban as GuildBan);
+                })
+                .catch(() => {});
         }
     }
 }
