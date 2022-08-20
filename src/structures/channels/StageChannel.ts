@@ -16,10 +16,10 @@ export class StageChannel extends VoiceChannel {
     }
 
     public override async fetch(options?: FetchOptions) {
-        return (await super.fetch(options)) as StageChannel;
+        return (await super.fetch(options)) as unknown as StageChannel;
     }
 
     public override async edit(data: EditChannelData, reason?: string) {
-        return (await super.edit(data, reason)) as StageChannel;
+        return (await super.edit(data, reason)) as unknown as StageChannel;
     }
 }

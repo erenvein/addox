@@ -5,6 +5,7 @@ import {
     VideoQualityMode,
     EditChannelData,
     FetchOptions,
+    GuildChannelCacheManager,
 } from '../../index';
 
 import { BaseGuildChannel } from '../base/BaseGuildChannel';
@@ -15,6 +16,7 @@ export class VoiceChannel extends BaseGuildChannel {
     public rtcRegion!: string | null;
     public userLimit!: number;
     public videoQualityMode!: keyof typeof VideoQualityMode;
+    public caches!: GuildChannelCacheManager;
 
     public constructor(client: Client, guild: Guild, data: APIVoiceBasedChannelResolvable) {
         super(client, guild, data);
@@ -32,6 +34,8 @@ export class VoiceChannel extends BaseGuildChannel {
         this.videoQualityMode = VideoQualityMode[
             data.video_quality_mode ?? 1
         ] as keyof typeof VideoQualityMode;
+
+        this.caches ??= new GuildChannelCacheManager(this.client, this);
 
         return this;
     }

@@ -12,6 +12,9 @@ import {
     GuildScheduledEventStatus,
     User,
     SnowflakeUtil,
+    VoiceChannel,
+    StageChannel,
+    TextBasedChannelResolvable,
 } from '../../index';
 
 import { BaseStructure } from '../base/BaseStructure';
@@ -84,7 +87,10 @@ export class GuildScheduledEvent extends BaseStructure {
     }
 
     public get channel() {
-        return this.guild?.caches.channels.cache.get(this.channelId!);
+        return this.guild?.caches.channels.cache.get(this.channelId!) as
+            | VoiceChannel
+            | StageChannel
+            | undefined;
     }
 
     public get guild() {
@@ -120,6 +126,6 @@ export class GuildScheduledEvent extends BaseStructure {
     }
 
     public async createInvite(data: CreateInviteData, reason?: string) {
-        return await this.channel?.caches.invites.create(data,reason)!;
+        return await this.channel?.caches.invites.create(data, reason)!;
     }
 }

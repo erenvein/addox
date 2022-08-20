@@ -28,6 +28,7 @@ import {
     StageChannel,
     ThreadChannel,
     NewsChannel,
+    TextBasedChannelCacheManager,
 } from '../../index';
 
 import { CachedManager } from '../base/CachedManager';
@@ -303,8 +304,8 @@ export class ClientChannelManager extends CachedManager<Snowflake, AnyChannel> {
         );
 
         if (_channel) {
-            _channel.caches.pins.cache.clear();
-            _channel.caches.pins.cache.concat(result);
+            (_channel.caches as TextBasedChannelCacheManager).pins.cache.clear();
+            (_channel.caches as TextBasedChannelCacheManager).pins.cache.concat(result);
         }
 
         return result;

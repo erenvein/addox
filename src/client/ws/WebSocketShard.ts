@@ -189,11 +189,10 @@ export class WebSocketShard extends EventEmitter {
     }
 
     public sendHeartbeat() {
-        if (this.status === 'Ready') {
-            this.lastHeartbeatAcked = false;
-            this.lastHeartbeat = Date.now();
-            this.send({ op: GatewayOpcodes.Heartbeat, d: this.sequence });
-        }
+        this.lastHeartbeatAcked = false;
+        this.lastHeartbeat = Date.now();
+
+        this.send({ op: GatewayOpcodes.Heartbeat, d: this.sequence });
     }
 
     public heartbeatAck(updatePing: boolean = false) {
@@ -214,10 +213,9 @@ export class WebSocketShard extends EventEmitter {
                     token: this.manager.token!,
                     intents: this.manager.client?.ws.intents!,
                     large_threshold: this.manager.largeThreshold,
-                    compress: this.manager.compress,
+                    compress: !!zlib && this.manager.compress,
                     presence: this.manager.presence,
                     properties: this.manager.properties,
-                    shard: [this.id, +this.manager.shardCount],
                 },
             });
         }
@@ -285,7 +283,7 @@ export class WebSocketShard extends EventEmitter {
 
         try {
             data = this.unpack(data);
-        } catch {
+        } catch (err) {
             data = null;
         }
 

@@ -1,9 +1,10 @@
-import type { WebSocketShardEvents, WebSocketShard } from '../../../index';
+import type { WebSocketShard } from '../../../index';
 
 export class BaseWebSocketEvent {
-    public name: keyof WebSocketShardEvents;
+    public name: any;
     public shard!: WebSocketShard;
-    public constructor(name: keyof WebSocketShardEvents) {
+    
+    public constructor(name: any) {
         this.name = name;
     }
 

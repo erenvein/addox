@@ -24,7 +24,7 @@ client.ws.on('ready', () => {
 
 client.ws.on('messageCreate', async (message) => {
     if (message.content === '!ping') {
-        message.channel?.send({ content: `Pong! :ping_pong: **${client.ws.ping}**ms` });
+        message.reply({ content: `Pong! :ping_pong: **${client.ws.ping}**ms` });
     }
 });
 

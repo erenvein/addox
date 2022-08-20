@@ -23,6 +23,7 @@ import {
     type ReplyMessageOptions,
     type GatewayMessageUpdateDispatchData,
     SnowflakeUtil,
+    TextBasedChannelCacheManager,
 } from '../../index';
 
 import { BaseStructure } from '../base/BaseStructure';
@@ -145,7 +146,6 @@ export class Message extends BaseStructure {
         } else {
             this.member ??= null;
         }
-        
 
         return this;
     }
@@ -220,11 +220,11 @@ export class Message extends BaseStructure {
     }
 
     public async pin(reason?: string) {
-        return this.channel?.caches.pins.create(this.id, reason);
+        return (this.channel?.caches as TextBasedChannelCacheManager).pins.create(this.id, reason);
     }
 
     public async unpin(reason?: string) {
-        return this.channel?.caches.pins.delete(this.id, reason);
+        return (this.channel?.caches as TextBasedChannelCacheManager).pins.delete(this.id, reason);
     }
 
     public async fetchWebhook() {
