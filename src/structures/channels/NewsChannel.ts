@@ -6,6 +6,8 @@ import {
     type CategoryChannel,
     type RESTPostAPIChannelFollowersResult,
     FollowedChannel,
+    EditChannelData,
+    FetchOptions,
 } from '../../index';
 
 import { BaseGuildTextChannel } from '../base/BaseGuildTextChannel';
@@ -46,5 +48,13 @@ export class NewsChannel extends BaseGuildTextChannel {
         );
 
         return new FollowedChannel(this.client, data);
+    }
+
+    public override async fetch(options?: FetchOptions) {
+        return (await super.fetch(options)) as NewsChannel;
+    }
+
+    public override async edit(data: EditChannelData, reason?: string) {
+        return (await super.edit(data, reason)) as NewsChannel;
     }
 }

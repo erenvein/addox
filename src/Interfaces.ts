@@ -126,8 +126,6 @@ export type UserFlagsBitsResolvable = ArrayLike<number> | ArrayLike<keyof typeof
 
 export type ColorResolvable = number | `#${string}` | keyof typeof Colors;
 
-export type WebSocketEvents = 'open' | 'message' | 'error' | 'close';
-
 export type SystemChannelFlagsBitsResolvable =
     | ArrayLike<number>
     | ArrayLike<keyof typeof GuildSystemChannelFlags>;
@@ -572,7 +570,7 @@ export interface GroupDMAddRecipientData {
     nick: string;
 }
 
-export interface ClientEvents {
+export interface WebSocketEvents {
     ready: [client: Client];
     guildCreate: [guild: Guild];
     guildDelete: [guild: Guild];

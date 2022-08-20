@@ -62,6 +62,8 @@ export { GroupDMChannelRecipientManager } from './managers/channels/GroupDMChann
 export { ChannelPinManager } from './managers/channels/ChannelPinManager';
 export { GuildTextBasedChannelCacheManager } from './managers/channels/GuildTextBasedChannelCacheManager';
 export { GroupDMChannelCacheManager } from './managers/channels/GroupDMChannelCacheManager';
+export { ThreadChannelCacheManager } from './managers/channels/ThreadChannelCacheManager';
+export { ThreadChannelMemberManager } from './managers/channels/ThreadChannelMemberManager';
 
 // - MEMBERS
 export { GuildMemberCacheManager } from './managers/members/GuildMemberCacheManager';
@@ -124,6 +126,7 @@ export { Message } from './structures/channels/Message';
 export { MessageInteraction } from './structures/channels/MessageInteraction';
 export { GroupDMChannel } from './structures/channels/GroupDMChannel';
 export { ThreadMember } from './structures/channels/ThreadMember';
+export { ThreadMetadata } from './structures/channels/ThreadMetadata';
 
 // - ANY
 export { Sticker } from './structures/Sticker';

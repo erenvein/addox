@@ -13,16 +13,16 @@ import {
     APIGatewayBotInfo,
     ReconnectableWebSocketCloseCodes,
     Sleep,
-    type ClientEvents,
+    type WebSocketEvents,
 } from '../../index';
 
 export declare interface WebSocketManager {
-    on<K extends keyof ClientEvents>(event: K, listener: (...args: ClientEvents[K]) => void): this;
-    once<K extends keyof ClientEvents>(
+    on<K extends keyof WebSocketEvents>(event: K, listener: (...args: WebSocketEvents[K]) => void): this;
+    once<K extends keyof WebSocketEvents>(
         event: K,
-        listener: (...args: ClientEvents[K]) => void
+        listener: (...args: WebSocketEvents[K]) => void
     ): this;
-    emit<K extends keyof ClientEvents>(event: K, ...args: ClientEvents[K]): any;
+    emit<K extends keyof WebSocketEvents>(event: K, ...args: WebSocketEvents[K]): any;
 }
 
 export class WebSocketManager extends EventEmitter {
@@ -33,7 +33,7 @@ export class WebSocketManager extends EventEmitter {
     public compress: boolean;
     public properties: WebSocketProperties;
     public autoReconnect: boolean;
-    #maximumIndentifyPerFiveSecond: number | null;
+    #maximumIdentifyPerFiveSecond: number | null;
     #token: string | null;
     #shardList: number[] | null;
     #shardQueue: Set<WebSocketShard> | null;
@@ -72,7 +72,7 @@ export class WebSocketManager extends EventEmitter {
         this.#spawnStreak = 0;
         this.autoReconnect = autoReconnect ?? true;
         this.#token = null;
-        this.#maximumIndentifyPerFiveSecond = null;
+        this.#maximumIdentifyPerFiveSecond = null;
     }
 
     public get shards() {
@@ -95,8 +95,8 @@ export class WebSocketManager extends EventEmitter {
         return this.#token;
     }
 
-    public get maximumIndentifyPerFiveSecond() {
-        return this.#maximumIndentifyPerFiveSecond;
+    public get maximumIdentifyPerFiveSecond() {
+        return this.#maximumIdentifyPerFiveSecond;
     }
 
     public async getGatewayBot() {
@@ -136,7 +136,7 @@ export class WebSocketManager extends EventEmitter {
             this.#shardList?.map((id) => new WebSocketShard(this, id))
         );
 
-        this.#maximumIndentifyPerFiveSecond = session_start_limit.max_concurrency;
+        this.#maximumIdentifyPerFiveSecond = session_start_limit.max_concurrency;
 
         return await this.spawnShards();
     }
@@ -244,12 +244,12 @@ export class WebSocketManager extends EventEmitter {
     }
 
     public async sleepForMaximumIdentifyPerFiveSecond() {
-        if (!this.#maximumIndentifyPerFiveSecond) {
+        if (!this.#maximumIdentifyPerFiveSecond) {
             const { session_start_limit } = await this.getGatewayBot();
-            this.#maximumIndentifyPerFiveSecond = session_start_limit.max_concurrency;
+            this.#maximumIdentifyPerFiveSecond = session_start_limit.max_concurrency;
         }
 
-        if (this.#spawnStreak >= this.#maximumIndentifyPerFiveSecond) {
+        if (this.#spawnStreak >= this.#maximumIdentifyPerFiveSecond) {
             this.#spawnStreak = 0;
             return await Sleep(5000);
         } else {

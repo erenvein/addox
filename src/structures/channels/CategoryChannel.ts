@@ -1,4 +1,10 @@
-import type { APIGuildCategoryChannel, Guild, Client } from '../../index';
+import type {
+    APIGuildCategoryChannel,
+    Guild,
+    Client,
+    FetchOptions,
+    EditChannelData,
+} from '../../index';
 
 import { BaseGuildChannel } from '../base/BaseGuildChannel';
 
@@ -13,5 +19,13 @@ export class CategoryChannel extends BaseGuildChannel {
         super._patch(data);
 
         return this;
+    }
+
+    public override async fetch(options?: FetchOptions) {
+        return (await super.fetch(options)) as CategoryChannel;
+    }
+
+    public override async edit(data: EditChannelData, reason?: string) {
+        return (await super.edit(data, reason)) as CategoryChannel;
     }
 }

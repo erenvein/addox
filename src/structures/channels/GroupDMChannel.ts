@@ -5,6 +5,8 @@ import {
     User,
     type CreateMessageData,
     GroupDMChannelCacheManager,
+    EditChannelData,
+    FetchOptions,
 } from '../../index';
 
 import { BaseTextChannel } from '../base/BaseTextChannel';
@@ -13,7 +15,7 @@ export class GroupDMChannel extends BaseTextChannel {
     public applicationId!: string | null;
     public icon!: string | null;
     public ownerId!: Snowflake | null;
-    public caches!: GroupDMChannelCacheManager;
+    public declare caches: GroupDMChannelCacheManager;
 
     public constructor(client: Client, data: APIGroupDMChannel) {
         //@ts-ignore
@@ -29,7 +31,7 @@ export class GroupDMChannel extends BaseTextChannel {
         this.icon = data.icon ?? null;
         this.ownerId = data.owner_id ?? null;
 
-        this.caches ??= new GroupDMChannelCacheManager(this.client, this);
+        this.caches = new GroupDMChannelCacheManager(this.client, this);
 
         if ('recipients' in data) {
             this.caches.recipients.cache.clear();
@@ -52,7 +54,11 @@ export class GroupDMChannel extends BaseTextChannel {
         return this.caches.messages.cache.get(this.lastMessageId!);
     }
 
-    public async send(data: CreateMessageData) {
-        return this.caches.messages.create(data);
+    public override async fetch(options?: FetchOptions) {
+        return (await super.fetch(options)) as GroupDMChannel;
+    }
+
+    public override async edit(data: EditChannelData, reason?: string) {
+        return (await super.edit(data, reason)) as GroupDMChannel;
     }
 }

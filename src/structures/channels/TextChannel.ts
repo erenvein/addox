@@ -1,4 +1,4 @@
-import type { APITextChannel, Guild, Client } from '../../index';
+import type { APITextChannel, Guild, Client, EditChannelData, FetchOptions } from '../../index';
 
 import { BaseGuildTextChannel } from '../base/BaseGuildTextChannel';
 
@@ -26,5 +26,13 @@ export class TextChannel extends BaseGuildTextChannel {
         this.topic = data.topic ?? null;
 
         return this;
+    }
+
+    public override async fetch(options?: FetchOptions) {
+        return (await super.fetch(options)) as TextChannel;
+    }
+
+    public override async edit(data: EditChannelData, reason?: string) {
+        return (await super.edit(data, reason)) as TextChannel;
     }
 }

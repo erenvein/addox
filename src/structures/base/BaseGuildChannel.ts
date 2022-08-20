@@ -1,19 +1,18 @@
-import {
-    type Client,
-    type Guild,
-    type APIGuildBasedChannelResolvable,
-    type FetchOptions,
-    type GuildBasedChannelResolvable,
-    type Snowflake,
-    type CategoryChannel,
-    GuildChannelCacheManager,
+import type {
+    Client,
+    Guild,
+    APIGuildBasedChannelResolvable,
+    FetchOptions,
+    GuildBasedChannelResolvable,
+    Snowflake,
+    CategoryChannel,
+    EditChannelData,
 } from '../../index';
 
 import { BaseChannel } from './BaseChannel';
 
 export class BaseGuildChannel extends BaseChannel {
     public guild: Guild;
-    public caches!: GuildChannelCacheManager;
     public parentId!: Snowflake | null;
     public rawPosition!: number;
 
@@ -31,11 +30,6 @@ export class BaseGuildChannel extends BaseChannel {
         this.parentId = data.parent_id ?? null;
         this.rawPosition = data.position ?? 0;
 
-        // Permission Overwrites
-        // TODO
-
-        this.caches ??= new GuildChannelCacheManager(this.client, this);
-
         return this;
     }
 
@@ -51,6 +45,14 @@ export class BaseGuildChannel extends BaseChannel {
         return (await this.guild.caches.channels.fetch(
             this.id,
             options
+        )) as GuildBasedChannelResolvable;
+    }
+
+    public override async edit(data: EditChannelData, reason?: string) {
+        return (await this.client.caches.channels.edit(
+            this.id,
+            data,
+            reason
         )) as GuildBasedChannelResolvable;
     }
 }

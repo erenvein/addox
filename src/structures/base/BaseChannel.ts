@@ -44,8 +44,8 @@ export class BaseChannel extends BaseStructure {
         return `https://discordapp.com/channels/${this.id}`;
     }
 
-    public async delete() {
-        return await this.client.caches.channels.delete(this.id);
+    public async delete(reason?: string) {
+        return await this.client.caches.channels.delete(this.id, reason);
     }
 
     public async fetch(options?: FetchOptions) {
