@@ -6,6 +6,7 @@ import {
     type APIDMChannel,
     type FetchOptions,
     type CollectionLike,
+    DMChannel,
 } from '../../index';
 
 import { CachedManager } from '../base/CachedManager';
@@ -52,21 +53,32 @@ export class ClientUserManager extends CachedManager<Snowflake, User> {
 
     public async createDM(id: Snowflake) {
         const channel = await this.client.rest.post<APIDMChannel>(`/users/@me/channels`, {
-            body: ({ recipient_id: id }),
+            body: { recipient_id: id },
         });
 
-        // TODO
+        const _channel = new DMChannel(this.client, channel);
+
+        return this.client.caches.channels.cache._add(channel.id, _channel) as DMChannel;
     }
 
     public async fetchDM(id: Snowflake) {
         const channel = await this.client.rest.get<APIDMChannel>(`/channels/${id}`);
 
-        // TODO
+        let _channel = this.client.caches.channels.cache.get(id) as DMChannel;
+
+        if (_channel) {
+            _channel = _channel._patch(channel);
+        }
+
+        return this.client.caches.channels.cache._add(
+            channel.id,
+            _channel ?? new DMChannel(this.client, channel)
+        ) as DMChannel;
     }
 
     public async deleteDM(id: Snowflake) {
         await this.client.rest.delete(`/channels/${id}`);
-
-        // TODO
+        this.client.caches.channels.cache.delete(id);
+        return;
     }
 }

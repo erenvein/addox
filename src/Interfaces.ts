@@ -124,7 +124,13 @@ export type PermissionFlagsBitsResolvable =
 
 export type UserFlagsBitsResolvable = ArrayLike<number> | ArrayLike<keyof typeof UserFlags>;
 
-export type ColorResolvable = number | `#${string}` | keyof typeof Colors;
+export type ColorResolvable = RGBResolvable | number | `#${string}` | keyof typeof Colors;
+
+export interface RGBResolvable {
+    r: number;
+    g: number;
+    b: number;
+}
 
 export type SystemChannelFlagsBitsResolvable =
     | ArrayLike<number>
@@ -414,6 +420,15 @@ export type GuildBasedChannelResolvable =
     | GuildTextBasedChannelResolvable
     | CategoryChannel;
 
+export type GuildBasedNonCategoryChannelResolvable =
+    | VoiceBasedChannelResolvable
+    | GuildTextBasedChannelResolvable;
+
+export type GuildBasedInvitableChannelResolvable =
+    | VoiceBasedChannelResolvable
+    | TextChannel
+    | NewsChannel;
+
 export type AnyChannel = GuildBasedChannelResolvable | DMBasedChannelResolvable;
 
 export type APITextBasedChannelResolvable =
@@ -433,6 +448,15 @@ export type APIGuildBasedChannelResolvable =
     | APIVoiceBasedChannelResolvable
     | APIGuildTextBasedChannelResolvable
     | APIGuildCategoryChannel;
+
+export type APIGuildBasedNonCategoryChannelResolvable =
+    | APIVoiceBasedChannelResolvable
+    | APIGuildTextBasedChannelResolvable;
+
+export type APIGuildBasedInvitableChannelResolvable =
+    | APIVoiceBasedChannelResolvable
+    | APITextChannel
+    | APINewsChannel;
 
 export type APIAnyChannel =
     | APITextChannel

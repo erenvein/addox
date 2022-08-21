@@ -26,11 +26,11 @@ export class ActionRowBuilder extends BaseBuilder {
 
     public removeComponents(...components: APIAnyComponent[]) {
         for (const component of components) {
-           const index = this.components.indexOf(component);
+            const index = this.components.indexOf(component);
 
-           if (index > -1) {
+            if (index > -1) {
                 this.components.splice(index, 1);
-           }
+            }
         }
 
         return this;

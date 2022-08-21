@@ -24,7 +24,9 @@ client.ws.on('ready', () => {
 
 client.ws.on('messageCreate', async (message) => {
     if (message.content === '!ping') {
-        message.reply({ content: `Pong! :ping_pong: **${client.ws.ping}**ms` });
+        message.reply({
+            content: `Pong! :ping_pong: **${client.ws.ping}**ms`,
+        });
     }
 });
 
@@ -57,3 +59,6 @@ client.ws.on('shardDeath', (shard, code, reason) => {
 });
 
 client.ws.connect(process.env.TOKEN!);
+
+//allah var
+//-- cpp, c, go, rust ve javaya boşaldım

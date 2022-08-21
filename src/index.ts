@@ -166,6 +166,7 @@ export { Sleep } from './utils/times/Sleep';
 // - COLORS
 export { HexDecimalToHex } from './utils/colors/HexDecimalToHex';
 export { HexToHexDecimal } from './utils/colors/HexToHexDecimal';
+export { RGBToHex } from "./utils/colors/RGBToHex";
 
 // - BASE
 export * from './utils/Base';

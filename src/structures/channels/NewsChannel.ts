@@ -1,11 +1,8 @@
-import {
-    type APINewsChannel,
-    type Guild,
-    type Client,
-    type Snowflake,
-    type CategoryChannel,
-    type RESTPostAPIChannelFollowersResult,
-    FollowedChannel,
+import type {
+    APINewsChannel,
+    Guild,
+    Client,
+    Snowflake,
     EditChannelData,
     FetchOptions,
 } from '../../index';
@@ -40,14 +37,7 @@ export class NewsChannel extends BaseGuildTextChannel {
     }
 
     public async follow(webhookId: Snowflake) {
-        const data = await this.client.rest.post<RESTPostAPIChannelFollowersResult>(
-            `/channels/${this.id}/followers`,
-            {
-                body: { webhook_id: webhookId },
-            }
-        );
-
-        return new FollowedChannel(this.client, data);
+        return await this.guild.caches.channels.followNewsChannel(this.id, webhookId);
     }
 
     public override async fetch(options?: FetchOptions) {

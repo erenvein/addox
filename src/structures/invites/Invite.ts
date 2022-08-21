@@ -8,7 +8,8 @@ import {
     InviteApplication,
     GuildScheduledEvent,
     InviteGuild,
-    GuildBasedChannelResolvable,
+    GuildBasedInvitableChannelResolvable,
+    FetchInviteOptions,
 } from '../../index';
 import { BaseStructure } from '../base/BaseStructure';
 
@@ -136,22 +137,19 @@ export class Invite extends BaseStructure {
         return this;
     }
 
-    public delete(reason?: string) {
-        // TODO
+    public async delete(reason?: string) {
+        await this.channel?.caches.invites.delete(this.code, reason);
+        return;
     }
 
-    public edit() {
-        // TODO
-    }
-
-    public fetch() {
-        // TODO
+    public async fetch(options?: FetchInviteOptions) {
+        return (await this.channel?.caches.invites.fetch(this.code, options)) as Invite | undefined;
     }
 
     public get channel() {
-        return this.client!.caches.channels.cache.get(
-            this.channelId!
-        ) as GuildBasedChannelResolvable;
+        return this.client!.caches.channels.cache.get(this.channelId!) as
+            | GuildBasedInvitableChannelResolvable
+            | undefined;
     }
 
     public get url() {

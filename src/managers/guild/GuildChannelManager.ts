@@ -16,6 +16,14 @@ import {
     OverwriteType,
     Message,
     APIMessage,
+    CreateInviteData,
+    InviteTargetType,
+    APIInvite,
+    Invite,
+    FetchInviteOptions,
+    GuildBasedInvitableChannelResolvable,
+    RESTPostAPIChannelFollowersResult,
+    FollowedChannel,
 } from '../../index';
 
 import { CachedManager } from '../base/CachedManager';
@@ -100,8 +108,6 @@ export class GuildChannelManager extends CachedManager<Snowflake, GuildBasedChan
         const threads = await this.client.rest.get<RESTGetAPIGuildThreadsResult>(
             `/guilds/${this.guild.id}/threads`
         );
-
-        // TODO
     }
 
     public async setPosition(id: Snowflake, data: EditGuildChannelPositionsData) {
@@ -178,16 +184,101 @@ export class GuildChannelManager extends CachedManager<Snowflake, GuildBasedChan
         }
     }
 
-    public async fetchInvites() {
-        // TODO
+    public async fetchInvites(
+        id: Snowflake,
+        code?: string | null,
+        { force, with_counts, with_expiration, scheduled_event_id }: FetchInviteOptions = {
+            force: false,
+        }
+    ) {
+        const channel = this.cache.get(id)! as GuildBasedInvitableChannelResolvable;
+
+        if (code) {
+            let _invite = channel.caches.invites.cache.get(code);
+
+            if (_invite && !force) {
+                return _invite;
+            } else {
+                const invite = await this.client.rest.get<APIInvite>(`/invites/${code}`, {
+                    query: {
+                        with_counts,
+                        with_expiration,
+                        guild_scheduled_event_id: scheduled_event_id,
+                    },
+                });
+
+                if (_invite) {
+                    _invite = _invite._patch(invite);
+                }
+
+                _invite ??= new Invite(this.client, invite);
+
+                if (channel) {
+                    channel.caches.invites.cache.set(code, _invite);
+                }
+
+                return _invite;
+            }
+        } else {
+            const invites = await this.client.rest.get<APIInvite[]>(
+                `/channels/${channel.id}/invites`
+            );
+
+            const result = new Collection<Snowflake, Invite>();
+
+            for (const invite of invites) {
+                let _invite = channel.caches.invites.cache.get(invite.code);
+
+                if (_invite) {
+                    _invite = _invite._patch(invite);
+                }
+
+                result.set(invite.code, _invite ?? new Invite(this.client, invite));
+            }
+
+            channel.caches.invites.cache.clear();
+            channel.caches.invites.cache.concat(result);
+
+            return result;
+        }
     }
 
-    public async createInvite() {
-        // TODO
+    public async createInvite(id: Snowflake, data: CreateInviteData, reason?: string) {
+        if (typeof data.target_type === 'string') {
+            data.target_type = InviteTargetType[data.target_type];
+        }
+
+        const invite = await this.client.rest.post<APIInvite>(`/channels/${id}/invites`, {
+            body: reason,
+        });
+
+        const _invite = new Invite(this.client, invite);
+
+        const channel = this.cache.get(id);
+
+        if (channel) {
+        }
+
+        return _invite;
     }
 
-    public async followNewsChannel() {
-        // TODO
+    public async deleteInvite(code: string, reason?: string) {
+        await this.client.rest.delete(`/invites/${code}`, {
+            reason,
+        });
+
+        this.cache.delete(code);
+    }
+
+    public async followNewsChannel(id: Snowflake, webhookId: Snowflake) {
+        const data = await this.client.rest.post<RESTPostAPIChannelFollowersResult>(
+            `/channels/${id}/followers`,
+            {
+                body: { webhook_id: webhookId },
+            }
+        );
+
+        return new FollowedChannel(this.client, data);
     }
 
     public async startThread() {

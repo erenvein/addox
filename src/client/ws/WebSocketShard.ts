@@ -72,7 +72,7 @@ export class WebSocketShard extends EventEmitter {
         this.id = id;
         this.socket = null;
 
-        if (zlib) {
+        if (!!zlib && this.manager.compress) {
             this.inflate = new zlib.Inflate({
                 chunkSize: 65535,
                 to: this.encoding === 'json' ? 'string' : '',
@@ -133,7 +133,7 @@ export class WebSocketShard extends EventEmitter {
 
         this.removeAllListeners();
 
-        if (zlib) {
+        if (!!zlib && this.manager.compress) {
             this.inflate = new zlib.Inflate({
                 chunkSize: 65535,
                 to: this.encoding === 'json' ? 'string' : '',
@@ -271,8 +271,8 @@ export class WebSocketShard extends EventEmitter {
             data = new Uint8Array(data);
         }
 
-        if (zlib) {
-            const isFlush = this.isInflateFlush(data);
+        if (!!zlib && this.manager.compress) {
+            const isFlush = this.isFlush(data);
 
             this.inflate.push(data, isFlush && zlib.Z_SYNC_FLUSH);
 
@@ -296,7 +296,7 @@ export class WebSocketShard extends EventEmitter {
         baseEndpoint += `?v=${DiscordGatewayVersion}`;
         baseEndpoint += `&encoding=${this.encoding}`;
 
-        if (zlib) {
+        if (!!zlib && this.manager.compress) {
             baseEndpoint += `&compress=zlib-stream`;
         }
 
@@ -307,7 +307,7 @@ export class WebSocketShard extends EventEmitter {
         return erlpack ? 'etf' : 'json';
     }
 
-    public isInflateFlush(data: any) {
+    public isFlush(data: any) {
         return (
             data.length >= 4 &&
             data[data.length - 4] === 0x00 &&

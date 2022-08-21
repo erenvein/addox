@@ -74,7 +74,7 @@ export class ChannelInviteManager extends CachedManager<Snowflake, Invite> {
                     _invite = _invite._patch(invite);
                 }
 
-                this.cache.set(invite.code!, _invite ?? new Invite(this.client, invite));
+                result.set(invite.code!, _invite ?? new Invite(this.client, invite));
             }
 
             this.cache.clear();
@@ -85,10 +85,6 @@ export class ChannelInviteManager extends CachedManager<Snowflake, Invite> {
     }
 
     public async delete(code: string, reason?: string) {
-        await this.client.rest.delete(`/invites/${code}`, {
-            reason,
-        });
-
-        this.cache.delete(code);
+        return await this.channel.guild.caches.channels.deleteInvite(code, reason);
     }
 }
