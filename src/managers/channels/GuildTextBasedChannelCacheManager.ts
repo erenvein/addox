@@ -1,6 +1,6 @@
 import {
     type Client,
-    type GuildTextBasedChannelResolvable,
+    type GuildTextBasedNonThreadChannelResolvable,
     ChannelMessageManager,
     ChannelPinManager,
 } from '../../index';
@@ -8,11 +8,11 @@ import {
 import { GuildChannelCacheManager } from './GuildChannelCacheManager';
 
 export class GuildTextBasedChannelCacheManager extends GuildChannelCacheManager {
-    public override channel: GuildTextBasedChannelResolvable;
+    public override channel: GuildTextBasedNonThreadChannelResolvable;
     public messages: ChannelMessageManager;
     public pins: ChannelPinManager;
 
-    public constructor(client: Client, channel: GuildTextBasedChannelResolvable) {
+    public constructor(client: Client, channel: GuildTextBasedNonThreadChannelResolvable) {
         super(client, channel);
 
         this.channel = channel;

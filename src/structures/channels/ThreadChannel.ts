@@ -17,8 +17,7 @@ export class ThreadChannel extends BaseGuildTextChannel {
     public messageCount!: number;
     public threadMetadata!: ThreadMetadata | null;
     public totalMessageSent!: number;
-    //@ts-ignore
-    public declare caches: ThreadChannelCacheManager;
+    public caches!: ThreadChannelCacheManager;
 
     public constructor(client: Client, guild: Guild, data: APIThreadChannel) {
         super(client, guild, data);

@@ -361,7 +361,7 @@ export interface ChannelOverwriteData {
 }
 
 export interface EditGuildChannelData {
-    name: string;
+    name?: string;
     type?: ChannelTypeResolvable;
     topic?: string;
     bitrate?: number;
@@ -409,6 +409,14 @@ export type TextBasedChannelResolvable =
     | NewsChannel
     | ThreadChannel;
 
+export type TextBasedNonThreadChannelResolvable =
+    | TextChannel
+    | DMChannel
+    | GroupDMChannel
+    | NewsChannel;
+
+export type GuildTextBasedNonThreadChannelResolvable = TextChannel | NewsChannel;
+
 export type DMBasedChannelResolvable = DMChannel | GroupDMChannel;
 
 export type GuildTextBasedChannelResolvable = TextChannel | NewsChannel | ThreadChannel;
@@ -424,12 +432,30 @@ export type GuildBasedNonCategoryChannelResolvable =
     | VoiceBasedChannelResolvable
     | GuildTextBasedChannelResolvable;
 
+export type GuildBasedNonThreadChannelResolvable =
+    | VoiceBasedChannelResolvable
+    | TextChannel
+    | NewsChannel;
+
 export type GuildBasedInvitableChannelResolvable =
     | VoiceBasedChannelResolvable
     | TextChannel
     | NewsChannel;
 
+export type GuildBasedPermissionOverwritableChannelResolvable =
+    | VoiceBasedChannelResolvable
+    | TextChannel
+    | CategoryChannel
+    | NewsChannel;
+
 export type AnyChannel = GuildBasedChannelResolvable | DMBasedChannelResolvable;
+
+export type PinnableChannelResolvable = DMBasedChannelResolvable | TextChannel | NewsChannel;
+
+export type MessageableChannelResolvable =
+    | DMBasedChannelResolvable
+    | GuildTextBasedChannelResolvable
+    | VoiceBasedChannelResolvable;
 
 export type APITextBasedChannelResolvable =
     | APITextChannel
@@ -437,6 +463,14 @@ export type APITextBasedChannelResolvable =
     | APIThreadChannel
     | APIDMChannel
     | APIGroupDMChannel;
+
+export type APITextBasedNonThreadChannelResolvable =
+    | APITextChannel
+    | APIDMChannel
+    | APIGroupDMChannel
+    | APINewsChannel;
+
+export type APIGuildTextBasedNonThreadChannelResolvable = APITextChannel | APINewsChannel;
 
 export type APIDMBasedChannelResolvable = APIDMChannel | APIGroupDMChannel;
 
@@ -453,10 +487,21 @@ export type APIGuildBasedNonCategoryChannelResolvable =
     | APIVoiceBasedChannelResolvable
     | APIGuildTextBasedChannelResolvable;
 
+export type APIGuildBasedNonThreadChannelResolvable =
+    | APIVoiceBasedChannelResolvable
+    | APITextChannel
+    | APINewsChannel;
+
 export type APIGuildBasedInvitableChannelResolvable =
     | APIVoiceBasedChannelResolvable
     | APITextChannel
     | APINewsChannel;
+
+export type APIGuildBasedPermissionOverwritableChannelResolvable =
+    | APIVoiceBasedChannelResolvable
+    | APITextChannel
+    | APIGuildCategoryChannel
+    | NewsChannel;
 
 export type APIAnyChannel =
     | APITextChannel
@@ -466,6 +511,16 @@ export type APIAnyChannel =
     | APIThreadChannel
     | APIVoiceChannel
     | APIGuildCategoryChannel;
+
+export type APIPinnableChannelResolvable =
+    | APIDMBasedChannelResolvable
+    | APITextChannel
+    | APINewsChannel;
+
+export type APIMessageableChannelResolvable =
+    | APIDMBasedChannelResolvable
+    | APIGuildTextBasedChannelResolvable
+    | APIVoiceBasedChannelResolvable;
 
 export interface MessageReaction {
     count: number;

@@ -64,6 +64,9 @@ export { GuildTextBasedChannelCacheManager } from './managers/channels/GuildText
 export { GroupDMChannelCacheManager } from './managers/channels/GroupDMChannelCacheManager';
 export { ThreadChannelCacheManager } from './managers/channels/ThreadChannelCacheManager';
 export { ThreadChannelMemberManager } from './managers/channels/ThreadChannelMemberManager';
+export { ChannelPermissionOverwriteManager } from './managers/channels/ChannelPermissionOverwriteManager';
+export { CategoryChannelCacheManager } from './managers/channels/CategoryChannelCacheManager';
+export { VoiceBasedChannelCacheManager } from './managers/channels/VoiceBasedChannelCacheManager';
 
 // - MEMBERS
 export { GuildMemberCacheManager } from './managers/members/GuildMemberCacheManager';
@@ -166,7 +169,7 @@ export { Sleep } from './utils/times/Sleep';
 // - COLORS
 export { HexDecimalToHex } from './utils/colors/HexDecimalToHex';
 export { HexToHexDecimal } from './utils/colors/HexToHexDecimal';
-export { RGBToHex } from "./utils/colors/RGBToHex";
+export { RGBToHex } from './utils/colors/RGBToHex';
 
 // - BASE
 export * from './utils/Base';

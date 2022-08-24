@@ -1,10 +1,12 @@
-import type {
+import {
     APINewsChannel,
     Guild,
     Client,
     Snowflake,
     EditChannelData,
     FetchOptions,
+    GuildTextBasedChannelCacheManager,
+    CreateMessageData,
 } from '../../index';
 
 import { BaseGuildTextChannel } from '../base/BaseGuildTextChannel';
@@ -13,6 +15,7 @@ export class NewsChannel extends BaseGuildTextChannel {
     public defaultAutoArchiveDuration!: number | null;
     public lastPinTimestamp!: number | null;
     public topic!: string | null;
+    public caches!: GuildTextBasedChannelCacheManager;
 
     public constructor(client: Client, guild: Guild, data: APINewsChannel) {
         super(client, guild, data);
@@ -28,6 +31,8 @@ export class NewsChannel extends BaseGuildTextChannel {
             ? new Date(data.last_pin_timestamp).getTime()
             : null;
         this.topic = data.topic ?? null;
+
+        this.caches = new GuildTextBasedChannelCacheManager(this.client, this);
 
         return this;
     }
@@ -46,5 +51,9 @@ export class NewsChannel extends BaseGuildTextChannel {
 
     public override async edit(data: EditChannelData, reason?: string) {
         return (await super.edit(data, reason)) as NewsChannel;
+    }
+
+    public async send(data: CreateMessageData) {
+        return await this.caches.messages.create(data);
     }
 }

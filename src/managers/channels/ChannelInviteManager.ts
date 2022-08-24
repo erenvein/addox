@@ -1,7 +1,7 @@
 import {
     type Snowflake,
     type Client,
-    type GuildBasedChannelResolvable,
+    type GuildBasedInvitableChannelResolvable,
     type CreateInviteData,
     type APIInvite,
     type FetchInviteOptions,
@@ -13,9 +13,9 @@ import {
 import { CachedManager } from '../base/CachedManager';
 
 export class ChannelInviteManager extends CachedManager<Snowflake, Invite> {
-    public channel: GuildBasedChannelResolvable;
+    public channel: GuildBasedInvitableChannelResolvable;
 
-    public constructor(client: Client, channel: GuildBasedChannelResolvable) {
+    public constructor(client: Client, channel: GuildBasedInvitableChannelResolvable) {
         super(client);
 
         this.channel = channel;

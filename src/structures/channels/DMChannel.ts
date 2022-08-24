@@ -12,6 +12,7 @@ import { BaseTextChannel } from '../base/BaseTextChannel';
 
 export class DMChannel extends BaseTextChannel {
     public recipient!: User;
+    public caches!: TextBasedChannelCacheManager;
 
     public constructor(client: Client, data: APIDMChannel) {
         super(client, data);
@@ -36,6 +37,8 @@ export class DMChannel extends BaseTextChannel {
             this.client.caches.users.cache.set(_user.id, _user);
         }
 
+        this.caches = new TextBasedChannelCacheManager(this.client, this);
+
         return this;
     }
 
@@ -49,5 +52,9 @@ export class DMChannel extends BaseTextChannel {
 
     public override async edit(data: EditChannelData, reason?: string) {
         return (await super.edit(data, reason)) as DMChannel;
+    }
+
+    public async send(data: CreateMessageData) {
+        return await this.caches.messages.create(data);
     }
 }

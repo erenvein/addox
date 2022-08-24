@@ -2,7 +2,7 @@ import type {
     Message,
     Snowflake,
     Client,
-    TextBasedChannelResolvable,
+    MessageableChannelResolvable,
     CreateMessageData,
     FetchOptions,
     EditMessageData,
@@ -11,9 +11,9 @@ import type {
 import { CachedManager } from '../base/CachedManager';
 
 export class ChannelMessageManager extends CachedManager<Snowflake, Message> {
-    public channel: TextBasedChannelResolvable;
+    public channel: MessageableChannelResolvable;
 
-    public constructor(client: Client, channel: TextBasedChannelResolvable) {
+    public constructor(client: Client, channel: MessageableChannelResolvable) {
         super(client);
 
         this.channel = channel;

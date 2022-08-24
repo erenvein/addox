@@ -1,4 +1,11 @@
-import type { APITextChannel, Guild, Client, EditChannelData, FetchOptions } from '../../index';
+import {
+    APITextChannel,
+    Guild,
+    Client,
+    EditChannelData,
+    FetchOptions,
+    GuildTextBasedChannelCacheManager,
+} from '../../index';
 
 import { BaseGuildTextChannel } from '../base/BaseGuildTextChannel';
 
@@ -7,6 +14,7 @@ export class TextChannel extends BaseGuildTextChannel {
     public lastPinTimestamp!: number | null;
     public rateLimitPerUser!: number;
     public topic!: string | null;
+    public caches!: GuildTextBasedChannelCacheManager;
 
     public constructor(client: Client, guild: Guild, data: APITextChannel) {
         super(client, guild, data);
@@ -24,6 +32,8 @@ export class TextChannel extends BaseGuildTextChannel {
         this.nsfw = data.nsfw ?? false;
         this.rateLimitPerUser = data.rate_limit_per_user ?? 0;
         this.topic = data.topic ?? null;
+
+        this.caches = new GuildTextBasedChannelCacheManager(this.client, this);
 
         return this;
     }

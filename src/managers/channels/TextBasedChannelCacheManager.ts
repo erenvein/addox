@@ -1,6 +1,6 @@
 import {
     type Client,
-    type TextBasedChannelResolvable,
+    type TextBasedNonThreadChannelResolvable,
     ChannelMessageManager,
     ChannelPinManager,
 } from '../../index';
@@ -8,11 +8,11 @@ import {
 import { BaseManager } from '../base/BaseManager';
 
 export class TextBasedChannelCacheManager extends BaseManager {
-    public channel: TextBasedChannelResolvable;
+    public channel: TextBasedNonThreadChannelResolvable;
     public messages: ChannelMessageManager;
     public pins: ChannelPinManager;
 
-    public constructor(client: Client, channel: TextBasedChannelResolvable) {
+    public constructor(client: Client, channel: TextBasedNonThreadChannelResolvable) {
         super(client);
 
         this.channel = channel;

@@ -5,7 +5,8 @@ import {
     VideoQualityMode,
     EditChannelData,
     FetchOptions,
-    GuildChannelCacheManager,
+    VoiceBasedChannelCacheManager,
+    CreateMessageData,
 } from '../../index';
 
 import { BaseGuildChannel } from '../base/BaseGuildChannel';
@@ -16,7 +17,7 @@ export class VoiceChannel extends BaseGuildChannel {
     public rtcRegion!: string | null;
     public userLimit!: number;
     public videoQualityMode!: keyof typeof VideoQualityMode;
-    public caches!: GuildChannelCacheManager;
+    public caches!: VoiceBasedChannelCacheManager;
 
     public constructor(client: Client, guild: Guild, data: APIVoiceBasedChannelResolvable) {
         super(client, guild, data);
@@ -35,7 +36,7 @@ export class VoiceChannel extends BaseGuildChannel {
             data.video_quality_mode ?? 1
         ] as keyof typeof VideoQualityMode;
 
-        this.caches ??= new GuildChannelCacheManager(this.client, this);
+        this.caches = new VoiceBasedChannelCacheManager(this.client, this);
 
         return this;
     }
@@ -46,5 +47,9 @@ export class VoiceChannel extends BaseGuildChannel {
 
     public override async edit(data: EditChannelData, reason?: string) {
         return (await super.edit(data, reason)) as VoiceChannel;
+    }
+
+    public async send(data: CreateMessageData) {
+        return await this.caches.messages.create(data);
     }
 }

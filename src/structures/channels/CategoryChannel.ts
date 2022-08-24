@@ -1,14 +1,17 @@
-import type {
+import {
     APIGuildCategoryChannel,
     Guild,
     Client,
     FetchOptions,
     EditChannelData,
+    CategoryChannelCacheManager,
 } from '../../index';
 
 import { BaseGuildChannel } from '../base/BaseGuildChannel';
 
 export class CategoryChannel extends BaseGuildChannel {
+    public caches!: CategoryChannelCacheManager;
+
     public constructor(client: Client, guild: Guild, data: APIGuildCategoryChannel) {
         super(client, guild, data);
 
@@ -17,6 +20,8 @@ export class CategoryChannel extends BaseGuildChannel {
 
     public override _patch(data: APIGuildCategoryChannel) {
         super._patch(data);
+
+        this.caches = new CategoryChannelCacheManager(this.client, this);
 
         return this;
     }

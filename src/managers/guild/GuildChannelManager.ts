@@ -111,7 +111,7 @@ export class GuildChannelManager extends CachedManager<Snowflake, GuildBasedChan
     }
 
     public async setPosition(id: Snowflake, data: EditGuildChannelPositionsData) {
-        await this.client.rest.patch(`/guilds/${this.guild.id}/channels/`, {
+        return await this.client.rest.patch(`/guilds/${this.guild.id}/channels/`, {
             body: {
                 id,
                 position: data.position,
@@ -121,7 +121,11 @@ export class GuildChannelManager extends CachedManager<Snowflake, GuildBasedChan
         });
     }
 
-    public async editOverwrite(id: Snowflake, data: ChannelOverwriteData, reason?: string) {
+    public async editOverwrite(
+        id: Snowflake,
+        data: ChannelOverwriteData,
+        reason?: string
+    ): Promise<void> {
         if ('allow' in data) {
             data.allow = new PermissionFlagsBitField().set(data.allow!);
         }
@@ -132,7 +136,7 @@ export class GuildChannelManager extends CachedManager<Snowflake, GuildBasedChan
 
         if (typeof data.type === 'string') data.type = OverwriteType[data.type!];
 
-        await this.client.rest.put(`/channels/${id}/permissions/${data.id}`, {
+        return await this.client.rest.put(`/channels/${id}/permissions/${data.id}`, {
             body: {
                 allow: data.allow,
                 deny: data.deny,
@@ -143,11 +147,15 @@ export class GuildChannelManager extends CachedManager<Snowflake, GuildBasedChan
     }
 
     public async createOverwrite(id: Snowflake, data: ChannelOverwriteData, reason?: string) {
-        await this.editOverwrite(id, data, reason);
+        return await this.editOverwrite(id, data, reason);
     }
 
-    public async deleteOverwrite(channelId: Snowflake, overwriteId: Snowflake, reason?: string) {
-        await this.client.rest.delete(`/channels/${channelId}/permissions/${overwriteId}`, {
+    public async deleteOverwrite(
+        channelId: Snowflake,
+        overwriteId: Snowflake,
+        reason?: string
+    ): Promise<void> {
+        return await this.client.rest.delete(`/channels/${channelId}/permissions/${overwriteId}`, {
             reason: reason,
         });
     }

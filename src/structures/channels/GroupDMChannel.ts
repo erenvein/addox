@@ -15,7 +15,7 @@ export class GroupDMChannel extends BaseTextChannel {
     public applicationId!: string | null;
     public icon!: string | null;
     public ownerId!: Snowflake | null;
-    public declare caches: GroupDMChannelCacheManager;
+    public caches!: GroupDMChannelCacheManager;
 
     public constructor(client: Client, data: APIGroupDMChannel) {
         //@ts-ignore
@@ -60,5 +60,9 @@ export class GroupDMChannel extends BaseTextChannel {
 
     public override async edit(data: EditChannelData, reason?: string) {
         return (await super.edit(data, reason)) as GroupDMChannel;
+    }
+
+    public async send(data: CreateMessageData) {
+        return await this.caches.messages.create(data);
     }
 }

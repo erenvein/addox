@@ -1,11 +1,11 @@
-import type { Snowflake, Client, TextBasedChannelResolvable, Message } from '../../index';
+import type { Snowflake, Client, PinnableChannelResolvable, Message } from '../../index';
 
 import { CachedManager } from '../base/CachedManager';
 
 export class ChannelPinManager extends CachedManager<Snowflake, Message> {
-    public channel: TextBasedChannelResolvable;
+    public channel: PinnableChannelResolvable;
 
-    public constructor(client: Client, channel: TextBasedChannelResolvable) {
+    public constructor(client: Client, channel: PinnableChannelResolvable) {
         super(client);
 
         this.channel = channel;
