@@ -24,6 +24,13 @@ import {
     GuildBasedInvitableChannelResolvable,
     RESTPostAPIChannelFollowersResult,
     FollowedChannel,
+    RESTPostAPIChannelThreadsJSONBody,
+    APIThreadChannel,
+    ThreadChannel,
+    ThreadMember,
+    APIThreadMember,
+    GuildTextBasedChannelResolvable,
+    FetchArchivedThreadOptions,
 } from '../../index';
 
 import { CachedManager } from '../base/CachedManager';
@@ -104,12 +111,6 @@ export class GuildChannelManager extends CachedManager<Snowflake, GuildBasedChan
         }
     }
 
-    public async fetchActiveThreads() {
-        const threads = await this.client.rest.get<RESTGetAPIGuildThreadsResult>(
-            `/guilds/${this.guild.id}/threads`
-        );
-    }
-
     public async setPosition(id: Snowflake, data: EditGuildChannelPositionsData) {
         return await this.client.rest.patch(`/guilds/${this.guild.id}/channels/`, {
             body: {
@@ -161,7 +162,12 @@ export class GuildChannelManager extends CachedManager<Snowflake, GuildBasedChan
     }
 
     public async bulkDelete(channelId: Snowflake, size: number) {
-        const _channel = this.cache.get(channelId)!;
+        const _channel = this.cache.get(channelId)! as GuildTextBasedChannelResolvable;
+        const _messages = (await _channel!.caches.messages.fetch()) as Collection<
+            Snowflake,
+            Message
+        >;
+
         const deletions = new Collection<Snowflake, Message>();
 
         if (_channel) {
@@ -169,27 +175,28 @@ export class GuildChannelManager extends CachedManager<Snowflake, GuildBasedChan
                 `/channels/${channelId}/messages/bulk-delete`,
                 {
                     body: {
-                        messages: (_channel as any).caches.messages.cache
-                            .slice(0, size)
-                            .map((message: Message) => message.id),
+                        messages: _messages
+                            .reduce<Message[]>((accumulator: any, message) => {
+                                accumulator.push(message);
+                                return accumulator;
+                            }, [])
+                            .slice(0, size),
                     },
                 }
             );
 
             for (const message of messages) {
-                const _message = (_channel as any).caches.messages.cache.get(message.id);
+                const _message = _channel.caches.messages.cache.get(message.id);
 
                 if (_message) {
                     deletions.set(message.id, _message);
                 }
 
-                (_channel as any).caches.messages.cache.delete(message.id);
+                _channel.caches.messages.cache.delete(message.id);
             }
-
-            return deletions;
-        } else {
-            return null;
         }
+
+        return deletions;
     }
 
     public async fetchInvites(
@@ -289,39 +296,274 @@ export class GuildChannelManager extends CachedManager<Snowflake, GuildBasedChan
         return new FollowedChannel(this.client, data);
     }
 
-    public async startThread() {
-        // TODO
+    public async startThread(
+        channelId: Snowflake,
+        data: RESTPostAPIChannelThreadsJSONBody,
+        reason?: string | null,
+        messageId?: Snowflake
+    ) {
+        if (messageId) {
+            const channel = await this.client.rest.post<APIThreadChannel>(
+                `/channels/${channelId}/messages/threads/${messageId}`,
+                {
+                    body: data,
+                    reason: reason as string,
+                }
+            );
+
+            return this.client.caches.channels.cache._add(
+                channel.id,
+                this.cache._add(channel.id, new ThreadChannel(this.client, this.guild, channel))
+            ) as ThreadChannel;
+        } else {
+            const channel = await this.client.rest.post<APIThreadChannel>(
+                `/channels/${channelId}/threads`,
+                {
+                    body: data,
+                    reason: reason as string,
+                }
+            );
+
+            return this.client.caches.channels.cache._add(
+                channel.id,
+                this.cache._add(channel.id, new ThreadChannel(this.client, this.guild, channel))
+            ) as ThreadChannel;
+        }
     }
 
-    public async joinThread() {
-        // TODO
+    public async joinThread(id: Snowflake) {
+        return await this.client.rest.put<void>(`/channels/${id}/thread-members/@me`);
     }
 
-    public async leaveThread() {
-        // TODO
+    public async leaveThread(id: Snowflake) {
+        return await this.client.rest.delete<void>(`/channels/${id}/thread-members/@me`);
     }
 
-    public async addThreadMember() {
-        // TODO
+    public async addThreadMember(threadId: Snowflake, userId: Snowflake) {
+        return await this.client.rest.put<void>(`/channels/${threadId}/thread-members/${userId}`);
     }
 
-    public async removeThreadMember() {
-        // TODO
+    public async removeThreadMember(threadId: Snowflake, userId: Snowflake) {
+        return await this.client.rest.delete<void>(`/channels/${userId}/thread-members/${userId}`);
     }
 
-    public async fetchThreadMember() {
-        // TODO
+    public async fetchThreadMembers(
+        threadId: Snowflake,
+        userId?: Snowflake,
+        { force }: FetchOptions = { force: false }
+    ): Promise<CollectionLike<Snowflake, ThreadMember>> {
+        const channel = this.cache.get(threadId) as ThreadChannel;
+
+        if (userId) {
+            let _member = channel?.caches.members.cache.get(userId)!;
+
+            if (!force && _member) {
+                return _member;
+            } else {
+                const member = await this.client.rest.get<APIThreadMember>(
+                    `/channels/${threadId}/thread-members/${userId}`
+                );
+
+                if (_member) {
+                    _member = _member._patch(member);
+                }
+
+                _member ??= new ThreadMember(this.client, member);
+
+                return channel ? channel.caches.members.cache._add(userId, _member) : _member;
+            }
+        } else {
+            const members = await this.client.rest.get<APIThreadMember[]>(
+                `/channels/${threadId}/thread-members`
+            );
+
+            const result = new Collection<Snowflake, ThreadMember>();
+
+            for (const member of members) {
+                let _member = channel?.caches.members.cache.get(member.id!)!;
+
+                if (_member) {
+                    _member = _member._patch(member as never);
+                }
+
+                result.set(_member.userId!, _member ?? new ThreadMember(this.client, member));
+            }
+
+            channel?.caches.members.cache.clear();
+            channel?.caches.members.cache.concat(result);
+
+            return result;
+        }
     }
 
-    public async fetchPublicArchivedThreads() {
-        // TODO
+    public async fetchActiveThreads() {
+        const threads = await this.client.rest.get<RESTGetAPIGuildThreadsResult>(
+            `/guilds/${this.guild.id}/threads`
+        );
+
+        const _threads = new Collection<Snowflake, ThreadChannel>();
+        const _members = new Collection<Snowflake, ThreadMember>();
+        const result = new Collection<Snowflake, ThreadChannel>();
+
+        for (const thread of threads.threads) {
+            _threads.set(thread.id, new ThreadChannel(this.client, this.guild, thread as any));
+        }
+
+        for (const member of threads.members) {
+            _members.set(member.user_id!, new ThreadMember(this.client, member));
+        }
+
+        for (const thread of _threads.values()) {
+            for (const member of _members.values()) {
+                if (member.threadId === thread.id) {
+                    thread.caches.members.cache.set(member.userId!, member);
+                }
+            }
+
+            this.client.caches.channels.cache.set(thread.id, thread);
+            this.guild.caches.channels.cache.set(thread.id, thread);
+
+            result.set(thread.id, thread);
+        }
+
+        return result;
     }
 
-    public async fetchPrivateArchivedThreads() {
-        // TODO
+    public async fetchPublicArchivedThreads(
+        id: Snowflake,
+        { before, limit }: FetchArchivedThreadOptions = {}
+    ) {
+        const threads = await this.client.rest.get<RESTGetAPIGuildThreadsResult>(
+            `/guilds/${id}/threads/archived/public`,
+            {
+                query: {
+                    limit,
+                    before: before ? new Date(before).toISOString() : undefined,
+                },
+            }
+        );
+
+        const _threads = new Collection<Snowflake, ThreadChannel>();
+        const _members = new Collection<Snowflake, ThreadMember>();
+        const result = new Collection<Snowflake, ThreadChannel>();
+
+        for (const thread of threads.threads) {
+            _threads.set(thread.id, new ThreadChannel(this.client, this.guild, thread as any));
+        }
+
+        for (const member of threads.members) {
+            _members.set(member.user_id!, new ThreadMember(this.client, member));
+        }
+
+        for (const thread of _threads.values()) {
+            for (const member of _members.values()) {
+                if (member.threadId === thread.id) {
+                    thread.caches.members.cache.set(member.userId!, member);
+                }
+            }
+
+            this.client.caches.channels.cache.set(thread.id, thread);
+            this.guild.caches.channels.cache.set(thread.id, thread);
+
+            result.set(thread.id, thread);
+        }
+
+        return {
+            threads: result,
+            //@ts-ignore
+            hasMore: threads.has_more,
+        };
     }
 
-    public async fetchJoinedThreads() {
-        // TODO
+    public async fetchPrivateArchivedThreads(
+        id: Snowflake,
+        { before, limit }: FetchArchivedThreadOptions = {}
+    ) {
+        const threads = await this.client.rest.get<RESTGetAPIGuildThreadsResult>(
+            `/guilds/${id}/threads/archived/private`,
+            {
+                query: {
+                    limit,
+                    before: before ? new Date(before).toISOString() : undefined,
+                },
+            }
+        );
+
+        const _threads = new Collection<Snowflake, ThreadChannel>();
+        const _members = new Collection<Snowflake, ThreadMember>();
+        const result = new Collection<Snowflake, ThreadChannel>();
+
+        for (const thread of threads.threads) {
+            _threads.set(thread.id, new ThreadChannel(this.client, this.guild, thread as any));
+        }
+
+        for (const member of threads.members) {
+            _members.set(member.user_id!, new ThreadMember(this.client, member));
+        }
+
+        for (const thread of _threads.values()) {
+            for (const member of _members.values()) {
+                if (member.threadId === thread.id) {
+                    thread.caches.members.cache.set(member.userId!, member);
+                }
+            }
+
+            this.client.caches.channels.cache.set(thread.id, thread);
+            this.guild.caches.channels.cache.set(thread.id, thread);
+
+            result.set(thread.id, thread);
+        }
+
+        return {
+            threads: result,
+            //@ts-ignore
+            hasMore: threads.has_more,
+        };
+    }
+
+    public async fetchJoinedThreads(
+        id: Snowflake,
+        { before, limit }: FetchArchivedThreadOptions = {}
+    ) {
+        const threads = await this.client.rest.get<RESTGetAPIGuildThreadsResult>(
+            `/channels/${id}/users/@me/threads/archived/private`,
+            {
+                query: {
+                    limit,
+                    before: before ? new Date(before).toISOString() : undefined,
+                },
+            }
+        );
+
+        const _threads = new Collection<Snowflake, ThreadChannel>();
+        const _members = new Collection<Snowflake, ThreadMember>();
+        const result = new Collection<Snowflake, ThreadChannel>();
+
+        for (const thread of threads.threads) {
+            _threads.set(thread.id, new ThreadChannel(this.client, this.guild, thread as any));
+        }
+
+        for (const member of threads.members) {
+            _members.set(member.user_id!, new ThreadMember(this.client, member));
+        }
+
+        for (const thread of _threads.values()) {
+            for (const member of _members.values()) {
+                if (member.threadId === thread.id) {
+                    thread.caches.members.cache.set(member.userId!, member);
+                }
+            }
+
+            this.client.caches.channels.cache.set(thread.id, thread);
+            this.guild.caches.channels.cache.set(thread.id, thread);
+
+            result.set(thread.id, thread);
+        }
+
+        return {
+            threads: result,
+            //@ts-ignore
+            hasMore: threads.has_more,
+        };
     }
 }

@@ -1,6 +1,4 @@
--   Channels
 -   Webhooks
--   Threads
 -   Interactions
 -   Integrations
 -   Voice States

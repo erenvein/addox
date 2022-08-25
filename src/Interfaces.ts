@@ -63,7 +63,6 @@ import type {
     Message,
     ApplicationFlags,
     APITextChannel,
-    APIVoiceChannel,
     APIGuildCategoryChannel,
     APINewsChannel,
     APIThreadChannel,
@@ -84,6 +83,7 @@ import type {
     RESTPostAPIStageInstanceJSONBody,
     RESTPatchAPIStageInstanceJSONBody,
     StageInstancePrivacyLevel,
+    APIGuildVoiceChannel
 } from './index';
 
 import type { BodyInit } from 'node-fetch';
@@ -476,7 +476,7 @@ export type APIDMBasedChannelResolvable = APIDMChannel | APIGroupDMChannel;
 
 export type APIGuildTextBasedChannelResolvable = APITextChannel | APINewsChannel | APIThreadChannel;
 
-export type APIVoiceBasedChannelResolvable = APIVoiceChannel;
+export type APIVoiceBasedChannelResolvable = APIGuildVoiceChannel;
 
 export type APIGuildBasedChannelResolvable =
     | APIVoiceBasedChannelResolvable
@@ -509,7 +509,7 @@ export type APIAnyChannel =
     | APIGroupDMChannel
     | APINewsChannel
     | APIThreadChannel
-    | APIVoiceChannel
+    | APIGuildVoiceChannel
     | APIGuildCategoryChannel;
 
 export type APIPinnableChannelResolvable =
@@ -647,6 +647,11 @@ export interface EditStageInstanceData extends RESTPatchAPIStageInstanceJSONBody
 export interface GroupDMAddRecipientData {
     access_token: string;
     nick: string;
+}
+
+export interface FetchArchivedThreadOptions {
+    before?: number;
+    limit?: number;
 }
 
 export interface WebSocketEvents {

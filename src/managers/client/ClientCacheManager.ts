@@ -9,7 +9,7 @@ import {
     ClientStickerManager,
     Collection,
     ClientChannelManager,
-    ClientStageInstanceManager
+    ClientStageInstanceManager,
 } from '../../index';
 
 import { BaseManager } from '../base/BaseManager';
@@ -19,7 +19,7 @@ export class ClientCacheManager extends BaseManager {
     public users: ClientUserManager;
     public stickers: ClientStickerManager;
     public channels: ClientChannelManager;
-    public stageInstances: ClientStageInstanceManager
+    public stageInstances: ClientStageInstanceManager;
 
     public constructor(client: Client) {
         super(client);
@@ -33,21 +33,21 @@ export class ClientCacheManager extends BaseManager {
 
     public get emojis() {
         return this.client.caches.guilds.cache.reduce(
-            (accumulator, guild) => (accumulator as any).concat(guild.caches.emojis.cache),
+            (accumulator: any, guild) => accumulator.concat(guild.caches.emojis.cache),
             new Collection<Snowflake, GuildEmoji>()
         );
     }
 
     public get roles() {
         return this.client.caches.guilds.cache.reduce(
-            (accumulator, guild) => (accumulator as any).concat(guild.caches.roles.cache),
+            (accumulator: any, guild) => accumulator.concat(guild.caches.roles.cache),
             new Collection<Snowflake, Role>()
         );
     }
 
     public get presences() {
         return this.client.caches.guilds.cache.reduce(
-            (accumulator, guild) => (accumulator as any).concat(guild.caches.presences),
+            (accumulator: any, guild) => accumulator.concat(guild.caches.presences),
             new Collection<Snowflake, Presence>()
         );
     }

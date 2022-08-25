@@ -37,6 +37,7 @@ export { ClientUserManager } from './managers/client/ClientUserManager';
 export { ClientStickerManager } from './managers/client/ClientStickerManager';
 export { ClientChannelManager } from './managers/client/ClientChannelManager';
 export { ClientStageInstanceManager } from './managers/client/ClientStageInstanceManager';
+export { ClientWebhookManager } from './managers/client/ClientWebhookManager';
 
 // - GUILD
 export { GuildEmojiManager } from './managers/guild/GuildEmojiManager';
@@ -142,6 +143,7 @@ export { Team } from './structures/Team';
 export { TeamMember } from './structures/TeamMember';
 export { MessageReference } from './structures/channels/MessageReference';
 export { StageInstance } from './structures/StageInstance';
+export { Webhook } from './structures/Webhook';
 
 // #UTILS
 

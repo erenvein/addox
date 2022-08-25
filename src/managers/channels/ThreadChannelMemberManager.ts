@@ -1,13 +1,4 @@
-import {
-    Snowflake,
-    Client,
-    ThreadChannel,
-    CollectionLike,
-    FetchOptions,
-    ThreadMember,
-    Collection,
-    APIThreadMember,
-} from '../../index';
+import type { Snowflake, Client, ThreadChannel, FetchOptions, ThreadMember } from '../../index';
 
 import { CachedManager } from '../base/CachedManager';
 
@@ -21,57 +12,18 @@ export class ThreadChannelMemberManager extends CachedManager<Snowflake, ThreadM
     }
 
     public async add(id: Snowflake): Promise<void> {
-        return await this.client.rest.put(`/channels/${this.channel.id}/thread-members/${id}`);
+        return await this.channel.guild.caches.channels.addThreadMember(this.channel.id, id);
     }
 
     public async remove(id: Snowflake): Promise<void> {
-        return await this.client.rest.delete(`/channels/${this.channel.id}/thread-members/${id}`);
+        return await this.channel.guild.caches.channels.removeThreadMember(this.channel.id, id);
     }
 
-    public async fetch(
-        id?: Snowflake,
-        { force }: FetchOptions = { force: false }
-    ): Promise<CollectionLike<Snowflake, ThreadMember>> {
-        if (id) {
-            let _member = this.cache.get(id)!;
-
-            if (!force && _member) {
-                return _member;
-            } else {
-                const member = await this.client.rest.get<APIThreadMember>(
-                    `/channels/${this.channel.id}/thread-members/${id}`
-                );
-
-                if (_member) {
-                    _member = _member._patch(member);
-                }
-
-                return this.cache._add(
-                    _member.userId!,
-                    _member ?? new ThreadMember(this.client, member)
-                );
-            }
-        } else {
-            const members = await this.client.rest.get<APIThreadMember[]>(
-                `/channels/${this.channel.id}/thread-members`
-            );
-
-            const result = new Collection<Snowflake, ThreadMember>();
-
-            for (const member of members) {
-                let _member = this.cache.get(member.id!)!;
-
-                if (_member) {
-                    _member = _member._patch(member as never);
-                }
-
-                result.set(_member.userId!, _member ?? new ThreadMember(this.client, member));
-            }
-
-            this.cache.clear();
-            this.cache.concat(result);
-
-            return this.cache;
-        }
+    public async fetch(id?: Snowflake, options?: FetchOptions) {
+        return await this.channel.guild.caches.channels.fetchThreadMembers(
+            this.channel.id,
+            id,
+            options
+        );
     }
 }

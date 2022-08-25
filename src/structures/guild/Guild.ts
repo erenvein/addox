@@ -244,9 +244,6 @@ export class Guild extends BaseGuild {
         // VOICE STATES
         // - TODO
 
-        // THREADS
-        // - TODO
-
         // WEBHOOKS
         // - TODO
 

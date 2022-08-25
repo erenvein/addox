@@ -1,15 +1,21 @@
-import type { APIVoiceChannel, Guild, Client, EditChannelData, FetchOptions } from '../../index';
+import type {
+    APIGuildVoiceChannel,
+    Guild,
+    Client,
+    EditChannelData,
+    FetchOptions,
+} from '../../index';
 
 import { VoiceChannel } from './VoiceChannel';
 
 export class StageChannel extends VoiceChannel {
-    public constructor(client: Client, guild: Guild, data: APIVoiceChannel) {
+    public constructor(client: Client, guild: Guild, data: APIGuildVoiceChannel) {
         super(client, guild, data);
 
         this._patch(data);
     }
 
-    public override _patch(data: APIVoiceChannel) {
+    public override _patch(data: APIGuildVoiceChannel) {
         super._patch(data);
 
         return this;
