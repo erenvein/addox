@@ -41,6 +41,10 @@ export class ThreadChannel extends BaseGuildTextChannel {
         return this;
     }
 
+    public get lastMessage() {
+        return this.caches.messages.cache.get(this.lastMessageId!);
+    }
+
     public override async fetch(options?: FetchOptions) {
         return (await super.fetch(options)) as ThreadChannel;
     }

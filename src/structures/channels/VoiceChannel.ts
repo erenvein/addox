@@ -1,42 +1,37 @@
 import {
-    APIVoiceBasedChannelResolvable,
+    APIGuildVoiceChannel,
     Guild,
     Client,
     VideoQualityMode,
     EditChannelData,
     FetchOptions,
-    VoiceBasedChannelCacheManager,
     CreateMessageData,
+    Snowflake,
+    VoiceChannelCacheManager,
 } from '../../index';
 
-import { BaseGuildChannel } from '../base/BaseGuildChannel';
+import { BaseVoiceChannel } from '../base/BaseVoiceChannel';
 
-export class VoiceChannel extends BaseGuildChannel {
-    public bitrate!: number;
-    public nsfw!: boolean;
-    public rtcRegion!: string | null;
-    public userLimit!: number;
+export class VoiceChannel extends BaseVoiceChannel {
     public videoQualityMode!: keyof typeof VideoQualityMode;
-    public caches!: VoiceBasedChannelCacheManager;
+    public lastMessageId!: Snowflake | null;
+    public declare caches: VoiceChannelCacheManager;
 
-    public constructor(client: Client, guild: Guild, data: APIVoiceBasedChannelResolvable) {
+    public constructor(client: Client, guild: Guild, data: APIGuildVoiceChannel) {
         super(client, guild, data);
 
         this._patch(data);
     }
 
-    public override _patch(data: APIVoiceBasedChannelResolvable) {
+    public override _patch(data: APIGuildVoiceChannel) {
         super._patch(data);
 
-        this.bitrate = data.bitrate ?? 64;
-        this.nsfw = data.nsfw ?? false;
-        this.rtcRegion = data.rtc_region ?? null;
-        this.userLimit = data.user_limit ?? 0;
         this.videoQualityMode = VideoQualityMode[
             data.video_quality_mode ?? 1
         ] as keyof typeof VideoQualityMode;
+        this.lastMessageId = data.last_message_id ?? null;
 
-        this.caches = new VoiceBasedChannelCacheManager(this.client, this);
+        this.caches = new VoiceChannelCacheManager(this.client, this);
 
         return this;
     }
@@ -51,5 +46,9 @@ export class VoiceChannel extends BaseGuildChannel {
 
     public async send(data: CreateMessageData) {
         return await this.caches.messages.create(data);
+    }
+
+    public get lastMessage() {
+        return this.caches.messages.cache.get(this.lastMessageId!);
     }
 }

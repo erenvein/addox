@@ -1,21 +1,22 @@
 import type {
-    APIGuildVoiceChannel,
+    APIGuildStageVoiceChannel,
     Guild,
     Client,
     EditChannelData,
     FetchOptions,
+    EditStageInstanceData,
 } from '../../index';
 
-import { VoiceChannel } from './VoiceChannel';
+import { BaseVoiceChannel } from '../base/BaseVoiceChannel';
 
-export class StageChannel extends VoiceChannel {
-    public constructor(client: Client, guild: Guild, data: APIGuildVoiceChannel) {
+export class StageChannel extends BaseVoiceChannel {
+    public constructor(client: Client, guild: Guild, data: APIGuildStageVoiceChannel) {
         super(client, guild, data);
 
         this._patch(data);
     }
 
-    public override _patch(data: APIGuildVoiceChannel) {
+    public override _patch(data: APIGuildStageVoiceChannel) {
         super._patch(data);
 
         return this;
@@ -27,5 +28,17 @@ export class StageChannel extends VoiceChannel {
 
     public override async edit(data: EditChannelData, reason?: string) {
         return (await super.edit(data, reason)) as unknown as StageChannel;
+    }
+
+    public async fetchStageInstance(options?: FetchOptions) {
+        return this.client.caches.stageInstances.fetch(this.id, options);
+    }
+
+    public async editStageInstance(data: EditStageInstanceData, reason?: string) {
+        return this.client.caches.stageInstances.edit(this.id, data, reason);
+    }
+
+    public async deleteStageInstance(reason?: string) {
+        return this.client.caches.stageInstances.delete(this.id, reason);
     }
 }

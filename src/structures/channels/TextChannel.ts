@@ -45,4 +45,8 @@ export class TextChannel extends BaseGuildTextChannel {
     public override async edit(data: EditChannelData, reason?: string) {
         return (await super.edit(data, reason)) as TextChannel;
     }
+
+    public get lastMessage() {
+        return this.caches.messages.cache.get(this.lastMessageId!);
+    }
 }

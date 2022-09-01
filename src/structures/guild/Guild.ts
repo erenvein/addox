@@ -244,9 +244,6 @@ export class Guild extends BaseGuild {
         // VOICE STATES
         // - TODO
 
-        // WEBHOOKS
-        // - TODO
-
         return this;
     }
 
@@ -362,5 +359,9 @@ export class Guild extends BaseGuild {
 
     public async editWelcomeScreen(data: RESTPatchAPIGuildWelcomeScreenJSONBody, reason?: string) {
         return await this.client.caches.guilds.editWelcomeScreen(this.id, data, reason);
+    }
+
+    public async fetchWebhooks() {
+        return await this.client.caches.guilds.fetchWebhooks(this.id);
     }
 }

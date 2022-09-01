@@ -56,4 +56,8 @@ export class NewsChannel extends BaseGuildTextChannel {
     public async send(data: CreateMessageData) {
         return await this.caches.messages.create(data);
     }
+
+    public get lastMessage() {
+        return this.caches.messages.cache.get(this.lastMessageId!);
+    }
 }

@@ -21,6 +21,7 @@ import {
     type RESTPatchAPIGuildWelcomeScreenJSONBody,
     type RESTPatchAPIGuildWelcomeScreenResult,
     type RESTGetAPIGuildWelcomeScreenResult,
+    type APIWebhook,
     GuildWidgetSettings,
     GuildWidget,
     GuildPreview,
@@ -32,6 +33,7 @@ import {
     EditGuildData,
     UnavailableGuild,
     Collection,
+    Webhook,
 } from '../../index';
 
 import { BaseManager } from '../base/BaseManager';
@@ -222,5 +224,9 @@ export class ClientGuildManager extends BaseManager {
         );
 
         return new GuildWelcomeScreen(this.client, id, welcomeScreen);
+    }
+
+    public async fetchWebhooks(id: Snowflake) {
+        return this.client.caches.webhooks.fetchGuildWebhooks(id);
     }
 }

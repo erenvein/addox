@@ -67,7 +67,7 @@ export { ThreadChannelCacheManager } from './managers/channels/ThreadChannelCach
 export { ThreadChannelMemberManager } from './managers/channels/ThreadChannelMemberManager';
 export { ChannelPermissionOverwriteManager } from './managers/channels/ChannelPermissionOverwriteManager';
 export { CategoryChannelCacheManager } from './managers/channels/CategoryChannelCacheManager';
-export { VoiceBasedChannelCacheManager } from './managers/channels/VoiceBasedChannelCacheManager';
+export { VoiceChannelCacheManager } from './managers/channels/VoiceChannelCacheManager';
 
 // - MEMBERS
 export { GuildMemberCacheManager } from './managers/members/GuildMemberCacheManager';
@@ -84,6 +84,7 @@ export { BaseGuild } from './structures/base/BaseGuild';
 export { BaseGuildChannel } from './structures/base/BaseGuildChannel';
 export { BaseTextChannel } from './structures/base/BaseTextChannel';
 export { BaseGuildTextChannel } from './structures/base/BaseGuildTextChannel';
+export { BaseVoiceChannel } from './structures/base/BaseVoiceChannel';
 
 // - BITFIELD
 export { ThreadMemberFlagsBitField } from './structures/bitfield/ThreadMemberFlagsBitField';

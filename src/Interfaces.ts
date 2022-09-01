@@ -83,7 +83,12 @@ import type {
     RESTPostAPIStageInstanceJSONBody,
     RESTPatchAPIStageInstanceJSONBody,
     StageInstancePrivacyLevel,
-    APIGuildVoiceChannel
+    APIGuildVoiceChannel,
+    APIGuildStageVoiceChannel,
+    APIAllowedMentions,
+    APIActionRowComponent,
+    ActionRowBuilder,
+    APIAttachment,
 } from './index';
 
 import type { BodyInit } from 'node-fetch';
@@ -387,9 +392,13 @@ export interface MessageActivity {
     partyId: string | null;
 }
 
-export type APIAnyComponent = APIButtonComponent | APISelectMenuComponent | APITextInputComponent;
+export type APIAnyComponent =
+    | APIButtonComponent
+    | APISelectMenuComponent
+    | APITextInputComponent
+    | APIActionRowComponent<any>;
 
-export type AnyComponent = ButtonBuilder | SelectMenuBuilder | TextInputBuilder;
+export type AnyComponent = ButtonBuilder | SelectMenuBuilder | TextInputBuilder | ActionRowBuilder;
 
 export type ButtonStyleResolvable = keyof typeof ButtonStyle | number;
 
@@ -455,7 +464,7 @@ export type PinnableChannelResolvable = DMBasedChannelResolvable | TextChannel |
 export type MessageableChannelResolvable =
     | DMBasedChannelResolvable
     | GuildTextBasedChannelResolvable
-    | VoiceBasedChannelResolvable;
+    | VoiceChannel;
 
 export type APITextBasedChannelResolvable =
     | APITextChannel
@@ -476,7 +485,7 @@ export type APIDMBasedChannelResolvable = APIDMChannel | APIGroupDMChannel;
 
 export type APIGuildTextBasedChannelResolvable = APITextChannel | APINewsChannel | APIThreadChannel;
 
-export type APIVoiceBasedChannelResolvable = APIGuildVoiceChannel;
+export type APIVoiceBasedChannelResolvable = APIGuildVoiceChannel | APIGuildStageVoiceChannel;
 
 export type APIGuildBasedChannelResolvable =
     | APIVoiceBasedChannelResolvable
@@ -503,14 +512,7 @@ export type APIGuildBasedPermissionOverwritableChannelResolvable =
     | APIGuildCategoryChannel
     | NewsChannel;
 
-export type APIAnyChannel =
-    | APITextChannel
-    | APIDMChannel
-    | APIGroupDMChannel
-    | APINewsChannel
-    | APIThreadChannel
-    | APIGuildVoiceChannel
-    | APIGuildCategoryChannel;
+export type APIAnyChannel = APIGuildBasedChannelResolvable | APIDMBasedChannelResolvable;
 
 export type APIPinnableChannelResolvable =
     | APIDMBasedChannelResolvable
@@ -543,6 +545,7 @@ export interface EditMessageData extends RESTPatchAPIChannelMessageJSONBody {
     files?: (Buffer | string)[];
     flags?: MessageFlagsBitsResolvable;
     embeds: (EmbedData | EmbedBuilder)[];
+    components?: (APIAnyComponent | AnyComponent)[];
 }
 
 //@ts-ignore
@@ -652,6 +655,25 @@ export interface GroupDMAddRecipientData {
 export interface FetchArchivedThreadOptions {
     before?: number;
     limit?: number;
+}
+
+export interface CreateWebhookData {
+    name: string;
+    avatar?: string | Buffer;
+}
+
+export interface EditWebhookData {
+    name?: string;
+    avatar?: string | Buffer;
+    channel_id?: Snowflake;
+}
+
+export interface EditWebhookMessageData {
+    content?: string;
+    embeds?: (EmbedData | EmbedBuilder)[];
+    allowed_mentions?: APIAllowedMentions;
+    files?: (Buffer | string)[];
+    attachments: APIAttachment[];
 }
 
 export interface WebSocketEvents {

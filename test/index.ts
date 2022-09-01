@@ -1,6 +1,6 @@
 import { config } from 'dotenv';
 import { resolve } from 'node:path';
-import { Client } from '../src/index';
+import { Client, ActionRowBuilder, ButtonBuilder } from '../src/index';
 
 config({ path: resolve(__dirname, '.env') });
 
@@ -25,7 +25,7 @@ client.ws.on('ready', () => {
 client.ws.on('messageCreate', async (message) => {
     if (message.content === '!ping') {
         message.reply({
-            content: `Pong! :ping_pong: **${client.ws.ping}**ms`,
+            content: `Pong! :ping_pong: **${client.ws.ping}**ms`
         });
     }
 });

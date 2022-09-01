@@ -1,10 +1,10 @@
-import { ComponentType, type APIAnyComponent } from '../index';
+import { AnyComponent, ComponentType, type APIAnyComponent } from '../index';
 
 import { BaseBuilder } from './BaseBuilder';
 
 export class ActionRowBuilder extends BaseBuilder {
     public type: 1 = ComponentType.ActionRow;
-    public components: APIAnyComponent[];
+    public components: (APIAnyComponent | AnyComponent)[];
 
     public constructor(components?: APIAnyComponent[]) {
         super();
@@ -12,11 +12,11 @@ export class ActionRowBuilder extends BaseBuilder {
         this.components = components ?? [];
     }
 
-    public setComponents(...components: APIAnyComponent[]) {
+    public setComponents(...components: (APIAnyComponent | AnyComponent)[]) {
         return this.set('components', components);
     }
 
-    public addComponents(...components: APIAnyComponent[]) {
+    public addComponents(...components: (APIAnyComponent | AnyComponent)[]) {
         for (const component of components) {
             this.components.push(component);
         }
@@ -24,7 +24,7 @@ export class ActionRowBuilder extends BaseBuilder {
         return this;
     }
 
-    public removeComponents(...components: APIAnyComponent[]) {
+    public removeComponents(...components: (APIAnyComponent | AnyComponent)[]) {
         for (const component of components) {
             const index = this.components.indexOf(component);
 

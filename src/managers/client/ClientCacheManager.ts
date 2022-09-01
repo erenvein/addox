@@ -10,6 +10,7 @@ import {
     Collection,
     ClientChannelManager,
     ClientStageInstanceManager,
+    ClientWebhookManager,
 } from '../../index';
 
 import { BaseManager } from '../base/BaseManager';
@@ -20,6 +21,7 @@ export class ClientCacheManager extends BaseManager {
     public stickers: ClientStickerManager;
     public channels: ClientChannelManager;
     public stageInstances: ClientStageInstanceManager;
+    public webhooks: ClientWebhookManager;
 
     public constructor(client: Client) {
         super(client);
@@ -29,6 +31,7 @@ export class ClientCacheManager extends BaseManager {
         this.stickers = new ClientStickerManager(client);
         this.channels = new ClientChannelManager(client);
         this.stageInstances = new ClientStageInstanceManager(client);
+        this.webhooks = new ClientWebhookManager(client);
     }
 
     public get emojis() {

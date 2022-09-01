@@ -1,16 +1,16 @@
 import {
     type Client,
-    type VoiceBasedChannelResolvable,
+    type VoiceChannel,
     ChannelMessageManager,
 } from '../../index';
 
 import { GuildChannelCacheManager } from './GuildChannelCacheManager';
 
-export class VoiceBasedChannelCacheManager extends GuildChannelCacheManager {
-    public override channel: VoiceBasedChannelResolvable;
+export class VoiceChannelCacheManager extends GuildChannelCacheManager {
+    public override channel: VoiceChannel;
     public messages: ChannelMessageManager;
 
-    public constructor(client: Client, channel: VoiceBasedChannelResolvable) {
+    public constructor(client: Client, channel: VoiceChannel) {
         super(client, channel);
 
         this.channel = channel;
