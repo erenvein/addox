@@ -4,11 +4,10 @@ import {
     type Client,
     type EditGuildMemberData,
     type Snowflake,
-    type RESTPutAPIGuildBanJSONBody,
+    type CreateBanOptions,
     type ImageOptions,
     GuildMemberCacheManager,
     PermissionFlagsBitField,
-    PermissionFlagsBitsResolver,
 } from '../../index';
 
 import { BaseStructure } from '../base/BaseStructure';
@@ -77,8 +76,8 @@ export class GuildMember extends BaseStructure {
         return await this.guild.caches.members.kick(this.id, reason);
     }
 
-    public async ban(data?: RESTPutAPIGuildBanJSONBody, reason?: string) {
-        return await this.guild.caches.bans.create(this.id, data, reason);
+    public async ban(options?: CreateBanOptions) {
+        return await this.guild.caches.bans.create(this.id, options);
     }
 
     public async unban(reason?: string) {

@@ -1,9 +1,4 @@
 export class Collection<K, V> extends Map<K, V> {
-    accumulator(
-        _rawGuilds: Collection<string, import('discord-api-types/v10').APIGuild>
-    ): import('../../index').WebSocketShard {
-        throw new Error('Method not implemented.');
-    }
     public find(fn: (value: V, key: K, collection: this) => boolean) {
         for (const [key, value] of this.entries()) {
             if (fn(value, key, this)) {

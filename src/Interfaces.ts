@@ -690,6 +690,11 @@ export interface CreateWebhookMessageOptions {
     thread_id?: Snowflake;
 }
 
+export interface CreateBanOptions {
+    delete_message_days?: number;
+    reason?: string;
+}
+
 export interface WebSocketEvents {
     ready: [client: Client];
     guildCreate: [guild: Guild];

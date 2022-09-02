@@ -31,6 +31,7 @@ import {
     APIThreadMember,
     GuildTextBasedChannelResolvable,
     FetchArchivedThreadOptions,
+    EditChannelData,
 } from '../../index';
 
 import { CachedManager } from '../base/CachedManager';
@@ -42,6 +43,18 @@ export class GuildChannelManager extends CachedManager<Snowflake, GuildBasedChan
         super(client);
 
         this.guild = guild;
+    }
+
+    public async delete(id: Snowflake, reason?: string) {
+        return await this.client.caches.channels.delete(id, reason);
+    }
+
+    public async edit(id: Snowflake, data: EditChannelData, reason?: string) {
+        return (await this.client.caches.channels.edit(
+            id,
+            data,
+            reason
+        )) as GuildBasedChannelResolvable;
     }
 
     public async create(data: CreateGuildChannelData, reason?: string) {
@@ -161,12 +174,21 @@ export class GuildChannelManager extends CachedManager<Snowflake, GuildBasedChan
         });
     }
 
-    public async bulkDelete(channelId: Snowflake, size: number) {
+    public async bulkDelete(channelId: Snowflake, messages: number | Snowflake[]) {
         const _channel = this.cache.get(channelId)! as GuildTextBasedChannelResolvable;
-        const _messages = (await _channel!.caches.messages.fetch()) as Collection<
-            Snowflake,
-            Message
-        >;
+
+        let resolved: Snowflake[] = [];
+
+        if (typeof messages === 'number') {
+            const _messages = (await _channel!.caches.messages.fetch()) as Collection<
+                Snowflake,
+                Message
+            >;
+
+            resolved = _messages.keyArray().slice(0, messages);
+        } else {
+            resolved = messages;
+        }
 
         const deletions = new Collection<Snowflake, Message>();
 
@@ -175,24 +197,19 @@ export class GuildChannelManager extends CachedManager<Snowflake, GuildBasedChan
                 `/channels/${channelId}/messages/bulk-delete`,
                 {
                     body: {
-                        messages: _messages
-                            .reduce<Message[]>((accumulator: any, message) => {
-                                accumulator.push(message);
-                                return accumulator;
-                            }, [])
-                            .slice(0, size),
+                        messages: resolved,
                     },
                 }
             );
 
-            for (const message of messages) {
-                const _message = _channel.caches.messages.cache.get(message.id);
+            for (const messageId of resolved) {
+                const _message = _channel.caches.messages.cache.get(messageId);
 
                 if (_message) {
-                    deletions.set(message.id, _message);
+                    deletions.set(messageId, _message);
                 }
 
-                _channel.caches.messages.cache.delete(message.id);
+                _channel.caches.messages.cache.delete(messageId);
             }
         }
 

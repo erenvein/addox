@@ -72,6 +72,7 @@ export class Guild extends BaseGuild {
     public joinedAt!: Date;
     public welcomeScreen!: GuildWelcomeScreen | null;
     public lazy!: boolean;
+    public maximumStageVideoChannelUsers!: number | null;
 
     public constructor(
         client: Client,
@@ -156,6 +157,13 @@ export class Guild extends BaseGuild {
             this.lazy ??= false;
         }
 
+        if ('max_stage_video_channel_users' in data) {
+            //@ts-ignore
+            this.maximumStageVideoChannelUsers = data.max_stage_video_channel_users;
+        } else {
+            this.maximumStageVideoChannelUsers ??= null;
+        }
+
         if ('joined_at' in data) {
             this.joinedAt = new Date(Date.parse(data.joined_at));
         } else {
@@ -224,7 +232,7 @@ export class Guild extends BaseGuild {
 
         if ('stage_instances' in data) {
             for (const stageInstance of data.stage_instances) {
-                this.client.caches.stageInstances.cache.set(
+                this.caches.stageInstances.cache.set(
                     stageInstance.id,
                     new StageInstance(this.client, stageInstance)
                 );

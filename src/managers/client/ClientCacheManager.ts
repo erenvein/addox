@@ -50,7 +50,7 @@ export class ClientCacheManager extends BaseManager {
 
     public get presences() {
         return this.client.caches.guilds.cache.reduce(
-            (accumulator: any, guild) => accumulator.concat(guild.caches.presences),
+            (accumulator, guild) => (accumulator as any).concat(guild.caches.presences),
             new Collection<Snowflake, Presence>()
         );
     }

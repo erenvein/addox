@@ -7,13 +7,29 @@ import {
     type APIStageInstance,
     StageInstancePrivacyLevel,
     StageInstance,
+    Collection,
 } from '../../index';
 
-import { CachedManager } from '../base/CachedManager';
+import { BaseManager } from '../base/BaseManager';
 
-export class ClientStageInstanceManager extends CachedManager<Snowflake, StageInstance> {
+export class ClientStageInstanceManager extends BaseManager {
     public constructor(client: Client) {
         super(client);
+    }
+
+    public get cache() {
+        return new Collection<Snowflake, StageInstance>(
+            this.client.caches.guilds.cache.reduce((accumulator: any, guild) => {
+                accumulator.push(
+                    ...guild.caches.stageInstances.cache.map((stageInstance) => [
+                        stageInstance.id,
+                        stageInstance,
+                    ])
+                );
+
+                return accumulator;
+            }, [])
+        );
     }
 
     public async fetch(
@@ -53,8 +69,10 @@ export class ClientStageInstanceManager extends CachedManager<Snowflake, StageIn
     }
 
     public async delete(id: Snowflake, reason?: string) {
-        await this.client.rest.delete(`/stage-instances/${id}`, { reason: reason as string });
         this.cache.delete(id);
+        return await this.client.rest.delete<void>(`/stage-instances/${id}`, {
+            reason: reason as string,
+        });
     }
 
     public async edit(

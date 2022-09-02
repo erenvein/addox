@@ -48,6 +48,7 @@ export { GuildBanManager } from './managers/guild/GuildBanManager';
 export { GuildMemberManager } from './managers/guild/GuildMemberManager';
 export { GuildChannelManager } from './managers/guild/GuildChannelManager';
 export { GuildScheduledEventManager } from './managers/guild/GuildScheduledEventManager';
+export { GuildStageInstanceManager } from './managers/guild/GuildStageInstanceManager';
 
 // - MESSAGES
 export { MessageMentionManager } from './managers/messages/MessageMentionManager';
@@ -89,6 +90,7 @@ export { BaseGuildChannel } from './structures/base/BaseGuildChannel';
 export { BaseTextChannel } from './structures/base/BaseTextChannel';
 export { BaseGuildTextChannel } from './structures/base/BaseGuildTextChannel';
 export { BaseVoiceChannel } from './structures/base/BaseVoiceChannel';
+export { BaseApplication } from './structures/base/BaseApplication';
 
 // - BITFIELD
 export { ThreadMemberFlagsBitField } from './structures/bitfield/ThreadMemberFlagsBitField';
@@ -116,6 +118,8 @@ export { UnavailableGuild } from './structures/guild/UnavailableGuild';
 export { GuildBan } from './structures/guild/GuildBan';
 export { GuildMember } from './structures/guild/GuildMember';
 export { GuildScheduledEvent } from './structures/guild/GuildScheduledEvent';
+export { GuildIntegration } from './structures/guild/GuildIntegration';
+export { GuildIntegrationApplication } from './structures/guild/GuildIntegrationApplication';
 
 // - INVITES
 export { Invite } from './structures/invites/Invite';

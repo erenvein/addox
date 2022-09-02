@@ -26,10 +26,22 @@ client.ws.on('ready', () => {
 });
 
 client.ws.on('messageCreate', async (message) => {
-    if (message.content === '!ping') {
+    const [commandName, ...args] = message.content!.trim().split(/ /g);
+
+    if (commandName === '!ping') {
         message.reply({
             content: `Pong! :ping_pong: **${client.ws.ping}**ms`,
         });
+    } else if (commandName === '!sil') {
+        const amount = args[0] ? parseInt(args[0]) : 1;
+        if (amount > 100) {
+            message.reply({
+                content: "100'den fazla mesaj silemem!",
+            });
+        }
+
+        //@ts-ignore
+        message.channel!.bulkDelete(amount);
     }
 });
 

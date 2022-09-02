@@ -2,10 +2,10 @@ import type {
     Client,
     APIGuildTextBasedChannelResolvable,
     Guild,
-    Snowflake,
     FetchOptions,
     GuildTextBasedChannelResolvable,
     EditChannelData,
+    Snowflake,
 } from '../../index';
 
 import { BaseGuildChannel } from './BaseGuildChannel';
@@ -35,5 +35,9 @@ export class BaseGuildTextChannel extends BaseGuildChannel {
 
     public override async edit(data: EditChannelData, reason?: string) {
         return (await super.edit(data, reason)) as GuildTextBasedChannelResolvable;
+    }
+
+    public async bulkDelete(messages: number | Snowflake[], reason?: string) {
+        return await this.guild.caches.channels.bulkDelete(this.id, messages);
     }
 }
