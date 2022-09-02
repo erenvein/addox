@@ -186,4 +186,28 @@ export class ClientWebhookManager extends CachedManager<Snowflake, Webhook> {
             }
         );
     }
+
+    public async createSlackMessage(
+        id: Snowflake,
+        token: Snowflake,
+        options?: CreateWebhookMessageOptions
+    ) {
+        const data = await this.client.rest.post<any>(`/webhooks/${id}/${token}/slack`, {
+            query: options,
+        });
+
+        return data.toString() === 'ok';
+    }
+
+    public async createGithubMessage(
+        id: Snowflake,
+        token: Snowflake,
+        options?: CreateWebhookMessageOptions
+    ) {
+        const data = await this.client.rest.post<any>(`/webhooks/${id}/${token}/github`, {
+            query: options,
+        });
+
+        return data.toString() === 'ok';
+    }
 }

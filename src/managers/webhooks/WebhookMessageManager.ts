@@ -61,4 +61,20 @@ export class WebhookMessageManager extends CachedManager<Snowflake, Message> {
 
         return this.cache._add(message.id, message);
     }
+
+    public async createSlackMessage(options?: CreateWebhookMessageOptions) {
+        return await this.client.caches.webhooks.createSlackMessage(
+            this.webhook.id,
+            this.webhook.token!,
+            options
+        );
+    }
+
+    public async createGithubMessage(options?: CreateWebhookMessageOptions) {
+        return await this.client.caches.webhooks.createGithubMessage(
+            this.webhook.id,
+            this.webhook.token!,
+            options
+        );
+    }
 }

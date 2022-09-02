@@ -114,4 +114,12 @@ export class Webhook extends BaseStructure {
     public async send(data: CreateWebhookMessageData, options?: CreateWebhookMessageOptions) {
         return await this.caches.messages.create(data, options);
     }
+
+    public async sendSlackMessage(options?: CreateWebhookMessageOptions) {
+        return await this.caches.messages.createSlackMessage(options);
+    }
+
+    public async sendGitHubMessage(options?: CreateWebhookMessageOptions) {
+        return await this.caches.messages.createGithubMessage(options);
+    }
 }
