@@ -11,6 +11,10 @@ import {
     Message,
     EditWebhookMessageData,
     ColorResolver,
+    CreateWebhookMessageData,
+    CreateWebhookMessageOptions,
+    MessageFlagsBitField,
+    MessageFlagsBitsResolver,
 } from '../../index';
 
 import { CachedManager } from '../base/CachedManager';
@@ -71,8 +75,48 @@ export class ClientWebhookManager extends CachedManager<Snowflake, Webhook> {
         return this.cache._add(webhook.id, new Webhook(this.client, webhook));
     }
 
-    public async createMessage() {
-        // TODO
+    public async delete(id: Snowflake, token?: string | null, reason?: string) {
+        return await this.client.rest.delete<void>(`/webhooks/${id}${token ? `/${token}` : ''}`, {
+            reason: reason,
+        });
+    }
+
+    public async createMessage(
+        id: Snowflake,
+        token: string,
+        data: CreateWebhookMessageData,
+        { wait, thread_id }: CreateWebhookMessageOptions = { wait: false }
+    ) {
+        if (data.files) {
+            const files = [];
+
+            for await (const file of data.files) {
+                files.push(await DataResolver.resolveFile(file));
+            }
+
+            //@ts-ignore
+            data.files = files;
+        }
+
+        if (data.embeds) {
+            for (const embed of data.embeds) {
+                embed.color &&= ColorResolver(embed.color);
+            }
+        }
+
+        if ('flags' in data) {
+            data.flags = new MessageFlagsBitField().set(MessageFlagsBitsResolver(data.flags!));
+        }
+
+        const message = await this.client.rest.post<APIMessage>(`/webhooks/${id}/${token}`, {
+            body: data,
+            appendBodyToFormData: true,
+            // @ts-ignore
+            files: data.files,
+            query: { thread_id, wait },
+        });
+
+        return new Message(this.client, message);
     }
 
     public async fetchMessage(

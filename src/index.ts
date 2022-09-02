@@ -73,6 +73,10 @@ export { VoiceChannelCacheManager } from './managers/channels/VoiceChannelCacheM
 export { GuildMemberCacheManager } from './managers/members/GuildMemberCacheManager';
 export { GuildMemberRoleManager } from './managers/members/GuildMemberRoleManager';
 
+// - WEBHOOKS
+export { WebhookCacheManager } from './managers/webhooks/WebhookCacheManager';
+export { WebhookMessageManager } from './managers/webhooks/WebhookMessageManager';
+
 // #STRUCTURES
 
 // - BASE

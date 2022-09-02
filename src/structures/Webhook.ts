@@ -6,6 +6,11 @@ import {
     Snowflake,
     SnowflakeUtil,
     ImageOptions,
+    FetchOptions,
+    EditWebhookData,
+    WebhookCacheManager,
+    CreateWebhookMessageData,
+    CreateWebhookMessageOptions,
 } from '../index';
 
 import { BaseStructure } from './base/BaseStructure';
@@ -23,6 +28,7 @@ export class Webhook extends BaseStructure {
     public token!: string | null;
     public oauth2URL!: string | null;
     public user!: User | null;
+    public caches!: WebhookCacheManager;
 
     public constructor(client: Client, data: APIWebhook) {
         super(client);
@@ -45,6 +51,8 @@ export class Webhook extends BaseStructure {
         this.user = data.user
             ? this.client.caches.users.cache._add(data.user.id, new User(this.client, data.user))
             : null;
+
+        this.caches = new WebhookCacheManager(this.client, this);
 
         return this;
     }
@@ -91,15 +99,19 @@ export class Webhook extends BaseStructure {
             : null;
     }
 
-    public async fetch() {
-        // TODO
+    public async fetch(options?: FetchOptions) {
+        return await this.client.caches.webhooks.fetch(this.id, options);
     }
 
-    public async edit() {
-        // TODO
+    public async edit(data: EditWebhookData, reason?: string) {
+        return await this.client.caches.webhooks.edit(this.id, data, reason);
     }
 
-    public async delete() {
-        // TODO
+    public async delete(reason?: string) {
+        return await this.client.caches.webhooks.delete(this.id, this.token, reason);
+    }
+
+    public async send(data: CreateWebhookMessageData, options?: CreateWebhookMessageOptions) {
+        return await this.caches.messages.create(data, options);
     }
 }

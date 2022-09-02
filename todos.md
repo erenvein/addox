@@ -1,4 +1,3 @@
--   Webhooks
 -   Interactions
 -   Integrations
 -   Voice States

@@ -676,6 +676,19 @@ export interface EditWebhookMessageData {
     attachments: APIAttachment[];
 }
 
+export interface CreateWebhookMessageData extends EditWebhookMessageData {
+    username?: string;
+    avatar_url?: string;
+    tts?: boolean;
+    flags?: MessageFlagsBitsResolvable;
+    thread_name?: string;
+}
+
+export interface CreateWebhookMessageOptions {
+    wait?: boolean;
+    thread_id?: Snowflake;
+}
+
 export interface WebSocketEvents {
     ready: [client: Client];
     guildCreate: [guild: Guild];
