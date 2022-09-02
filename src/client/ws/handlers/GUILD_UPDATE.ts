@@ -7,7 +7,7 @@ import {
 
 export default class GuildUpdateHandler extends BaseWebSocketHandler {
     public constructor() {
-        super('GuildUpdate');
+        super();
     }
 
     public override handle({ d }: GatewayGuildUpdateDispatch) {

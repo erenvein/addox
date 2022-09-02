@@ -2,7 +2,7 @@ import { BaseWebSocketHandler, GatewayGuildEmojisUpdateDispatch, GuildEmoji } fr
 
 export default class GuildEmojisUpdateHandler extends BaseWebSocketHandler {
     public constructor() {
-        super('GuildEmojisUpdate');
+        super();
     }
 
     public override handle({ d }: GatewayGuildEmojisUpdateDispatch) {

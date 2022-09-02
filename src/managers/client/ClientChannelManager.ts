@@ -38,8 +38,8 @@ export class ClientChannelManager extends CachedManager<Snowflake, AnyChannel> {
         super(client);
     }
 
-    public _createChannel(data: APIChannel, guild?: Guild): AnyChannel | null {
-        let channel = null;
+    public _createChannel(data: APIChannel, guild?: Guild): AnyChannel {
+        let channel;
 
         switch (data.type) {
             case ChannelType.DM:
@@ -78,6 +78,7 @@ export class ClientChannelManager extends CachedManager<Snowflake, AnyChannel> {
             }
         }
 
+        // @ts-ignore
         return channel;
     }
 

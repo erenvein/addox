@@ -71,6 +71,7 @@ export class Guild extends BaseGuild {
     public large!: boolean;
     public joinedAt!: Date;
     public welcomeScreen!: GuildWelcomeScreen | null;
+    public lazy!: boolean;
 
     public constructor(
         client: Client,
@@ -146,6 +147,13 @@ export class Guild extends BaseGuild {
             this.large = data.large;
         } else {
             this.large ??= false;
+        }
+
+        if ('lazy' in data) {
+            //@ts-ignore
+            this.lazy = data.lazy;
+        } else {
+            this.lazy ??= false;
         }
 
         if ('joined_at' in data) {
@@ -247,6 +255,10 @@ export class Guild extends BaseGuild {
         return this;
     }
 
+    public get me() {
+        return this.caches.members.cache.get(this.client.user!.id);
+    }
+
     public get owner() {
         return this.caches.members.cache.get(this.ownerId);
     }
@@ -303,10 +315,6 @@ export class Guild extends BaseGuild {
 
     public get joinedTimestamp() {
         return this.joinedAt.getTime();
-    }
-
-    public get fetchMe() {
-        return this.caches.members.fetch(this.client.user!.id) as unknown as GuildMember;
     }
 
     public async leave() {

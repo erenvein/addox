@@ -8,7 +8,7 @@ import {
 
 export default class MessageUpdateHandler extends BaseWebSocketHandler {
     public constructor() {
-        super('MessageUpdate');
+        super();
     }
 
     public override handle({ d }: GatewayMessageUpdateDispatch) {

@@ -24,6 +24,7 @@ import {
     type GatewayMessageUpdateDispatchData,
     SnowflakeUtil,
     TextBasedChannelCacheManager,
+    FetchOptions,
 } from '../../index';
 
 import { BaseStructure } from '../base/BaseStructure';
@@ -227,7 +228,7 @@ export class Message extends BaseStructure {
         return (this.channel?.caches as TextBasedChannelCacheManager).pins.delete(this.id, reason);
     }
 
-    public async fetchWebhook() {
-        // TODO
+    public async fetchWebhook(options?: FetchOptions) {
+        return this.client.caches.webhooks.fetch(this.webhookId!, options);
     }
 }

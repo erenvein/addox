@@ -2,7 +2,7 @@ import { BaseWebSocketHandler, GatewayGuildDeleteDispatch } from '../../../index
 
 export default class GuildDeleteHandler extends BaseWebSocketHandler {
     public constructor() {
-        super('GuildDelete');
+        super();
     }
 
     public override handle({ d }: GatewayGuildDeleteDispatch) {

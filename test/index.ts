@@ -1,6 +1,6 @@
 import { config } from 'dotenv';
 import { resolve } from 'node:path';
-import { Client, ActionRowBuilder, ButtonBuilder } from '../src/index';
+import { Client, GatewayIntentBits } from '../src/index';
 
 config({ path: resolve(__dirname, '.env') });
 
@@ -10,7 +10,10 @@ const client = new Client({
             status: 'dnd',
             activities: [{ name: 'annen ile', type: 'Playing' }],
         },
-        intents: 131071,
+        intents: Object.values(GatewayIntentBits).reduce(
+            (accumulator, intent) => accumulator | (intent as number),
+            0
+        ),
         shardCount: 1,
     },
     rest: {
@@ -25,7 +28,7 @@ client.ws.on('ready', () => {
 client.ws.on('messageCreate', async (message) => {
     if (message.content === '!ping') {
         message.reply({
-            content: `Pong! :ping_pong: **${client.ws.ping}**ms`
+            content: `Pong! :ping_pong: **${client.ws.ping}**ms`,
         });
     }
 });

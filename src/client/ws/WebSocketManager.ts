@@ -14,10 +14,14 @@ import {
     ReconnectableWebSocketCloseCodes,
     Sleep,
     type WebSocketEvents,
+    DiscordSocketError,
 } from '../../index';
 
 export declare interface WebSocketManager {
-    on<K extends keyof WebSocketEvents>(event: K, listener: (...args: WebSocketEvents[K]) => void): this;
+    on<K extends keyof WebSocketEvents>(
+        event: K,
+        listener: (...args: WebSocketEvents[K]) => void
+    ): this;
     once<K extends keyof WebSocketEvents>(
         event: K,
         listener: (...args: WebSocketEvents[K]) => void
@@ -33,7 +37,6 @@ export class WebSocketManager extends EventEmitter {
     public compress: boolean;
     public properties: WebSocketProperties;
     public autoReconnect: boolean;
-    #maximumIdentifyPerFiveSecond: number | null;
     #token: string | null;
     #shardList: number[] | null;
     #shardQueue: Set<WebSocketShard> | null;
@@ -72,7 +75,6 @@ export class WebSocketManager extends EventEmitter {
         this.#spawnStreak = 0;
         this.autoReconnect = autoReconnect ?? true;
         this.#token = null;
-        this.#maximumIdentifyPerFiveSecond = null;
     }
 
     public get shards() {
@@ -95,10 +97,6 @@ export class WebSocketManager extends EventEmitter {
         return this.#token;
     }
 
-    public get maximumIdentifyPerFiveSecond() {
-        return this.#maximumIdentifyPerFiveSecond;
-    }
-
     public async getGatewayBot() {
         return await this.client.rest.get<APIGatewayBotInfo>('/gateway/bot');
     }
@@ -119,6 +117,7 @@ export class WebSocketManager extends EventEmitter {
 
     public async connect(token: string) {
         token = token.replace(/^(Bot|Bearer)\s/iu, '');
+
         this.#token = token;
         this.client.rest.setToken(token);
 
@@ -130,13 +129,17 @@ export class WebSocketManager extends EventEmitter {
             this.#shardCount = 1;
         }
 
+        if (this.#shardCount > session_start_limit.total) {
+            throw new DiscordSocketError(
+                'The shard count is greater than the total number of shards allowed by the discord gateway.'
+            );
+        }
+
         this.#shardList = Array.from({ length: this.#shardCount }, (_, i) => i);
 
         this.#shardQueue = new Set<WebSocketShard>(
             this.#shardList?.map((id) => new WebSocketShard(this, id))
         );
-
-        this.#maximumIdentifyPerFiveSecond = session_start_limit.max_concurrency;
 
         return await this.spawnShards();
     }
@@ -244,12 +247,11 @@ export class WebSocketManager extends EventEmitter {
     }
 
     public async sleepForMaximumIdentifyPerFiveSecond() {
-        if (!this.#maximumIdentifyPerFiveSecond) {
-            const { session_start_limit } = await this.getGatewayBot();
-            this.#maximumIdentifyPerFiveSecond = session_start_limit.max_concurrency;
-        }
+        const { session_start_limit } = await this.getGatewayBot();
 
-        if (this.#spawnStreak >= this.#maximumIdentifyPerFiveSecond) {
+        const { max_concurrency } = session_start_limit;
+
+        if (this.#spawnStreak >= max_concurrency) {
             this.#spawnStreak = 0;
             return await Sleep(5000);
         } else {

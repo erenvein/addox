@@ -3,7 +3,7 @@ import { type GatewayMessageCreateDispatch, BaseWebSocketHandler } from '../../.
 
 export default class MessageCreateHandler extends BaseWebSocketHandler {
     public constructor() {
-        super('MessageCreate');
+        super();
     }
 
     public override handle({ d }: GatewayMessageCreateDispatch) {

@@ -1,7 +1,7 @@
--   Interactions
 -   Integrations
 -   Voice States
 -   Audit Logs
 -   Auto Moderation
 -   Builders
+-   Interactions
 -   Voice

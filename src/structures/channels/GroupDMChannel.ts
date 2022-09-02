@@ -16,6 +16,7 @@ export class GroupDMChannel extends BaseTextChannel {
     public icon!: string | null;
     public ownerId!: Snowflake | null;
     public caches!: GroupDMChannelCacheManager;
+    public lastPinTimestamp!: number | null;
 
     public constructor(client: Client, data: APIGroupDMChannel) {
         //@ts-ignore
@@ -46,6 +47,12 @@ export class GroupDMChannel extends BaseTextChannel {
                 );
             }
         }
+
+        //@ts-ignore
+        this.lastPinTimestamp = data.last_pin_timestamp
+            ? //@ts-ignore
+              new Date(data.last_pin_timestamp).getTime()
+            : null;
 
         return this;
     }

@@ -89,6 +89,7 @@ import type {
     APIActionRowComponent,
     ActionRowBuilder,
     APIAttachment,
+    GuildScheduledEvent,
 } from './index';
 
 import type { BodyInit } from 'node-fetch';
@@ -722,6 +723,25 @@ export interface WebSocketEvents {
     messageCreate: [message: Message];
     messageDelete: [message: Message];
     messageUpdate: [oldMessage: Message, newMessage: Message];
+    channelCreate: [message: GuildBasedChannelResolvable];
+    channelDelete: [message: GuildBasedChannelResolvable];
+    channelUpdate: [
+        oldChannel: GuildBasedChannelResolvable,
+        newChannel: GuildBasedChannelResolvable
+    ];
+    channelPinsUpdate: [
+        channel: GuildTextBasedNonThreadChannelResolvable | DMBasedChannelResolvable,
+        data: {
+            lastPinTimestamp: number | null;
+            lastPinAt: Date | null;
+        }
+    ];
+    scheduledEventCreate: [scheduledEvent: GuildScheduledEvent];
+    scheduledEventUserAdd: [scheduledEvent: GuildScheduledEvent, user: User];
+    messageDeleteBulk: [
+        channel: GuildTextBasedChannelResolvable,
+        messages: Collection<Snowflake, Message> | Snowflake[]
+    ];
     raw: [eventName: keyof typeof GatewayDispatchEvents, data: any];
     shardSpawn: [shard: WebSocketShard];
     shardReady: [shard: WebSocketShard];

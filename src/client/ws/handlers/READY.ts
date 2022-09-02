@@ -7,7 +7,7 @@ import {
 
 export default class ReadyHandler extends BaseWebSocketHandler {
     public constructor() {
-        super('Ready');
+        super();
     }
 
     public override handle({ d }: GatewayReadyDispatch) {
@@ -28,8 +28,6 @@ export default class ReadyHandler extends BaseWebSocketHandler {
             );
         }
 
-        this.shard.heartbeatAck();
-        this.shard.sendHeartbeat();
         this.shard.emit('ready', this.shard);
     }
 }

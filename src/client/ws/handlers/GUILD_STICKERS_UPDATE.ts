@@ -2,7 +2,7 @@ import { BaseWebSocketHandler, GatewayGuildStickersUpdateDispatch, Sticker } fro
 
 export default class GuildStickersUpdateHandler extends BaseWebSocketHandler {
     public constructor() {
-        super('GuildStickersUpdate');
+        super();
     }
 
     public override handle({ d }: GatewayGuildStickersUpdateDispatch) {

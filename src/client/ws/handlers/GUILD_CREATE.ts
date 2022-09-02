@@ -9,7 +9,7 @@ import {
 
 export default class GuildCreateHandler extends BaseWebSocketHandler {
     public constructor() {
-        super('GuildCreate');
+        super();
     }
 
     public override handle({ d }: GatewayGuildCreateDispatch) {

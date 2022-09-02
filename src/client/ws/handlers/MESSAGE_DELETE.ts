@@ -6,7 +6,7 @@ import {
 
 export default class MessageDeleteHandler extends BaseWebSocketHandler {
     public constructor() {
-        super('MessageDelete');
+        super();
     }
 
     public override handle({ d }: GatewayMessageDeleteDispatch) {

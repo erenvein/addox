@@ -15,6 +15,7 @@ import {
     CreateWebhookMessageOptions,
     MessageFlagsBitField,
     MessageFlagsBitsResolver,
+    Collection,
 } from '../../index';
 
 import { CachedManager } from '../base/CachedManager';
@@ -55,9 +56,11 @@ export class ClientWebhookManager extends CachedManager<Snowflake, Webhook> {
         }
     }
 
-    public async fetchGuildWebhooks(id: Snowflake) {
+    public async fetchGuildWebhooks(id: Snowflake): Promise<Collection<Snowflake, Webhook>> {
         const webhooks = await this.client.rest.get<APIWebhook[]>(`/guilds/${id}/webhooks`);
-        return webhooks.map((webhook) => new Webhook(this.client, webhook));
+        return new Collection(
+            webhooks.map((webhook) => [webhook.id, new Webhook(this.client, webhook)])
+        );
     }
 
     public async edit(id: Snowflake, data: EditWebhookData, reason?: string) {

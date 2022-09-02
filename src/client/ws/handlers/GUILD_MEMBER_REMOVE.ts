@@ -2,7 +2,7 @@ import { type GatewayGuildMemberRemoveDispatch, BaseWebSocketHandler } from '../
 
 export default class GuildMemberRemoveHandler extends BaseWebSocketHandler {
     public constructor() {
-        super('GuildMemberRemove');
+        super();
     }
 
     public override handle({ d }: GatewayGuildMemberRemoveDispatch) {

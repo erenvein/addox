@@ -2,7 +2,7 @@ import { BaseWebSocketHandler } from '../../../index';
 
 export default class ResumedHandler extends BaseWebSocketHandler {
     public constructor() {
-        super('Resumed');
+        super();
     }
 
     public override handle() {

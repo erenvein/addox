@@ -2,7 +2,7 @@ import { BaseWebSocketHandler, GatewayGuildRoleDeleteDispatch } from '../../../i
 
 export default class GuildRoleDeleteHandler extends BaseWebSocketHandler {
     public constructor() {
-        super('GuildRoleDelete');
+        super();
     }
 
     public override handle({ d }: GatewayGuildRoleDeleteDispatch) {
@@ -13,7 +13,7 @@ export default class GuildRoleDeleteHandler extends BaseWebSocketHandler {
             const role = guild.caches.roles.cache.get(d.role_id);
 
             if (role) {
-                guild?.caches.roles.cache.delete(role.id);
+                guild.caches.roles.cache.delete(role.id);
                 this.shard.manager.emit('roleDelete', role);
             }
         }

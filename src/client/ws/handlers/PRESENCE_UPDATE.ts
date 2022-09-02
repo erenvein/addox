@@ -2,7 +2,7 @@ import { BaseWebSocketHandler, GatewayPresenceUpdateDispatch } from '../../../in
 
 export default class PresenceUpdateHandler extends BaseWebSocketHandler {
     public constructor() {
-        super('GuildUpdate');
+        super();
     }
 
     public override handle({ d }: GatewayPresenceUpdateDispatch) {

@@ -233,7 +233,7 @@ export class WebSocketShard extends EventEmitter {
 
     public send(data: any) {
         if (++this.packetQueue > 2) {
-            Sleep(1150).then(() => {
+            Sleep(1000).then(() => {
                 this._send(data);
                 this.packetQueue--;
             });

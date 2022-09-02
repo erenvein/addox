@@ -9,7 +9,7 @@ import {
 
 export default class GuildMembersChunkHandler extends BaseWebSocketHandler {
     public constructor() {
-        super('GuildMembersChunk');
+        super();
     }
 
     public override handle({ d }: GatewayGuildMembersChunkDispatch) {

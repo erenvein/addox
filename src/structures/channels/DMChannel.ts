@@ -12,6 +12,7 @@ import { BaseTextChannel } from '../base/BaseTextChannel';
 
 export class DMChannel extends BaseTextChannel {
     public recipient!: User;
+    public lastPinTimestamp!: number | null;
     public caches!: TextBasedChannelCacheManager;
 
     public constructor(client: Client, data: APIDMChannel) {
@@ -36,6 +37,12 @@ export class DMChannel extends BaseTextChannel {
             this.recipient = _user;
             this.client.caches.users.cache.set(_user.id, _user);
         }
+
+        //@ts-ignore
+        this.lastPinTimestamp = data.last_pin_timestamp
+            ? //@ts-ignore
+              new Date(data.last_pin_timestamp).getTime()
+            : null;
 
         this.caches = new TextBasedChannelCacheManager(this.client, this);
 
