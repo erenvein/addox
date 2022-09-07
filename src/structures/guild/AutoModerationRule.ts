@@ -88,4 +88,16 @@ export class AutoModerationRule extends BaseStructure {
             this.exemptChannelsIds.includes(channel.id)
         );
     }
+
+    public async delete(reason?: string) {
+        // TODO
+    }
+
+    public async edit(data: any, reason?: string) {
+        // TODO
+    }
+
+    public async fetch() {
+        // TODO
+    }
 }
