@@ -193,7 +193,7 @@ export class GuildChannelManager extends CachedManager<Snowflake, GuildBasedChan
         const deletions = new Collection<Snowflake, Message>();
 
         if (_channel) {
-            const messages = await this.client.rest.post<APIMessage[]>(
+            await this.client.rest.post<APIMessage[]>(
                 `/channels/${channelId}/messages/bulk-delete`,
                 {
                     body: {

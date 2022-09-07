@@ -9,12 +9,11 @@ import {
     Sleep,
 } from '../../index';
 import { AsyncQueue } from '@sapphire/async-queue';
-import fetch from 'node-fetch';
+import fetch, { type Response } from 'node-fetch';
 import FormData from 'form-data';
 
 export class RequestManager {
     public queue = new AsyncQueue();
-    public token: string | null | undefined;
     public rejectOnRateLimit: boolean;
     public offset: number;
     public baseURL: string;
@@ -26,6 +25,7 @@ export class RequestManager {
     #retrys = new Collection<`/${string}`, number>();
     #rateLimits = new Collection<string, RateLimitData>();
     #globalRateLimitData: RateLimitData = { limited: false };
+    #token: string | null | undefined;
 
     public constructor({
         offset,
@@ -49,6 +49,10 @@ export class RequestManager {
         this.requestTimeout = requestTimeout ?? 15000;
     }
 
+    public get token() {
+        return this.#token;
+    }
+ 
     public get rateLimits(): Collection<string, RateLimitData> {
         return this.#rateLimits;
     }
@@ -71,8 +75,8 @@ export class RequestManager {
 
         options.method ||= 'Get';
 
-        if (this.token) {
-            options.headers['Authorization'] = this.token;
+        if (this.#token) {
+            options.headers['Authorization'] = this.#token;
         }
 
         if (options.reason) {
@@ -144,25 +148,34 @@ export class RequestManager {
                 signal: controller.signal as any,
             });
 
-            const data = (await response.json()) as T;
+            const data = (await this._parseResponse(response)) as T;
             const status = response.status;
 
             if (status >= 200 && status < 300) {
                 return data;
             } else if (status === 400) {
-                throw new HTTPError(status, options.method, fullRoute, 'Bad Request');
+                throw new DiscordAPIError(
+                    status,
+                    //@ts-ignore
+                    data.code,
+                    options.method,
+                    fullRoute,
+                    //@ts-ignore
+                    data.message,
+                    data
+                );
             } else if (status === 401) {
-                this.token = null;
+                this.#token = null;
 
-                throw new HTTPError(status, options.method, fullRoute, 'Unauthorized');
+                throw new HTTPError(status, options.method, fullRoute, 'Unauthorized', data);
             } else if (status === 402) {
-                throw new HTTPError(status, options.method, fullRoute, 'Gateway Unvailable');
+                throw new HTTPError(status, options.method, fullRoute, 'Gateway Unvailable', data);
             } else if (status === 403) {
-                throw new HTTPError(status, options.method, fullRoute, 'Forbidden');
+                throw new HTTPError(status, options.method, fullRoute, 'Forbidden', data);
             } else if (status === 404) {
-                throw new HTTPError(status, options.method, fullRoute, 'Not Found');
+                throw new HTTPError(status, options.method, fullRoute, 'Not Found', data);
             } else if (status === 405) {
-                throw new HTTPError(status, options.method, fullRoute, 'Method Not Allowed');
+                throw new HTTPError(status, options.method, fullRoute, 'Method Not Allowed', data);
             } else if (status === 429) {
                 const scope = response.headers.get('x-ratelimit-scope');
                 const limit = response.headers.get('x-ratelimit-limit');
@@ -226,10 +239,17 @@ export class RequestManager {
                     options.method,
                     fullRoute,
                     //@ts-ignore
-                    data.message
+                    data.message,
+                    data
                 );
             } else if (status >= 500 && status < 600) {
-                throw new HTTPError(status, options.method, fullRoute, 'Internal Server Error');
+                throw new HTTPError(
+                    status,
+                    options.method,
+                    fullRoute,
+                    'Internal Server Error',
+                    data
+                );
             } else {
                 return data;
             }
@@ -270,6 +290,16 @@ export class RequestManager {
     }
 
     public setToken(token: string) {
-        this.token = this.authPrefix + ' ' + token;
+        this.#token = this.authPrefix + ' ' + token;
+    }
+
+    private async _parseResponse(response: Response) {
+        if (response.headers.get('content-type')?.includes('application/json')) {
+            return await response.json();
+        } else if (response.headers.get('content-type')?.includes('text/html')) {
+            return await response.text();
+        }
+
+        return await response.arrayBuffer();
     }
 }

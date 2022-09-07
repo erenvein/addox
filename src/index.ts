@@ -49,6 +49,8 @@ export { GuildMemberManager } from './managers/guild/GuildMemberManager';
 export { GuildChannelManager } from './managers/guild/GuildChannelManager';
 export { GuildScheduledEventManager } from './managers/guild/GuildScheduledEventManager';
 export { GuildStageInstanceManager } from './managers/guild/GuildStageInstanceManager';
+export { GuildVoiceStateManager } from './managers/guild/GuildVoiceStateManager';
+export { GuildIntegrationManager } from './managers/guild/GuildIntegrationManager';
 
 // - MESSAGES
 export { MessageMentionManager } from './managers/messages/MessageMentionManager';
@@ -120,6 +122,7 @@ export { GuildMember } from './structures/guild/GuildMember';
 export { GuildScheduledEvent } from './structures/guild/GuildScheduledEvent';
 export { GuildIntegration } from './structures/guild/GuildIntegration';
 export { GuildIntegrationApplication } from './structures/guild/GuildIntegrationApplication';
+export { VoiceState } from './structures/guild/VoiceState';
 
 // - INVITES
 export { Invite } from './structures/invites/Invite';

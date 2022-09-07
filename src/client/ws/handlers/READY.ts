@@ -28,6 +28,7 @@ export default class ReadyHandler extends BaseWebSocketHandler {
             );
         }
 
+        this.shard.sendHeartbeat();
         this.shard.emit('ready', this.shard);
     }
 }

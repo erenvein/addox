@@ -1,4 +1,3 @@
--   Voice States
 -   Audit Logs
 -   Auto Moderation
 -   Interactions

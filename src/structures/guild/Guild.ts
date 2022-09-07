@@ -28,6 +28,7 @@ import {
     StageInstance,
     GuildScheduledEvent,
     GuildWelcomeScreen,
+    VoiceState,
 } from '../../index';
 
 import { BaseGuild } from '../base/BaseGuild';
@@ -254,11 +255,14 @@ export class Guild extends BaseGuild {
                 : null;
         }
 
-        // INTEGRATIONS
-        // - TODO
-
-        // VOICE STATES
-        // - TODO
+        if ('voice_states' in data) {
+            for (const voiceState of data.voice_states) {
+                this.caches.voiceStates.cache.set(
+                    voiceState.user_id,
+                    new VoiceState(this.client, voiceState)
+                );
+            }
+        }
 
         return this;
     }

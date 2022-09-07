@@ -695,6 +695,12 @@ export interface CreateBanOptions {
     reason?: string;
 }
 
+export interface EditGuildMeVoiceStateData {
+    channel_id?: Snowflake;
+    suppress?: boolean;
+    request_to_speak_timestamp?: number;
+}
+
 export interface WebSocketEvents {
     ready: [client: Client];
     guildCreate: [guild: Guild];

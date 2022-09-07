@@ -67,6 +67,7 @@ export class GuildIntegration extends BaseStructure {
             default:
                 // @ts-ignore
                 this.type = data.type.charAt(0).toUpperCase() + data.type.slice(1);
+                break;
         }
 
         return this;
@@ -96,5 +97,9 @@ export class GuildIntegration extends BaseStructure {
 
     public get role() {
         return this.roleId ? this.guild.caches.roles.cache.get(this.roleId) : null;
+    }
+
+    public async delete() {
+        return await this.guild.caches.integrations.delete(this.id);
     }
 }

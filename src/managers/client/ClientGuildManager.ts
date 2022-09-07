@@ -21,7 +21,9 @@ import {
     type RESTPatchAPIGuildWelcomeScreenJSONBody,
     type RESTPatchAPIGuildWelcomeScreenResult,
     type RESTGetAPIGuildWelcomeScreenResult,
-    type APIWebhook,
+    type RESTPatchAPIGuildVoiceStateUserJSONBody,
+    type EditGuildMeVoiceStateData,
+    type APIGuildIntegration,
     GuildWidgetSettings,
     GuildWidget,
     GuildPreview,
@@ -33,7 +35,7 @@ import {
     EditGuildData,
     UnavailableGuild,
     Collection,
-    Webhook,
+    GuildIntegration,
 } from '../../index';
 
 import { BaseManager } from '../base/BaseManager';
@@ -228,5 +230,50 @@ export class ClientGuildManager extends BaseManager {
 
     public async fetchWebhooks(id: Snowflake) {
         return this.client.caches.webhooks.fetchGuildWebhooks(id);
+    }
+
+    public async editVoiceStateUser(
+        guildId: Snowflake,
+        userId: Snowflake,
+        data: RESTPatchAPIGuildVoiceStateUserJSONBody
+    ) {
+        return await this.client.rest.patch<void>(`/guilds/${guildId}/voice-states/${userId}`, {
+            body: data,
+        });
+    }
+
+    public async editMeVoiceState(guildId: Snowflake, data: EditGuildMeVoiceStateData) {
+        //@ts-ignore
+        data.request_to_speak_timestamp &&= new Date(data.request_to_speak_timestamp).toISOString();
+
+        return await this.client.rest.patch<void>(`/guilds/${guildId}/voice-states/@me`, {
+            body: data,
+        });
+    }
+
+    public async fetchIntegrations(
+        id: Snowflake
+    ): Promise<Collection<Snowflake, GuildIntegration>> {
+        const integrations = await this.client.rest.get<APIGuildIntegration[]>(
+            `/guilds/${id}/integrations`
+        );
+
+        const guild = this.cache.get(id)!;
+        const result = new Collection<Snowflake, GuildIntegration>();
+
+        for (const integration of integrations) {
+            result.set(integration.id, new GuildIntegration(this.client, guild!, integration));
+        }
+
+        return result;
+    }
+
+    public async deleteIntegration(guildId: Snowflake, integrationId: Snowflake, reason?: string) {
+        return await this.client.rest.delete<void>(
+            `/guilds/${guildId}/integrations/${integrationId}`,
+            {
+                reason: reason as string,
+            }
+        );
     }
 }

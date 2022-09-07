@@ -12,6 +12,8 @@ import {
     GuildScheduledEventManager,
     Collection,
     GuildStageInstanceManager,
+    GuildVoiceStateManager,
+    GuildIntegrationManager,
 } from '../../index';
 
 import { BaseManager } from '../base/BaseManager';
@@ -26,6 +28,8 @@ export class GuildCacheManager extends BaseManager {
     public channels: GuildChannelManager;
     public scheduledEvents: GuildScheduledEventManager;
     public stageInstances: GuildStageInstanceManager;
+    public voiceStates: GuildVoiceStateManager;
+    public integrations: GuildIntegrationManager;
     public presences: Collection<Snowflake, Presence>;
 
     public constructor(client: Client, guild: Guild) {
@@ -41,6 +45,8 @@ export class GuildCacheManager extends BaseManager {
         this.channels = new GuildChannelManager(client, guild);
         this.scheduledEvents = new GuildScheduledEventManager(client, guild);
         this.stageInstances = new GuildStageInstanceManager(client, guild);
+        this.voiceStates = new GuildVoiceStateManager(client, guild);
+        this.integrations = new GuildIntegrationManager(client, guild);
         this.presences = new Collection();
     }
 }

@@ -1,6 +1,6 @@
 import { config } from 'dotenv';
 import { resolve } from 'node:path';
-import { Client, GatewayIntentBits } from '../src/index';
+import { Client, GatewayIntentBits, GuildTextBasedChannelResolvable } from '../src/index';
 
 config({ path: resolve(__dirname, '.env') });
 
@@ -8,7 +8,7 @@ const client = new Client({
     ws: {
         presence: {
             status: 'dnd',
-            activities: [{ name: 'annen ile', type: 'Playing' }],
+            activities: [{ name: 'frappenin annesi ile', type: 'Playing' }],
         },
         intents: Object.values(GatewayIntentBits).reduce(
             (accumulator, intent) => accumulator | (intent as number),
@@ -29,20 +29,36 @@ client.ws.on('messageCreate', async (message) => {
     const [commandName, ...args] = message.content!.trim().split(/ /g);
 
     if (commandName === '!ping') {
-        message.reply({
+        return await message.reply({
             content: `Pong! :ping_pong: **${client.ws.ping}**ms`,
         });
     } else if (commandName === '!sil') {
-        const amount = args[0] ? parseInt(args[0]) : 1;
-        if (amount > 100) {
-            message.reply({
-                content: "100'den fazla mesaj silemem!",
+        const amount = args[0] ? +args[0] : 10;
+
+        if (isNaN(amount)) {
+            return await message.reply({
+                content: 'Lütfen silinecek mesaj sayısını belirtin.',
+            });
+        } else if (amount > 100) {
+            return await message.reply({
+                content: "**100**'den fazla mesaj silemem!",
+            });
+        } else if (amount <= 1) {
+            return await message.reply({
+                content: 'En az **1** mesaj silebilirim!',
             });
         }
 
         //@ts-ignore
-        message.channel!.bulkDelete(amount);
+        (message.channel as GuildTextBasedChannelResolvable)
+            .bulkDelete(amount)
+            .then((deletions) => {
+                message.reply({
+                    content: `**${deletions.size}** adet mesaj silindi!`,
+                });
+            });
     }
+    return;
 });
 
 client.ws.on('shardError', (shard, error) => {
