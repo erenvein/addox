@@ -175,6 +175,7 @@ export { DataResolver } from './utils/resolvers/DataResolver';
 export { MessageFlagsBitsResolver } from './utils/resolvers/MessageFlagsBitsResolver';
 export { ApplicationFlagsBitsResolver } from './utils/resolvers/ApplicationFlagsBitsResolver';
 export { GuildScheduledEventDataResolver } from './utils/resolvers/GuildScheduledEventDataResolver';
+export { AutoModerationRuleDataResolver } from './utils/resolvers/AutoModerationRuleDataResolver';
 export * from './utils/resolvers/EmojiResolver';
 export * from './utils/resolvers/RoleDataResolver';
 export * from './utils/resolvers/ChannelDataResolver';

@@ -24,6 +24,8 @@ import {
     type RESTPatchAPIGuildVoiceStateUserJSONBody,
     type EditGuildMeVoiceStateData,
     type APIGuildIntegration,
+    type EditAndCreateAutoModerationRuleData,
+    type APIAutoModerationRuleData,
     GuildWidgetSettings,
     GuildWidget,
     GuildPreview,
@@ -36,6 +38,8 @@ import {
     UnavailableGuild,
     Collection,
     GuildIntegration,
+    AutoModerationRuleDataResolver,
+    AutoModerationRule,
 } from '../../index';
 
 import { BaseManager } from '../base/BaseManager';
@@ -275,5 +279,72 @@ export class ClientGuildManager extends BaseManager {
                 reason: reason as string,
             }
         );
+    }
+
+    public async deleteAutoModerationRule(guildId: Snowflake, ruleId: Snowflake, reason?: string) {
+        return await this.client.rest.delete<void>(
+            `/guilds/${guildId}/auto-moderation/rules/${ruleId}`,
+            {
+                reason: reason,
+            }
+        );
+    }
+
+    public async createAutoModerationRule(
+        id: Snowflake,
+        data: EditAndCreateAutoModerationRuleData,
+        reason?: string
+    ) {
+        const rule = await this.client.rest.post<APIAutoModerationRuleData>(
+            `/guilds/${id}/auto-moderation/rules`,
+            {
+                body: AutoModerationRuleDataResolver(data),
+                reason: reason,
+            }
+        );
+
+        return new AutoModerationRule(this.client, rule);
+    }
+
+    public async editAutoModerationRule(
+        guildId: Snowflake,
+        ruleId: Snowflake,
+        data: EditAndCreateAutoModerationRuleData,
+        reason?: string
+    ) {
+        const rule = await this.client.rest.patch<APIAutoModerationRuleData>(
+            `/guilds/${guildId}/auto-moderation/rules/${ruleId}`,
+            {
+                body: AutoModerationRuleDataResolver(data),
+                reason: reason,
+            }
+        );
+
+        return new AutoModerationRule(this.client, rule);
+    }
+
+    public async fetchAutoModerationRules(
+        guildId: Snowflake,
+        ruleId?: Snowflake
+    ): Promise<CollectionLike<Snowflake, AutoModerationRule>> {
+        if (ruleId) {
+            const rule = await this.client.rest.get<APIAutoModerationRuleData>(
+                `/guilds/${guildId}/auto-moderation/rules/${ruleId}`
+            );
+
+            return new AutoModerationRule(this.client, rule);
+        } else {
+            const rules = await this.client.rest.get<APIAutoModerationRuleData[]>(
+                `/guilds/${guildId}/auto-moderation/rules`
+            );
+
+            const result = new Collection<Snowflake, AutoModerationRule>();
+
+            for (const rule of rules) {
+                result.set(rule.id, new AutoModerationRule(this.client, rule));
+            }
+
+            return result;
+        }
     }
 }

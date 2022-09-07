@@ -739,6 +739,18 @@ export interface AutoModerationRuleActionData {
     metadata?: AutoModerationRuleActionMetadata | null;
 }
 
+export type AutoModerationRuleEventTypeResolvable = keyof typeof AutoModerationRuleEventTypes | number;
+
+export interface EditAndCreateAutoModerationRuleData {
+    name?: string;
+    event_type?: AutoModerationRuleEventTypeResolvable;
+    trigger_metadata?: APIAutoModerationRuleTriggerMetadata;
+    actions?: APIAutoModerationRuleActionData[];
+    enabled?: boolean;
+    exempt_roles?: Snowflake[];
+    exempt_channels?: Snowflake[];
+}
+
 export interface APIAutoModerationRuleData {
     id: Snowflake;
     guild_id: Snowflake;

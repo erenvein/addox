@@ -7,6 +7,8 @@ import {
     AutoModerationRuleActionTypes,
     AutoModerationRuleTriggerMetadata,
     AutoModerationRuleTriggerTypes,
+    EditAndCreateAutoModerationRuleData,
+    FetchOptions,
 } from '../../index';
 
 import { BaseStructure } from '../base/BaseStructure';
@@ -90,14 +92,17 @@ export class AutoModerationRule extends BaseStructure {
     }
 
     public async delete(reason?: string) {
-        // TODO
+        return await this.guild?.caches.autoModerationRules.delete(this.id, reason);
     }
 
-    public async edit(data: any, reason?: string) {
-        // TODO
+    public async edit(data: EditAndCreateAutoModerationRuleData, reason?: string) {
+        return await this.guild?.caches.autoModerationRules.edit(this.id, data, reason);
     }
 
-    public async fetch() {
-        // TODO
+    public async fetch(options?: FetchOptions) {
+        return (await this.guild?.caches.autoModerationRules.fetch(
+            this.id,
+            options
+        )) as AutoModerationRule;
     }
 }
