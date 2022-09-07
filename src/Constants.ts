@@ -45,3 +45,26 @@ export enum Colors {
 export const ReconnectableWebSocketCloseCodes = new Set([
     4000, 4001, 4002, 4003, 4005, 4007, 4008, 4009,
 ]);
+
+export enum AutoModerationRuleEventTypes {
+    MessageSend = 1,
+}
+
+export enum AutoModerationRuleTriggerTypes {
+    Keyword = 1,
+    Spam = 3,
+    KeywordPreset = 4,
+    MentionSpam = 5,
+}
+
+export enum AutoModerationRuleKeywordPresetTypes {
+    Profanity = 1,
+    SexualContent = 2,
+    Slurs = 3,
+}
+
+export enum AutoModerationRuleActionTypes {
+    BlockMessage = 1,
+    SendAlertMessage = 2,
+    Timeout = 3,
+}

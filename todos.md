@@ -1,4 +1,4 @@
--   Audit Logs
 -   Auto Moderation
+-   Audit Logs
 -   Interactions
 -   Voice

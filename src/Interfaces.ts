@@ -90,6 +90,10 @@ import type {
     ActionRowBuilder,
     APIAttachment,
     GuildScheduledEvent,
+    AutoModerationRuleEventTypes,
+    AutoModerationRuleTriggerTypes,
+    AutoModerationRuleKeywordPresetTypes,
+    AutoModerationRuleActionTypes,
 } from './index';
 
 import type { BodyInit } from 'node-fetch';
@@ -699,6 +703,54 @@ export interface EditGuildMeVoiceStateData {
     channel_id?: Snowflake;
     suppress?: boolean;
     request_to_speak_timestamp?: number;
+}
+
+export interface APIAutoModerationRuleTriggerMetadata {
+    keyword_filter: string[];
+    presets: AutoModerationRuleKeywordPresetTypes[];
+    allow_list: string[];
+    mention_total_limit: number;
+}
+
+export interface AutoModerationRuleTriggerMetadata {
+    keywordFilter: string[];
+    presets: AutoModerationRuleKeywordPresetTypes[];
+    allowList: string[];
+    mentionTotalLimit: number;
+}
+
+export interface APIAutoModerationRuleActionMetadata {
+    channel_id: Snowflake;
+    duration_seconds: number;
+}
+
+export interface AutoModerationRuleActionMetadata {
+    channelId: Snowflake;
+    durationSeconds: number;
+}
+
+export interface APIAutoModerationRuleActionData {
+    type: AutoModerationRuleActionTypes;
+    metadata?: APIAutoModerationRuleActionMetadata;
+}
+
+export interface AutoModerationRuleActionData {
+    type: keyof typeof AutoModerationRuleActionTypes;
+    metadata?: AutoModerationRuleActionMetadata | null;
+}
+
+export interface APIAutoModerationRuleData {
+    id: Snowflake;
+    guild_id: Snowflake;
+    name: string;
+    creator_id: Snowflake;
+    event_type: AutoModerationRuleEventTypes;
+    trigger_type: AutoModerationRuleTriggerTypes;
+    trigger_metadata: APIAutoModerationRuleTriggerMetadata;
+    actions: APIAutoModerationRuleActionData[];
+    enabled: boolean;
+    exempt_roles: Snowflake[];
+    exempt_channels: Snowflake[];
 }
 
 export interface WebSocketEvents {
