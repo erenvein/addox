@@ -30,7 +30,7 @@ import {
     type CreateCommandData,
     type EditCommandData,
     type RESTGetAPIApplicationCommandPermissionsResult,
-    type ApplicationCommandPermissionsData,
+    type ApplicationCommandPermissionsChildData,
     GuildWidgetSettings,
     GuildWidget,
     GuildPreview,
@@ -48,6 +48,7 @@ import {
     ApplicationCommand,
     FetchCommandOptions,
     ApplicationCommandPermissions,
+    ApplicationCommandPermissionType,
 } from '../../index';
 
 import { BaseManager } from '../base/BaseManager';
@@ -443,7 +444,33 @@ export class ClientGuildManager extends BaseManager {
         return new ApplicationCommandPermissions(permissions);
     }
 
-    public async editCommandPermissions() {
-        // TODO
+    public async setCommandPermissions(
+        guildId: Snowflake,
+        commandId: Snowflake,
+        data: ApplicationCommandPermissionsChildData[],
+        token?: string
+    ) {
+        for (const permission of data) {
+            if (typeof permission.type !== 'number') {
+                permission.type = ApplicationCommandPermissionType[
+                    permission.type
+                ] as unknown as keyof typeof ApplicationCommandPermissionType;
+            }
+        }
+
+        const permissions =
+            await this.client.rest.put<RESTGetAPIApplicationCommandPermissionsResult>(
+                `/applications/${
+                    this.client.user!.id
+                }/guilds/${guildId}/commands/${commandId}/permissions`,
+                {
+                    body: { permissions: data },
+                    headers: {
+                        Authorization: token!,
+                    },
+                }
+            );
+
+        return new ApplicationCommandPermissions(permissions);
     }
 }

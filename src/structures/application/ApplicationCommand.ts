@@ -68,22 +68,37 @@ export class ApplicationCommand extends BaseStructure {
     }
 
     public async fetch(options?: FetchOptions) {
-        return (await this.client.caches.commands.fetch(this.id, options)) as ApplicationCommand;
+        if (this.guild) {
+            return (await this.guild.caches.commands.fetch(this.id, options)) as ApplicationCommand;
+        } else {
+            return (await this.client.caches.commands.fetch(
+                this.id,
+                options
+            )) as ApplicationCommand;
+        }
     }
 
     public async edit(data: any) {
-        return await this.client.caches.commands.edit(this.id, data);
+        if (this.guild) {
+            return await this.guild.caches.commands.edit(this.id, data);
+        } else {
+            return await this.client.caches.commands.edit(this.id, data);
+        }
     }
 
     public async delete() {
-        return await this.client.caches.commands.delete(this.id);
+        if (this.guild) {
+            return await this.guild.caches.commands.delete(this.id);
+        } else {
+            return await this.client.caches.commands.delete(this.id);
+        }
     }
 
     public async fetchPermissions() {
-        // TODO
+        return await this.guild!.caches.commands.fetchPermissions(this.id);
     }
 
-    public async editPermissions(data: ApplicationCommandPermissionsChild[], token: string) {
-        // TODO
+    public async setPermissions(permissions: ApplicationCommandPermissionsChild[], token?: string) {
+        return await this.guild!.caches.commands.setPermissions(this.id, permissions, token);
     }
 }

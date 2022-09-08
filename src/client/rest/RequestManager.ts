@@ -75,7 +75,7 @@ export class RequestManager {
 
         options.method ||= 'Get';
 
-        if (this.#token) {
+        if (this.#token && !options.headers['Authorization']) {
             options.headers['Authorization'] = this.#token;
         }
 
@@ -133,6 +133,7 @@ export class RequestManager {
 
         if (this.#globalRateLimitData.limited) {
             await Sleep(this.#globalRateLimitData.retry!);
+
             this.#rateLimits.clear();
             this.#globalRateLimitData = { limited: false };
         }
@@ -162,20 +163,38 @@ export class RequestManager {
                     fullRoute,
                     //@ts-ignore
                     data.message,
-                    data
+                    {
+                        files: options.files,
+                        body: options.body,
+                    }
                 );
             } else if (status === 401) {
                 this.#token = null;
 
-                throw new HTTPError(status, options.method, fullRoute, 'Unauthorized', data);
+                throw new HTTPError(status, options.method, fullRoute, 'Unauthorized', {
+                    files: options.files,
+                    body: options.body,
+                });
             } else if (status === 402) {
-                throw new HTTPError(status, options.method, fullRoute, 'Gateway Unvailable', data);
+                throw new HTTPError(status, options.method, fullRoute, 'Gateway Unvailable', {
+                    files: options.files,
+                    body: options.body,
+                });
             } else if (status === 403) {
-                throw new HTTPError(status, options.method, fullRoute, 'Forbidden', data);
+                throw new HTTPError(status, options.method, fullRoute, 'Forbidden', {
+                    files: options.files,
+                    body: options.body,
+                });
             } else if (status === 404) {
-                throw new HTTPError(status, options.method, fullRoute, 'Not Found', data);
+                throw new HTTPError(status, options.method, fullRoute, 'Not Found', {
+                    files: options.files,
+                    body: options.body,
+                });
             } else if (status === 405) {
-                throw new HTTPError(status, options.method, fullRoute, 'Method Not Allowed', data);
+                throw new HTTPError(status, options.method, fullRoute, 'Method Not Allowed', {
+                    files: options.files,
+                    body: options.body,
+                });
             } else if (status === 429) {
                 const scope = response.headers.get('x-ratelimit-scope');
                 const limit = response.headers.get('x-ratelimit-limit');
@@ -240,16 +259,16 @@ export class RequestManager {
                     fullRoute,
                     //@ts-ignore
                     data.message,
-                    data
+                    {
+                        files: options.files,
+                        body: options.body,
+                    }
                 );
             } else if (status >= 500 && status < 600) {
-                throw new HTTPError(
-                    status,
-                    options.method,
-                    fullRoute,
-                    'Internal Server Error',
-                    data
-                );
+                throw new HTTPError(status, options.method, fullRoute, 'Internal Server Error', {
+                    files: options.files,
+                    body: options.body,
+                });
             } else {
                 return data;
             }

@@ -7,6 +7,7 @@ import type {
     Collection,
     CreateCommandData,
     Guild,
+    ApplicationCommandPermissionsChildData,
 } from '../../index';
 
 import { CachedManager } from '../base/CachedManager';
@@ -76,5 +77,22 @@ export class GuildCommandManager extends CachedManager<Snowflake, ApplicationCom
         this.cache.concat(result);
 
         return this.cache;
+    }
+
+    public async fetchPermissions(id: Snowflake) {
+        return await this.client.caches.guilds.fetchCommandPermissions(this.guild.id, id);
+    }
+
+    public async setPermissions(
+        id: Snowflake,
+        permissions: ApplicationCommandPermissionsChildData[],
+        token?: string
+    ) {
+        return await this.client.caches.guilds.setCommandPermissions(
+            this.guild.id,
+            id,
+            permissions,
+            token
+        );
     }
 }
