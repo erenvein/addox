@@ -26,6 +26,11 @@ import {
     type APIGuildIntegration,
     type EditAndCreateAutoModerationRuleData,
     type APIAutoModerationRuleData,
+    type APIApplicationCommand,
+    type CreateCommandData,
+    type EditCommandData,
+    type RESTGetAPIApplicationCommandPermissionsResult,
+    type ApplicationCommandPermissionsData,
     GuildWidgetSettings,
     GuildWidget,
     GuildPreview,
@@ -40,6 +45,9 @@ import {
     GuildIntegration,
     AutoModerationRuleDataResolver,
     AutoModerationRule,
+    ApplicationCommand,
+    FetchCommandOptions,
+    ApplicationCommandPermissions,
 } from '../../index';
 
 import { BaseManager } from '../base/BaseManager';
@@ -346,5 +354,96 @@ export class ClientGuildManager extends BaseManager {
 
             return result;
         }
+    }
+
+    public async createCommand(id: Snowflake, data: CreateCommandData) {
+        if (data.default_member_permissions) {
+            //@ts-ignore
+            data.default_member_permissions = PermissionFlagsBitsResolver(
+                data.default_member_permissions
+            ).toString();
+        }
+
+        const command = await this.client.rest.post<APIApplicationCommand>(
+            `/applications/${this.client.user!.id}/guilds/${id}/commands`,
+            { body: data }
+        );
+
+        return new ApplicationCommand(this.client, command);
+    }
+
+    public async editCommand(guildId: Snowflake, commandId: Snowflake, data: EditCommandData) {
+        const command = await this.client.rest.patch<APIApplicationCommand>(
+            `/applications/${this.client.user!.id}/guilds/${guildId}/commands/${commandId}`,
+            { body: data }
+        );
+
+        return new ApplicationCommand(this.client, command);
+    }
+
+    public async deleteCommand(guildId: Snowflake, commandId: Snowflake) {
+        return await this.client.rest.delete<void>(
+            `/applications/${this.client.user!.id}/guilds/${guildId}/commands/${commandId}`
+        );
+    }
+
+    public async setCommands(guildId: Snowflake, commands: CreateCommandData[]) {
+        const result = await this.client.rest.put<APIApplicationCommand[]>(
+            `/applications/${this.client.user!.id}/guilds/${guildId}/commands`,
+            { body: commands }
+        );
+
+        const collection = new Collection<Snowflake, ApplicationCommand>(
+            result.map((command) => [command.id, new ApplicationCommand(this.client, command)])
+        );
+
+        return collection;
+    }
+
+    public async fetchCommands(
+        guildId: Snowflake,
+        commandId?: Snowflake | null,
+        { with_localizations }: Partial<FetchCommandOptions> = {
+            with_localizations: false,
+        }
+    ): Promise<CollectionLike<Snowflake, ApplicationCommand>> {
+        if (commandId) {
+            const command = await this.client.rest.get<APIApplicationCommand>(
+                `/applications/${this.client.user!.id}/guilds/${guildId}/commands/${commandId}`
+            );
+
+            return new ApplicationCommand(this.client, command);
+        } else {
+            const commands = await this.client.rest.get<APIApplicationCommand[]>(
+                `/applications/${this.client.user!.id}/guilds/${guildId}/commands`,
+                {
+                    query: {
+                        with_localizations,
+                    },
+                }
+            );
+
+            return new Collection<Snowflake, ApplicationCommand>(
+                commands.map((command) => [
+                    command.id,
+                    new ApplicationCommand(this.client, command),
+                ])
+            );
+        }
+    }
+
+    public async fetchCommandPermissions(guildId: Snowflake, commandId: Snowflake) {
+        const permissions =
+            await this.client.rest.get<RESTGetAPIApplicationCommandPermissionsResult>(
+                `/applications/${
+                    this.client.user!.id
+                }/guilds/${guildId}/commands/${commandId}/permissions`
+            );
+
+        return new ApplicationCommandPermissions(permissions);
+    }
+
+    public async editCommandPermissions() {
+        // TODO
     }
 }

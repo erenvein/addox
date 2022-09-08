@@ -202,11 +202,7 @@ export class WebSocketManager extends EventEmitter {
                 this.emit('shardClosed', shard, code, reason);
 
                 if (ReconnectableWebSocketCloseCodes.has(code) && this.autoReconnect) {
-                    this.emit('shardReconnect', shard);
                     shard.status = 'Reconnecting';
-
-                    shard.cleanup();
-
                     this.respawn(shard.id);
                 } else {
                     this.emit('shardDeath', shard, code, reason);
@@ -264,6 +260,7 @@ export class WebSocketManager extends EventEmitter {
 
         const shard = this.#shards.get(id)!;
 
+        this.emit('shardReconnect', shard);
         shard.close(1000, false, true);
 
         this.#shards.delete(id);

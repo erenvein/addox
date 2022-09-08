@@ -15,6 +15,7 @@ import {
     GuildVoiceStateManager,
     GuildIntegrationManager,
     GuildAutoModerationRuleManager,
+    GuildCommandManager,
 } from '../../index';
 
 import { BaseManager } from '../base/BaseManager';
@@ -32,6 +33,7 @@ export class GuildCacheManager extends BaseManager {
     public voiceStates: GuildVoiceStateManager;
     public integrations: GuildIntegrationManager;
     public autoModerationRules: GuildAutoModerationRuleManager;
+    public commands: GuildCommandManager;
     public presences: Collection<Snowflake, Presence>;
 
     public constructor(client: Client, guild: Guild) {
@@ -50,6 +52,7 @@ export class GuildCacheManager extends BaseManager {
         this.voiceStates = new GuildVoiceStateManager(client, guild);
         this.integrations = new GuildIntegrationManager(client, guild);
         this.autoModerationRules = new GuildAutoModerationRuleManager(client, guild);
+        this.commands = new GuildCommandManager(client, guild);
         this.presences = new Collection();
     }
 }

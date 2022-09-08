@@ -95,6 +95,8 @@ import type {
     AutoModerationRuleKeywordPresetTypes,
     AutoModerationRuleActionTypes,
     GuildIntegration,
+    ApplicationCommandPermissionType,
+    LocalizationMap,
 } from './index';
 
 import type { BodyInit } from 'node-fetch';
@@ -766,6 +768,50 @@ export interface APIAutoModerationRuleData {
     enabled: boolean;
     exempt_roles: Snowflake[];
     exempt_channels: Snowflake[];
+}
+
+export interface ApplicationCommandPermissionsChildData {
+    id: Snowflake;
+    type: keyof typeof ApplicationCommandPermissionType;
+    permission: boolean;
+}
+
+//@ts-ignore
+export interface APIApplicationCommandPermissionsChildData extends ApplicationCommandPermissionsChildData {
+    type: ApplicationCommandPermissionType;
+}
+
+export interface ApplicationCommandPermissionsData {
+    id: Snowflake;
+    application_id: Snowflake;
+    guild_id: Snowflake;
+    permissions: ApplicationCommandPermissionsChildData[];
+}
+
+//@ts-ignore
+export interface APIApplicationCommandPermissionsData extends ApplicationCommandPermissionsData {
+    permissions: APIApplicationCommandPermissionsChildData[];
+}
+
+export interface FetchCommandOptions extends FetchOptions {
+    with_localizations?: boolean;
+}
+
+export interface CreateCommandData {
+    name: string;
+    name_localizations?: LocalizationMap;
+    description: string;
+    description_localizations?: LocalizationMap;
+    options?: any[];
+    default_member_permissions?: PermissionFlagsBitsResolvable;
+    dm_permission?: boolean;
+    type?: string;
+}
+
+//@ts-ignore
+export interface EditCommandData extends Omit<CreateCommandData, 'type'> {
+    name?: string;
+    description?: string;
 }
 
 export interface WebSocketEvents {

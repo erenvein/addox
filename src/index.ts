@@ -38,6 +38,7 @@ export { ClientStickerManager } from './managers/client/ClientStickerManager';
 export { ClientChannelManager } from './managers/client/ClientChannelManager';
 export { ClientStageInstanceManager } from './managers/client/ClientStageInstanceManager';
 export { ClientWebhookManager } from './managers/client/ClientWebhookManager';
+export { ClientCommandManager } from './managers/client/ClientCommandManager';
 
 // - GUILD
 export { GuildEmojiManager } from './managers/guild/GuildEmojiManager';
@@ -52,6 +53,7 @@ export { GuildStageInstanceManager } from './managers/guild/GuildStageInstanceMa
 export { GuildVoiceStateManager } from './managers/guild/GuildVoiceStateManager';
 export { GuildIntegrationManager } from './managers/guild/GuildIntegrationManager';
 export { GuildAutoModerationRuleManager } from './managers/guild/GuildAutoModerationRuleManager';
+export { GuildCommandManager } from './managers/guild/GuildCommandManager';
 
 // - MESSAGES
 export { MessageMentionManager } from './managers/messages/MessageMentionManager';
@@ -94,6 +96,11 @@ export { BaseTextChannel } from './structures/base/BaseTextChannel';
 export { BaseGuildTextChannel } from './structures/base/BaseGuildTextChannel';
 export { BaseVoiceChannel } from './structures/base/BaseVoiceChannel';
 export { BaseApplication } from './structures/base/BaseApplication';
+
+// - APPLICATION
+export { ApplicationCommand } from './structures/application/ApplicationCommand';
+export { ApplicationCommandPermissions } from './structures/application/ApplicationCommandPermissions';
+export { ApplicationCommandPermissionsChild } from './structures/application/ApplicationCommandPermissionsChild';
 
 // - BITFIELD
 export { ThreadMemberFlagsBitField } from './structures/bitfield/ThreadMemberFlagsBitField';

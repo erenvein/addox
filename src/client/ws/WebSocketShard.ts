@@ -283,7 +283,7 @@ export class WebSocketShard extends EventEmitter {
 
         try {
             data = this.unpack(data);
-        } catch (err) {
+        } catch {
             data = null;
         }
 
