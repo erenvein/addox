@@ -29,6 +29,6 @@ export class Client extends BaseClient {
         this.uptime = -1;
 
         this.ws.destroy();
-        this.rest.token = undefined;
+        this.rest.setToken(null);
     }
 }

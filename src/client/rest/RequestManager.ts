@@ -52,7 +52,7 @@ export class RequestManager {
     public get token() {
         return this.#token;
     }
- 
+
     public get rateLimits(): Collection<string, RateLimitData> {
         return this.#rateLimits;
     }
@@ -289,8 +289,12 @@ export class RequestManager {
         return await this.request<T>(route, { ...options, method: 'Delete' });
     }
 
-    public setToken(token: string) {
-        this.#token = this.authPrefix + ' ' + token;
+    public setToken(token: string | null) {
+        if (!token) {
+            this.#token = null;
+        } else {
+            this.#token = this.authPrefix + ' ' + token;
+        }
     }
 
     private async _parseResponse(response: Response) {

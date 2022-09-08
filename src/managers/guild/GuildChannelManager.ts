@@ -75,36 +75,53 @@ export class GuildChannelManager extends CachedManager<Snowflake, GuildBasedChan
         );
     }
 
-    public async fetch(): Promise<Collection<Snowflake, GuildBasedChannelResolvable>> {
-        const channels = await this.client.rest.get<APIChannel[]>(
-            `/guilds/${this.guild.id}/channels`
-        );
+    public async fetch(
+        id?: Snowflake,
+        { force }: FetchOptions = { force: false }
+    ): Promise<CollectionLike<Snowflake, GuildBasedChannelResolvable>> {
+        if (id) {
+            const _channel = this.cache.get(id)!;
 
-        const result = new Collection<Snowflake, GuildBasedChannelResolvable>();
-
-        for (const channel of channels) {
-            let _channel = this.cache.get(channel.id!)!;
-
-            if (_channel) {
-                _channel = _channel._patch(channel as never);
+            if (!force && _channel) {
+                return _channel;
             }
 
-            result.set(
-                channel.id,
-                this.client.caches.channels.cache._add(
-                    channel.id,
-                    _channel ??
-                        (this.client.caches.channels._createChannel(
-                            channel
-                        ) as GuildBasedChannelResolvable)
-                ) as GuildBasedChannelResolvable
+            const channels = (await this.fetch(undefined, {
+                force: force as boolean,
+            })) as Collection<Snowflake, GuildBasedChannelResolvable>;
+
+            return channels.get(id)!;
+        } else {
+            const channels = await this.client.rest.get<APIChannel[]>(
+                `/guilds/${this.guild.id}/channels`
             );
+
+            const result = new Collection<Snowflake, GuildBasedChannelResolvable>();
+
+            for (const channel of channels) {
+                let _channel = this.cache.get(channel.id!)!;
+
+                if (_channel) {
+                    _channel = _channel._patch(channel as never);
+                }
+
+                result.set(
+                    channel.id,
+                    this.client.caches.channels.cache._add(
+                        channel.id,
+                        _channel ??
+                            (this.client.caches.channels._createChannel(
+                                channel
+                            ) as GuildBasedChannelResolvable)
+                    ) as GuildBasedChannelResolvable
+                );
+            }
+
+            this.cache.clear();
+            this.cache.concat(result);
+
+            return this.cache;
         }
-
-        this.cache.clear();
-        this.cache.concat(result);
-
-        return this.cache;
     }
 
     public async setPosition(id: Snowflake, data: EditGuildChannelPositionsData) {

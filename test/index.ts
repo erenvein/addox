@@ -1,6 +1,12 @@
 import { config } from 'dotenv';
 import { resolve } from 'node:path';
-import { Client, GatewayIntentBits, GuildTextBasedChannelResolvable } from '../src/index';
+import {
+    Client,
+    GatewayIntentBits,
+    GuildTextBasedChannelResolvable,
+    EmbedBuilder,
+    User,
+} from '../src/index';
 
 config({ path: resolve(__dirname, '.env') });
 
@@ -57,7 +63,28 @@ client.ws.on('messageCreate', async (message) => {
                     content: `**${deletions.size}** adet mesaj silindi!`,
                 });
             });
+    } else if (commandName === '!avatar') {
+        const user = (message.mentions.users.first() as User) || message.author;
+
+        return await message.reply({
+            embeds: [
+                new EmbedBuilder()
+                    .setColor('DarkVividPink')
+                    .setAuthor({
+                        icon_url: user.avatarURL({ dynamic: true }),
+                        name: `${user.tag}'s Avatar`,
+                    })
+                    .setImage({
+                        url: user.avatarURL({ dynamic: true }),
+                    })
+                    .setFooter({
+                        icon_url: message.author.avatarURL({ dynamic: true }),
+                        text: `Requested by ${message.author.tag}`,
+                    }),
+            ],
+        });
     }
+
     return;
 });
 

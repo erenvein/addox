@@ -7,6 +7,8 @@ import {
     type RoleData,
     Collection,
     RoleDataResolver,
+    FetchOptions,
+    CollectionLike,
 } from '../../index';
 
 import { CachedManager } from '../base/CachedManager';
@@ -20,25 +22,42 @@ export class GuildRoleManager extends CachedManager<Snowflake, Role> {
         this.guild = guild;
     }
 
-    public async fetch(): Promise<Collection<Snowflake, Role>> {
-        const roles = await this.client.rest.get<APIRole[]>(`/guilds/${this.guild.id}/roles`);
+    public async fetch(
+        id?: Snowflake,
+        { force }: FetchOptions = { force: false }
+    ): Promise<CollectionLike<Snowflake, Role>> {
+        if (id) {
+            const _role = this.cache.get(id)!;
 
-        const result = new Collection<Snowflake, Role>();
-
-        for (const role of roles) {
-            let _role = this.cache.get(role.id!)!;
-
-            if (_role) {
-                _role = _role._patch(role);
+            if (!force && _role) {
+                return _role;
             }
 
-            result.set(role.id, _role ?? new Role(this.client, this.guild, role));
+            const roles = (await this.fetch(undefined, {
+                force: force as boolean,
+            })) as Collection<Snowflake, Role>;
+
+            return roles.get(id)!;
+        } else {
+            const roles = await this.client.rest.get<APIRole[]>(`/guilds/${this.guild.id}/roles`);
+
+            const result = new Collection<Snowflake, Role>();
+
+            for (const role of roles) {
+                let _role = this.cache.get(role.id!)!;
+
+                if (_role) {
+                    _role = _role._patch(role);
+                }
+
+                result.set(role.id, _role ?? new Role(this.client, this.guild, role));
+            }
+
+            this.cache.clear();
+            this.cache.concat(result);
+
+            return this.cache;
         }
-
-        this.cache.clear();
-        this.cache.concat(result);
-
-        return this.cache;
     }
 
     public async create(data: RoleData, reason?: string) {
