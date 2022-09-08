@@ -94,6 +94,7 @@ import type {
     AutoModerationRuleTriggerTypes,
     AutoModerationRuleKeywordPresetTypes,
     AutoModerationRuleActionTypes,
+    GuildIntegration,
 } from './index';
 
 import type { BodyInit } from 'node-fetch';
@@ -739,7 +740,9 @@ export interface AutoModerationRuleActionData {
     metadata?: AutoModerationRuleActionMetadata | null;
 }
 
-export type AutoModerationRuleEventTypeResolvable = keyof typeof AutoModerationRuleEventTypes | number;
+export type AutoModerationRuleEventTypeResolvable =
+    | keyof typeof AutoModerationRuleEventTypes
+    | number;
 
 export interface EditAndCreateAutoModerationRuleData {
     name?: string;
@@ -817,6 +820,10 @@ export interface WebSocketEvents {
         channel: GuildTextBasedChannelResolvable,
         messages: Collection<Snowflake, Message> | Snowflake[]
     ];
+    integrationUpdate: [oldIntegration: GuildIntegration, newIntegration: GuildIntegration];
+    integrationCreate: [integration: GuildIntegration];
+    integrationDelete: [integration: GuildIntegration];
+    guildIntegrationsUpdate: [guild: Guild];
     raw: [eventName: keyof typeof GatewayDispatchEvents, data: any];
     shardSpawn: [shard: WebSocketShard];
     shardReady: [shard: WebSocketShard];
