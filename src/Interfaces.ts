@@ -103,6 +103,7 @@ import type {
     ThreadMember,
     Typing,
     VoiceState,
+    MessageReaction
 } from './index';
 
 import type { BodyInit } from 'node-fetch';
@@ -538,7 +539,7 @@ export type APIMessageableChannelResolvable =
     | APIGuildTextBasedChannelResolvable
     | APIVoiceBasedChannelResolvable;
 
-export interface MessageReaction {
+export interface MessageReactionData {
     count: number;
     me: boolean;
     emoji: string;
@@ -943,6 +944,7 @@ export interface WebSocketEvents {
     threadMemberAdd: [thread: ThreadChannel, member: ThreadMember];
     typingStart: [typing: Typing];
     voiceStateUpdate: [oldState: VoiceState, newState: VoiceState];
+    messageReactionAdd: [reaction: MessageReaction];
     raw: [eventName: keyof typeof GatewayDispatchEvents, data: any];
     shardSpawn: [shard: WebSocketShard];
     shardReady: [shard: WebSocketShard];

@@ -1,7 +1,7 @@
 import {
     type Client,
     type Snowflake,
-    type MessageReaction,
+    type MessageReactionData,
     type APIReaction,
     type APIPartialEmoji,
     type Message,
@@ -14,7 +14,7 @@ import {
 
 import { CachedManager } from '../base/CachedManager';
 
-export class MessageReactionManager extends CachedManager<Snowflake, MessageReaction> {
+export class MessageReactionManager extends CachedManager<Snowflake, MessageReactionData> {
     public message: Message;
 
     public constructor(client: Client, message: Message, reactions: APIReaction[]) {
