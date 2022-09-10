@@ -99,7 +99,7 @@ import type {
     ApplicationCommandPermissionType,
     LocalizationMap,
     APIApplicationCommandOptionChoice,
-    APIApplicationCommandOptionBase,
+    StageInstance,
 } from './index';
 
 import type { BodyInit } from 'node-fetch';
@@ -934,6 +934,7 @@ export interface WebSocketEvents {
     integrationDelete: [integration: GuildIntegration];
     guildIntegrationsUpdate: [guild: Guild];
     messageReactionRemoveAll: [message: Message];
+    stageInstanceCreate: [stageInstance: StageInstance];
     raw: [eventName: keyof typeof GatewayDispatchEvents, data: any];
     shardSpawn: [shard: WebSocketShard];
     shardReady: [shard: WebSocketShard];

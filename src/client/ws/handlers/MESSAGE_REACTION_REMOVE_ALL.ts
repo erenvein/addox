@@ -1,8 +1,6 @@
 import {
     BaseWebSocketHandler,
     type GatewayMessageReactionRemoveAllDispatch,
-    Message,
-    type APIMessage,
     MessageableChannelResolvable,
 } from '../../../index';
 
