@@ -104,6 +104,7 @@ import type {
     Typing,
     VoiceState,
     MessageReaction,
+    Invite,
 } from './index';
 
 import type { BodyInit } from 'node-fetch';
@@ -936,7 +937,10 @@ export interface WebSocketEvents {
     ];
     scheduledEventCreate: [scheduledEvent: GuildScheduledEvent];
     scheduledEventUserAdd: [scheduledEvent: GuildScheduledEvent, user: User];
-    guildScheduledEventUpdate: [oldScheduledEvent: GuildScheduledEvent, newScheduledEvent: GuildScheduledEvent];
+    guildScheduledEventUpdate: [
+        oldScheduledEvent: GuildScheduledEvent,
+        newScheduledEvent: GuildScheduledEvent
+    ];
     messageDeleteBulk: [
         channel: GuildTextBasedChannelResolvable,
         messages: Collection<Snowflake, Message> | Snowflake[]
@@ -963,6 +967,7 @@ export interface WebSocketEvents {
     messageReactionRemoveEmoji: [reaction: MessageReaction];
     userUpdate: [oldUser: User, newUser: User];
     webhooksUpdate: [channel: WebhookableChannelResolvable];
+    inviteCreate: [invite: Invite];
     raw: [eventName: keyof typeof GatewayDispatchEvents, data: any];
     shardSpawn: [shard: WebSocketShard];
     shardReady: [shard: WebSocketShard];
