@@ -935,6 +935,7 @@ export interface WebSocketEvents {
     guildIntegrationsUpdate: [guild: Guild];
     messageReactionRemoveAll: [message: Message];
     stageInstanceCreate: [stageInstance: StageInstance];
+    threadCreate: [thread: ThreadChannel];
     raw: [eventName: keyof typeof GatewayDispatchEvents, data: any];
     shardSpawn: [shard: WebSocketShard];
     shardReady: [shard: WebSocketShard];
