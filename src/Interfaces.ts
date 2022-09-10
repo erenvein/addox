@@ -101,6 +101,7 @@ import type {
     APIApplicationCommandOptionChoice,
     StageInstance,
     ThreadMember,
+    Typing,
 } from './index';
 
 import type { BodyInit } from 'node-fetch';
@@ -939,6 +940,7 @@ export interface WebSocketEvents {
     threadCreate: [thread: ThreadChannel];
     threadMemberUpdate: [thread: ThreadChannel, oldMember: ThreadMember, newMember: ThreadMember];
     threadMemberAdd: [thread: ThreadChannel, member: ThreadMember];
+    typingStart: [typing: Typing];
     raw: [eventName: keyof typeof GatewayDispatchEvents, data: any];
     shardSpawn: [shard: WebSocketShard];
     shardReady: [shard: WebSocketShard];

@@ -178,6 +178,7 @@ export { TeamMember } from './structures/TeamMember';
 export { MessageReference } from './structures/channels/MessageReference';
 export { StageInstance } from './structures/StageInstance';
 export { Webhook } from './structures/Webhook';
+export { Typing } from './structures/Typing';
 
 // #UTILS
 
