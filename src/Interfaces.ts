@@ -541,7 +541,10 @@ export type APIMessageableChannelResolvable =
     | APIGuildTextBasedChannelResolvable
     | APIVoiceBasedChannelResolvable;
 
-export type APIWebhookableChannelResolvable = APITextChannel | APINewsChannel | APIVoiceChannel;
+export type APIWebhookableChannelResolvable =
+    | APITextChannel
+    | APINewsChannel
+    | APIGuildVoiceChannel;
 
 export interface MessageReactionData {
     count: number;
@@ -933,6 +936,7 @@ export interface WebSocketEvents {
     ];
     scheduledEventCreate: [scheduledEvent: GuildScheduledEvent];
     scheduledEventUserAdd: [scheduledEvent: GuildScheduledEvent, user: User];
+    guildScheduledEventUpdate: [oldScheduledEvent: GuildScheduledEvent, newScheduledEvent: GuildScheduledEvent];
     messageDeleteBulk: [
         channel: GuildTextBasedChannelResolvable,
         messages: Collection<Snowflake, Message> | Snowflake[]
