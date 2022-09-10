@@ -953,6 +953,7 @@ export interface WebSocketEvents {
     voiceStateUpdate: [oldState: VoiceState, newState: VoiceState];
     messageReactionAdd: [reaction: MessageReaction];
     messageReactionRemoveEmoji: [reaction: MessageReaction];
+    userUpdate: [oldUser: User, newUser: User];
     raw: [eventName: keyof typeof GatewayDispatchEvents, data: any];
     shardSpawn: [shard: WebSocketShard];
     shardReady: [shard: WebSocketShard];
