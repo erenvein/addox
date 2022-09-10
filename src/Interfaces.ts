@@ -103,7 +103,7 @@ import type {
     ThreadMember,
     Typing,
     VoiceState,
-    MessageReaction
+    MessageReaction,
 } from './index';
 
 import type { BodyInit } from 'node-fetch';
@@ -939,6 +939,7 @@ export interface WebSocketEvents {
     guildIntegrationsUpdate: [guild: Guild];
     messageReactionRemoveAll: [message: Message];
     stageInstanceCreate: [stageInstance: StageInstance];
+    stageInstanceDelete: [stageInstance: StageInstance];
     threadCreate: [thread: ThreadChannel];
     threadMemberUpdate: [thread: ThreadChannel, oldMember: ThreadMember, newMember: ThreadMember];
     threadMemberAdd: [thread: ThreadChannel, member: ThreadMember];
