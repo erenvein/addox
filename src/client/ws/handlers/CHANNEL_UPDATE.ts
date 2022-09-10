@@ -26,16 +26,6 @@ export default class ChannelUpdateHandler extends BaseWebSocketHandler {
                 this.shard.manager.client.caches.channels.cache.set(channel.id, _channel);
 
                 this.shard.manager.emit('channelUpdate', channel, _channel);
-            } else {
-                const channel = this.shard.manager.client.caches.channels._createChannel(
-                    d,
-                    guild
-                ) as GuildBasedChannelResolvable;
-
-                guild.caches.channels.cache.set(channel.id, channel);
-                this.shard.manager.client.caches.channels.cache.set(channel.id, channel);
-
-                this.shard.manager.emit('channelCreate', channel);
             }
         }
     }

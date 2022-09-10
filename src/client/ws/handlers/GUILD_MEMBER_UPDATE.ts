@@ -23,15 +23,6 @@ export default class GuildMemberUpdateHandler extends BaseWebSocketHandler {
 
                 guild.caches.members.cache.set(member.id, _member);
                 this.shard.manager.emit('guildMemberUpdate', member, _member);
-            } else {
-                const member = new GuildMember(
-                    this.shard.manager.client,
-                    guild,
-                    d as APIGuildMember
-                );
-
-                guild.caches.members.cache.set(member.id, member);
-                this.shard.manager.emit('guildMemberAdd', member);
             }
         }
     }

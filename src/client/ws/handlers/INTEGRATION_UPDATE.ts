@@ -20,14 +20,6 @@ export default class IntegrationUpdateHandler extends BaseWebSocketHandler {
             _integration = _integration._patch(d);
 
             this.shard.manager.emit('integrationUpdate', integration, _integration);
-        } else {
-            this.shard.manager.emit(
-                'integrationCreate',
-                guild.caches.integrations.cache._add(
-                    d.id,
-                    new GuildIntegration(this.shard.manager.client, guild, d)
-                )
-            );
         }
     }
 }

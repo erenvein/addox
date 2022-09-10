@@ -952,6 +952,7 @@ export interface WebSocketEvents {
     messageReactionRemoveAll: [message: Message];
     stageInstanceCreate: [stageInstance: StageInstance];
     stageInstanceDelete: [stageInstance: StageInstance];
+    stageInstanceUpdate: [oldStageInstance: StageInstance, newStageInstance: StageInstance];
     threadCreate: [thread: ThreadChannel];
     threadDelete: [thread: ThreadChannel];
     threadMemberUpdate: [thread: ThreadChannel, oldMember: ThreadMember, newMember: ThreadMember];
