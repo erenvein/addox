@@ -20,6 +20,7 @@ export default class ChannelDeleteHandler extends BaseWebSocketHandler {
 
             if (channel) {
                 guild.caches.channels.cache.delete(channel.id);
+                this.shard.manager.client.caches.channels.cache.delete(channel.id);
                 this.shard.manager.emit('channelDelete', channel);
             }
         }

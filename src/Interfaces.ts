@@ -941,6 +941,7 @@ export interface WebSocketEvents {
     stageInstanceCreate: [stageInstance: StageInstance];
     stageInstanceDelete: [stageInstance: StageInstance];
     threadCreate: [thread: ThreadChannel];
+    threadDelete: [thread: ThreadChannel];
     threadMemberUpdate: [thread: ThreadChannel, oldMember: ThreadMember, newMember: ThreadMember];
     threadMemberAdd: [thread: ThreadChannel, member: ThreadMember];
     typingStart: [typing: Typing];
