@@ -51,6 +51,7 @@ import type {
     ButtonBuilder,
     TextInputBuilder,
     SelectMenuBuilder,
+    ApplicationCommandType,
     MessageFlags,
     VoiceChannel,
     DMChannel,
@@ -97,6 +98,8 @@ import type {
     GuildIntegration,
     ApplicationCommandPermissionType,
     LocalizationMap,
+    APIApplicationCommandOptionChoice,
+    APIApplicationCommandOptionBase,
 } from './index';
 
 import type { BodyInit } from 'node-fetch';
@@ -777,7 +780,8 @@ export interface ApplicationCommandPermissionsChildData {
 }
 
 //@ts-ignore
-export interface APIApplicationCommandPermissionsChildData extends ApplicationCommandPermissionsChildData {
+export interface APIApplicationCommandPermissionsChildData
+    extends ApplicationCommandPermissionsChildData {
     type: ApplicationCommandPermissionType;
 }
 
@@ -797,15 +801,74 @@ export interface FetchCommandOptions extends FetchOptions {
     with_localizations?: boolean;
 }
 
+export interface ApplicationCommandOptionData {
+    type: keyof typeof ApplicationCommandType;
+    name: string;
+    name_localizations?: LocalizationMap;
+    description: string;
+    description_localizations?: LocalizationMap;
+    required?: boolean;
+    choices?: APIApplicationCommandOptionChoice[];
+    options?: ApplicationCommandOptionData[];
+    channel_types?: ChannelTypeResolvable[];
+    min_value?: number;
+    max_value?: number;
+    min_length?: number;
+    max_length?: number;
+    autocomplete?: boolean;
+}
+
+export interface APIApplicationCommandOptionData {
+    type: ApplicationCommandType;
+    name: string;
+    name_localizations?: LocalizationMap;
+    description: string;
+    description_localizations?: LocalizationMap;
+    required?: boolean;
+    choices?: APIApplicationCommandOptionChoice[];
+    options?: APIApplicationCommandOptionData[];
+    channel_types?: number[];
+    min_value?: number;
+    max_value?: number;
+    min_length?: number;
+    max_length?: number;
+    autocomplete?: boolean;
+}
+
+export type ApplicationCommandTypeResolvable = keyof typeof ApplicationCommandType | number;
+
+export type GuildBasedChannelTypes =
+    | ChannelType.GuildText
+    | ChannelType.GuildVoice
+    | ChannelType.GuildCategory
+    | ChannelType.GuildNews
+    | ChannelType.GuildNewsThread
+    | ChannelType.GuildPublicThread
+    | ChannelType.GuildPrivateThread
+    | ChannelType.GuildStageVoice
+    | ChannelType.GuildDirectory
+    | ChannelType.GuildForum;
+
 export interface CreateCommandData {
     name: string;
     name_localizations?: LocalizationMap;
     description: string;
     description_localizations?: LocalizationMap;
-    options?: any[];
+    options?: ApplicationCommandOptionData[];
     default_member_permissions?: PermissionFlagsBitsResolvable;
     dm_permission?: boolean;
-    type?: string;
+    type?: ApplicationCommandTypeResolvable;
+}
+
+export interface APICreateCommandData {
+    name: string;
+    name_localizations?: LocalizationMap;
+    description: string;
+    description_localizations?: LocalizationMap;
+    options?: APIApplicationCommandOptionData[];
+    default_member_permissions?: string;
+    dm_permission?: boolean;
+    type?: ApplicationCommandType;
 }
 
 //@ts-ignore

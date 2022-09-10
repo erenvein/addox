@@ -23,6 +23,19 @@ export { ButtonBuilder } from './builders/ButtonBuilder';
 export { TextInputBuilder } from './builders/TextInputBuilder';
 export { SelectMenuBuilder } from './builders/SelectMenuBuilder';
 export { EmbedBuilder } from './builders/EmbedBuilder';
+export { ApplicationCommandBuilder } from './builders/ApplicationCommandBuilder';
+export { ApplicationCommandBaseOptionBuilder } from './builders/ApplicationCommandOptionBuilders/BaseOptionBuilder';
+export { ApplicationCommandStringOptionBuilder } from './builders/ApplicationCommandOptionBuilders/StringBuilder';
+export { ApplicationCommandIntegerOptionBuilder } from './builders/ApplicationCommandOptionBuilders/IntegerBuilder';
+export { ApplicationCommandBooleanOptionBuilder } from './builders/ApplicationCommandOptionBuilders/BooleanBuilder';
+export { ApplicationCommandUserOptionBuilder } from './builders/ApplicationCommandOptionBuilders/UserBuilder';
+export { ApplicationCommandChannelOptionBuilder } from './builders/ApplicationCommandOptionBuilders/ChannelBuilder';
+export { ApplicationCommandRoleOptionBuilder } from './builders/ApplicationCommandOptionBuilders/RoleBuilder';
+export { ApplicationCommandMentionableOptionBuilder } from './builders/ApplicationCommandOptionBuilders/MentionableBuilder';
+export { ApplicationCommandNumberOptionBuilder } from './builders/ApplicationCommandOptionBuilders/NumberBuilder';
+export { ApplicationCommandAttachmentOptionBuilder } from './builders/ApplicationCommandOptionBuilders/AttachmentBuilder';
+export { ApplicationCommandSubcommandOptionBuilder } from './builders/ApplicationCommandOptionBuilders/SubcommandBuilder';
+export { ApplicationCommandSubcommandGroupOptionBuilder } from './builders/ApplicationCommandOptionBuilders/SubcommandGroupBuilder';
 
 // #MANAGERS
 
