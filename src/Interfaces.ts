@@ -481,6 +481,8 @@ export type MessageableChannelResolvable =
     | GuildTextBasedChannelResolvable
     | VoiceChannel;
 
+export type WebhookableChannelResolvable = TextChannel | NewsChannel | VoiceChannel;
+
 export type APITextBasedChannelResolvable =
     | APITextChannel
     | APINewsChannel
@@ -538,6 +540,8 @@ export type APIMessageableChannelResolvable =
     | APIDMBasedChannelResolvable
     | APIGuildTextBasedChannelResolvable
     | APIVoiceBasedChannelResolvable;
+
+export type APIWebhookableChannelResolvable = APITextChannel | APINewsChannel | APIVoiceChannel;
 
 export interface MessageReactionData {
     count: number;
@@ -954,6 +958,7 @@ export interface WebSocketEvents {
     messageReactionAdd: [reaction: MessageReaction];
     messageReactionRemoveEmoji: [reaction: MessageReaction];
     userUpdate: [oldUser: User, newUser: User];
+    webhooksUpdate: [channel: WebhookableChannelResolvable];
     raw: [eventName: keyof typeof GatewayDispatchEvents, data: any];
     shardSpawn: [shard: WebSocketShard];
     shardReady: [shard: WebSocketShard];
