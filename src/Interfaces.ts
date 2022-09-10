@@ -102,6 +102,7 @@ import type {
     StageInstance,
     ThreadMember,
     Typing,
+    VoiceState,
 } from './index';
 
 import type { BodyInit } from 'node-fetch';
@@ -941,6 +942,7 @@ export interface WebSocketEvents {
     threadMemberUpdate: [thread: ThreadChannel, oldMember: ThreadMember, newMember: ThreadMember];
     threadMemberAdd: [thread: ThreadChannel, member: ThreadMember];
     typingStart: [typing: Typing];
+    voiceStateUpdate: [oldState: VoiceState, newState: VoiceState];
     raw: [eventName: keyof typeof GatewayDispatchEvents, data: any];
     shardSpawn: [shard: WebSocketShard];
     shardReady: [shard: WebSocketShard];
