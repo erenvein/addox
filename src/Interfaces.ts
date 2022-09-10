@@ -964,6 +964,7 @@ export interface WebSocketEvents {
     typingStart: [typing: Typing];
     voiceStateUpdate: [oldState: VoiceState, newState: VoiceState];
     messageReactionAdd: [reaction: MessageReaction];
+    messageReactionRemove: [reaction: MessageReaction];
     messageReactionRemoveEmoji: [reaction: MessageReaction];
     userUpdate: [oldUser: User, newUser: User];
     webhooksUpdate: [channel: WebhookableChannelResolvable];

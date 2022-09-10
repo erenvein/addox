@@ -60,7 +60,7 @@ export class MessageReactionManager extends CachedManager<Snowflake, MessageReac
     public async create(emoji: string) {
         const resolved = EmojiResolver(emoji) as APIPartialEmoji;
 
-        await this.client.rest.post(
+        return await this.client.rest.post<void>(
             `/channels/${this.message.channelId}/messages/${this.message.id}/reactions/${resolved.name}:${resolved.id}/@me`
         );
     }
@@ -68,7 +68,7 @@ export class MessageReactionManager extends CachedManager<Snowflake, MessageReac
     public async delete(emoji: string, userId?: Snowflake) {
         const resolved = EmojiResolver(emoji) as APIPartialEmoji;
 
-        await this.client.rest.delete(
+        return await this.client.rest.delete<void>(
             `/channels/${this.message.channelId}/messages/${this.message.id}/reactions/${
                 resolved.name
             }:${resolved.id}/${userId ?? '@me'}`
@@ -76,7 +76,7 @@ export class MessageReactionManager extends CachedManager<Snowflake, MessageReac
     }
 
     public async deleteAll() {
-        await this.client.rest.delete(
+        return await this.client.rest.delete<void>(
             `/channels/${this.message.channelId}/messages/${this.message.id}/reactions`
         );
     }
@@ -84,7 +84,7 @@ export class MessageReactionManager extends CachedManager<Snowflake, MessageReac
     public async deleteAllForEmoji(emoji: string) {
         const resolved = EmojiResolver(emoji) as APIPartialEmoji;
 
-        await this.client.rest.delete(
+        return await this.client.rest.delete<void>(
             `/channels/${this.message.channelId}/messages/${this.message.id}/reactions/${resolved.name}:${resolved.id}`
         );
     }
