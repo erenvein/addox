@@ -100,6 +100,7 @@ import type {
     LocalizationMap,
     APIApplicationCommandOptionChoice,
     StageInstance,
+    ThreadMember,
 } from './index';
 
 import type { BodyInit } from 'node-fetch';
@@ -936,6 +937,8 @@ export interface WebSocketEvents {
     messageReactionRemoveAll: [message: Message];
     stageInstanceCreate: [stageInstance: StageInstance];
     threadCreate: [thread: ThreadChannel];
+    threadMemberUpdate: [thread: ThreadChannel, oldMember: ThreadMember, newMember: ThreadMember];
+    threadMemberAdd: [thread: ThreadChannel, member: ThreadMember];
     raw: [eventName: keyof typeof GatewayDispatchEvents, data: any];
     shardSpawn: [shard: WebSocketShard];
     shardReady: [shard: WebSocketShard];

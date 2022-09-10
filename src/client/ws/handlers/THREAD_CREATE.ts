@@ -4,7 +4,7 @@ import {
     ThreadChannel,
 } from '../../../index';
 
-export default class MessageCreateHandler extends BaseWebSocketHandler {
+export default class ThreadCreateHandler extends BaseWebSocketHandler {
     public constructor() {
         super();
     }

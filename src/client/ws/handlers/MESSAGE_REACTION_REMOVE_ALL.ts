@@ -4,7 +4,7 @@ import {
     MessageableChannelResolvable,
 } from '../../../index';
 
-export default class MessageUpdateHandler extends BaseWebSocketHandler {
+export default class MessageReactionRemoveAllHandler extends BaseWebSocketHandler {
     public constructor() {
         super();
     }
