@@ -1,0 +1,26 @@
+import {
+    BaseWebSocketHandler,
+    type GatewayMessageReactionRemoveAllDispatch,
+    Message,
+    type APIMessage,
+    MessageableChannelResolvable,
+} from '../../../index';
+
+export default class MessageUpdateHandler extends BaseWebSocketHandler {
+    public constructor() {
+        super();
+    }
+
+    public override handle({ d }: GatewayMessageReactionRemoveAllDispatch) {
+        const channel = this.shard.manager.client.caches.channels.cache.get(d.channel_id) as MessageableChannelResolvable;
+
+        if (channel) {
+            const message = channel.caches.messages.cache.get(d.message_id);
+
+            if (message) {
+                message.caches.reactions.cache.clear();
+                this.shard.manager.emit('messageReactionRemoveAll', message);
+            }
+        }
+    }
+}

@@ -933,6 +933,7 @@ export interface WebSocketEvents {
     integrationCreate: [integration: GuildIntegration];
     integrationDelete: [integration: GuildIntegration];
     guildIntegrationsUpdate: [guild: Guild];
+    messageReactionRemoveAll: [message: Message];
     raw: [eventName: keyof typeof GatewayDispatchEvents, data: any];
     shardSpawn: [shard: WebSocketShard];
     shardReady: [shard: WebSocketShard];
