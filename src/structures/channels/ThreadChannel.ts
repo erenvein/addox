@@ -14,7 +14,6 @@ import {
 import { BaseGuildTextChannel } from '../base/BaseGuildTextChannel';
 
 export class ThreadChannel extends BaseGuildTextChannel {
-    public member!: ThreadMember | null;
     public memberCount!: number;
     public messageCount!: number;
     public threadMetadata!: ThreadMetadata | null;
@@ -37,7 +36,6 @@ export class ThreadChannel extends BaseGuildTextChannel {
     public override _patch(data: APIThreadChannel | GatewayThreadCreateDispatchData) {
         super._patch(data);
 
-        this.member = data.member ? new ThreadMember(this.client, data.member) : null;
         this.memberCount = data.member_count ?? 1;
         this.messageCount = data.message_count ?? 0;
         this.threadMetadata = data.thread_metadata
@@ -54,6 +52,13 @@ export class ThreadChannel extends BaseGuildTextChannel {
         }
 
         this.caches = new ThreadChannelCacheManager(this.client, this);
+
+        if (data.member) {
+            this.caches.members.cache.set(
+                data.member.id!,
+                new ThreadMember(this.client, data.member)
+            );
+        }
 
         return this;
     }

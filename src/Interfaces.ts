@@ -944,6 +944,11 @@ export interface WebSocketEvents {
     threadDelete: [thread: ThreadChannel];
     threadMemberUpdate: [thread: ThreadChannel, oldMember: ThreadMember, newMember: ThreadMember];
     threadMemberAdd: [thread: ThreadChannel, member: ThreadMember];
+    threadMembersUpdate: [
+        thread: ThreadChannel,
+        addedMembers: Collection<Snowflake, ThreadMember>,
+        removedMembers: Collection<Snowflake, ThreadMember>
+    ];
     typingStart: [typing: Typing];
     voiceStateUpdate: [oldState: VoiceState, newState: VoiceState];
     messageReactionAdd: [reaction: MessageReaction];
