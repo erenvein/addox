@@ -72,9 +72,6 @@ export class ClientChannelManager extends CachedManager<Snowflake, AnyChannel> {
                 case ChannelType.GuildVoice:
                     channel = new VoiceChannel(this.client, guild, data);
                     break;
-                case ChannelType.GuildForum:
-                    // TODO
-                    break;
             }
         }
 

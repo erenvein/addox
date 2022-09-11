@@ -19,8 +19,7 @@ export default class ChannelCreateHandler extends BaseWebSocketHandler {
                 guild
             ) as GuildBasedChannelResolvable;
 
-            guild.caches.channels.cache.set(channel.id, channel);
-            this.shard.manager.client.caches.channels.cache.set(channel.id, channel);
+            this.addChannelToEveryting(channel, guild);
 
             this.shard.manager.emit('channelCreate', channel);
         }

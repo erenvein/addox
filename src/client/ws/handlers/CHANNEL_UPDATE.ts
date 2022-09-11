@@ -22,8 +22,7 @@ export default class ChannelUpdateHandler extends BaseWebSocketHandler {
                 //@ts-ignore
                 _channel = _channel._patch(d);
 
-                guild.caches.channels.cache.set(channel.id, _channel);
-                this.shard.manager.client.caches.channels.cache.set(channel.id, _channel);
+                this.addChannelToEveryting(_channel, guild);
 
                 this.shard.manager.emit('channelUpdate', channel, _channel);
             }

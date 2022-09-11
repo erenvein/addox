@@ -24,7 +24,7 @@ import {
     GuildBasedInvitableChannelResolvable,
     RESTPostAPIChannelFollowersResult,
     FollowedChannel,
-    RESTPostAPIChannelThreadsJSONBody,
+    StartThreadData,
     APIThreadChannel,
     ThreadChannel,
     ThreadMember,
@@ -32,6 +32,7 @@ import {
     GuildTextBasedChannelResolvable,
     FetchArchivedThreadOptions,
     EditChannelData,
+    ThreadType,
 } from '../../index';
 
 import { CachedManager } from '../base/CachedManager';
@@ -315,7 +316,7 @@ export class GuildChannelManager extends CachedManager<Snowflake, GuildBasedChan
 
     public async startThread(
         channelId: Snowflake,
-        data: RESTPostAPIChannelThreadsJSONBody,
+        data: StartThreadData,
         reason?: string | null,
         messageId?: Snowflake
     ) {
@@ -333,10 +334,30 @@ export class GuildChannelManager extends CachedManager<Snowflake, GuildBasedChan
                 this.cache._add(channel.id, new ThreadChannel(this.client, this.guild, channel))
             ) as ThreadChannel;
         } else {
+            const _channel = this.cache.get(channelId)! as GuildTextBasedChannelResolvable;
+
+            if (data.type && typeof data.type !== 'number') {
+                data.type = ThreadType[data.type];
+            }
+
+            const resolvedType =
+                _channel && !data.type
+                    ? _channel.type === 'GuildNews'
+                        ? ThreadType.News
+                        : ThreadType.Private
+                    : data.type;
+
             const channel = await this.client.rest.post<APIThreadChannel>(
                 `/channels/${channelId}/threads`,
                 {
-                    body: data,
+                    body: {
+                        ...data,
+                        type: resolvedType,
+                        invitable:
+                            'invitable' in data
+                                ? data.invitable
+                                : resolvedType === ThreadType.Private,
+                    },
                     reason: reason as string,
                 }
             );
@@ -415,7 +436,7 @@ export class GuildChannelManager extends CachedManager<Snowflake, GuildBasedChan
 
     public async fetchActiveThreads() {
         const threads = await this.client.rest.get<RESTGetAPIGuildThreadsResult>(
-            `/guilds/${this.guild.id}/threads`
+            `/guilds/${this.guild.id}/threads/active`
         );
 
         const _threads = new Collection<Snowflake, ThreadChannel>();
@@ -451,7 +472,7 @@ export class GuildChannelManager extends CachedManager<Snowflake, GuildBasedChan
         { before, limit }: FetchArchivedThreadOptions = {}
     ) {
         const threads = await this.client.rest.get<RESTGetAPIGuildThreadsResult>(
-            `/guilds/${id}/threads/archived/public`,
+            `/channels/${id}/threads/archived/public`,
             {
                 query: {
                     limit,
@@ -497,7 +518,7 @@ export class GuildChannelManager extends CachedManager<Snowflake, GuildBasedChan
         { before, limit }: FetchArchivedThreadOptions = {}
     ) {
         const threads = await this.client.rest.get<RESTGetAPIGuildThreadsResult>(
-            `/guilds/${id}/threads/archived/private`,
+            `/channels/${id}/threads/archived/private`,
             {
                 query: {
                     limit,

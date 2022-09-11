@@ -17,8 +17,7 @@ export default class ThreadCreateHandler extends BaseWebSocketHandler {
             const thread = guild.caches.channels.cache.get(d.id) as ThreadChannel;
 
             if (thread) {
-                guild.caches.channels.cache.delete(d.id);
-                this.shard.manager.client.caches.channels.cache.delete(d.id);
+                this.addChannelToEveryting(thread, guild);
                 this.shard.manager.emit('threadDelete', thread);
             }
         }

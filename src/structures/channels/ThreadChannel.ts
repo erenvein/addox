@@ -78,4 +78,12 @@ export class ThreadChannel extends BaseGuildTextChannel {
     public override async edit(data: EditChannelData, reason?: string) {
         return (await super.edit(data, reason)) as ThreadChannel;
     }
+
+    public async join() {
+        return await this.guild.caches.channels.joinThread(this.id);
+    }
+
+    public async leave() {
+        return await this.guild.caches.channels.leaveThread(this.id);
+    }
 }

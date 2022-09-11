@@ -105,6 +105,8 @@ import type {
     VoiceState,
     MessageReaction,
     Invite,
+    RESTPostAPIChannelThreadsJSONBody,
+    ThreadType,
 } from './index';
 
 import type { BodyInit } from 'node-fetch';
@@ -484,6 +486,8 @@ export type MessageableChannelResolvable =
 
 export type WebhookableChannelResolvable = TextChannel | NewsChannel | VoiceChannel;
 
+export type ThreadableChannelResolvable = TextChannel | NewsChannel;
+
 export type APITextBasedChannelResolvable =
     | APITextChannel
     | APINewsChannel
@@ -546,6 +550,8 @@ export type APIWebhookableChannelResolvable =
     | APITextChannel
     | APINewsChannel
     | APIGuildVoiceChannel;
+
+export type APIThreadableChannelResolvable = APITextChannel | APINewsChannel;
 
 export interface MessageReactionData {
     count: number;
@@ -889,6 +895,13 @@ export interface EditCommandData extends Omit<CreateCommandData, 'type'> {
     description?: string;
 }
 
+export type ThreadTypeResolvable = keyof typeof ThreadType | number;
+
+//@ts-ignore
+export interface StartThreadData extends RESTPostAPIChannelThreadsJSONBody {
+    type?: ThreadTypeResolvable;
+}
+
 export interface WebSocketEvents {
     ready: [client: Client];
     guildCreate: [guild: Guild];
@@ -962,6 +975,7 @@ export interface WebSocketEvents {
         addedMembers: Collection<Snowflake, ThreadMember>,
         removedMembers: Collection<Snowflake, ThreadMember>
     ];
+    threadListSync: [syncedThreads: Collection<Snowflake, ThreadChannel>, guild: Guild];
     typingStart: [typing: Typing];
     voiceStateUpdate: [oldState: VoiceState, newState: VoiceState];
     messageReactionAdd: [reaction: MessageReaction];

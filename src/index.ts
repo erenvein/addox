@@ -87,6 +87,7 @@ export { ThreadChannelMemberManager } from './managers/channels/ThreadChannelMem
 export { ChannelPermissionOverwriteManager } from './managers/channels/ChannelPermissionOverwriteManager';
 export { CategoryChannelCacheManager } from './managers/channels/CategoryChannelCacheManager';
 export { VoiceChannelCacheManager } from './managers/channels/VoiceChannelCacheManager';
+export { ChannelThreadManager } from "./managers/channels/ChannelThreadManager";
 
 // - MEMBERS
 export { GuildMemberCacheManager } from './managers/members/GuildMemberCacheManager';

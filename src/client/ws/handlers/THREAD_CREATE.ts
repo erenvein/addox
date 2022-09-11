@@ -1,7 +1,8 @@
 import {
     type GatewayThreadCreateDispatch,
-    BaseWebSocketHandler,
+    type APIThreadChannel,
     ThreadChannel,
+    BaseWebSocketHandler,
 } from '../../../index';
 
 export default class ThreadCreateHandler extends BaseWebSocketHandler {
@@ -16,13 +17,9 @@ export default class ThreadCreateHandler extends BaseWebSocketHandler {
         if (guild) {
             this.shard.manager.emit(
                 'threadCreate',
-                guild.caches.channels.cache._add(
-                    d.id,
-                    this.shard.manager.client.caches.channels.cache._add(
-                        d.id,
-                        //@ts-ignore
-                        new ThreadChannel(this.shard.manager.client, guild, d)
-                    ) as ThreadChannel
+                this.addChannelToEveryting(
+                    new ThreadChannel(this.shard.manager.client, guild, d as APIThreadChannel),
+                    guild
                 ) as ThreadChannel
             );
         }
