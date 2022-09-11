@@ -26,7 +26,7 @@ export class GuildMember extends BaseStructure {
     #permissions!: number | null;
     public guild: Guild;
 
-    public constructor(client: Client, guild: Guild, data: APIGuildMember) {
+    public constructor(client: Client, guild: Guild, data: APIGuildMember ) {
         super(client);
 
         this.guild = guild;

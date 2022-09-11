@@ -107,6 +107,14 @@ import type {
     Invite,
     RESTPostAPIChannelThreadsJSONBody,
     ThreadType,
+    AutocompleteInteraction,
+    ButtonInteraction,
+    CommandInteraction,
+    SelectMenuInteraction,
+    APIApplicationCommandAutocompleteInteraction,
+    APIMessageComponentButtonInteraction,
+    APIApplicationCommandInteraction,
+    APIMessageComponentSelectMenuInteraction,
 } from './index';
 
 import type { BodyInit } from 'node-fetch';
@@ -902,6 +910,18 @@ export interface StartThreadData extends RESTPostAPIChannelThreadsJSONBody {
     type?: ThreadTypeResolvable;
 }
 
+export type AnyInteraction =
+    | AutocompleteInteraction
+    | ButtonInteraction
+    | CommandInteraction
+    | SelectMenuInteraction;
+
+export type APIAnyInteraction =
+    | APIApplicationCommandAutocompleteInteraction
+    | APIMessageComponentButtonInteraction
+    | APIApplicationCommandInteraction
+    | APIMessageComponentSelectMenuInteraction;
+
 export interface WebSocketEvents {
     ready: [client: Client];
     guildCreate: [guild: Guild];
@@ -985,6 +1005,7 @@ export interface WebSocketEvents {
     userUpdate: [oldUser: User, newUser: User];
     webhooksUpdate: [channel: WebhookableChannelResolvable];
     inviteCreate: [invite: Invite];
+    interactionCreate: [interaction: AnyInteraction];
     raw: [eventName: keyof typeof GatewayDispatchEvents, data: any];
     shardSpawn: [shard: WebSocketShard];
     shardReady: [shard: WebSocketShard];

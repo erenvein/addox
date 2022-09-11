@@ -39,7 +39,7 @@ export { ApplicationCommandSubcommandGroupOptionBuilder } from './builders/Appli
 
 // #MANAGERS
 
-// -BASE
+// - BASE
 export { CachedManager } from './managers/base/CachedManager';
 export { BaseManager } from './managers/base/BaseManager';
 
@@ -87,7 +87,7 @@ export { ThreadChannelMemberManager } from './managers/channels/ThreadChannelMem
 export { ChannelPermissionOverwriteManager } from './managers/channels/ChannelPermissionOverwriteManager';
 export { CategoryChannelCacheManager } from './managers/channels/CategoryChannelCacheManager';
 export { VoiceChannelCacheManager } from './managers/channels/VoiceChannelCacheManager';
-export { ChannelThreadManager } from "./managers/channels/ChannelThreadManager";
+export { ChannelThreadManager } from './managers/channels/ChannelThreadManager';
 
 // - MEMBERS
 export { GuildMemberCacheManager } from './managers/members/GuildMemberCacheManager';
@@ -110,11 +110,19 @@ export { BaseTextChannel } from './structures/base/BaseTextChannel';
 export { BaseGuildTextChannel } from './structures/base/BaseGuildTextChannel';
 export { BaseVoiceChannel } from './structures/base/BaseVoiceChannel';
 export { BaseApplication } from './structures/base/BaseApplication';
+export { BaseInteraction } from './structures/base/BaseInteraction';
 
 // - APPLICATION
 export { ApplicationCommand } from './structures/application/ApplicationCommand';
 export { ApplicationCommandPermissions } from './structures/application/ApplicationCommandPermissions';
 export { ApplicationCommandPermissionsChild } from './structures/application/ApplicationCommandPermissionsChild';
+
+// - INTERACTIONS
+export { AutocompleteInteraction } from './structures/interactions/AutocompleteInteraction';
+export { CommandInteraction } from './structures/interactions/CommandInteraction';
+export { ModalSubmitInteraction } from './structures/interactions/ModalSubmitInteraction';
+export { ButtonInteraction } from './structures/interactions/ButtonInteraction';
+export { SelectMenuInteraction } from './structures/interactions/SelectMenuInteraction';
 
 // - BITFIELD
 export { ThreadMemberFlagsBitField } from './structures/bitfield/ThreadMemberFlagsBitField';
