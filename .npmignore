@@ -1,0 +1,9 @@
+node_modules
+test/
+src/
+.prettierrc.json
+.eslintrc.js
+.gitignore
+.npmignore
+*.lock
+*.log
