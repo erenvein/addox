@@ -225,20 +225,14 @@ export class WebSocketShard extends EventEmitter {
         return this.encoding === 'json' ? JSON.stringify : erlpack.pack;
     }
 
-    private _send(data: any) {
-        if (this.socket) {
-            this.socket.send(this.pack(data));
-        }
-    }
-
     public send(data: any) {
         if (++this.packetQueue > 2) {
             Sleep(1000).then(() => {
-                this._send(data);
+                this.socket.send(this.pack(data));
                 this.packetQueue--;
             });
         } else {
-            this._send(data);
+            this.socket.send(this.pack(data));
             this.packetQueue--;
         }
     }
