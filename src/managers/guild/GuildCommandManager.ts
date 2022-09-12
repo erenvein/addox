@@ -8,6 +8,8 @@ import type {
     CreateCommandData,
     Guild,
     ApplicationCommandPermissionsChildData,
+    ApplicationCommandBuilder,
+    EditCommandData,
 } from '../../index';
 
 import { CachedManager } from '../base/CachedManager';
@@ -52,13 +54,13 @@ export class GuildCommandManager extends CachedManager<Snowflake, ApplicationCom
         }
     }
 
-    public async create(data: CreateCommandData) {
+    public async create(data: CreateCommandData | ApplicationCommandBuilder) {
         const command = await this.client.caches.guilds.createCommand(this.guild.id, data);
 
         return this.cache._add(command.id, command);
     }
 
-    public async edit(id: Snowflake, data: any) {
+    public async edit(id: Snowflake, data: EditCommandData | ApplicationCommandBuilder) {
         const command = await this.client.caches.guilds.editCommand(this.guild.id, id, data);
 
         return this.cache._add(command.id, command);
@@ -70,7 +72,7 @@ export class GuildCommandManager extends CachedManager<Snowflake, ApplicationCom
         return await this.client.caches.guilds.deleteCommand(this.guild.id, id);
     }
 
-    public async set(id: Snowflake, commands: CreateCommandData[]) {
+    public async set(id: Snowflake, commands: (CreateCommandData | ApplicationCommandBuilder)[]) {
         const result = await this.client.caches.guilds.setCommands(id, commands);
 
         this.cache.clear();

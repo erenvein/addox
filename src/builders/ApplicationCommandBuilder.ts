@@ -43,7 +43,7 @@ export class ApplicationCommandBuilder extends BaseBuilder {
         this.name = data?.name;
         this.name_localizations = data?.name_localizations;
         this.options = data?.options ?? [];
-        this.type = data?.type;
+        this.type = data?.type ?? ApplicationCommandType.ChatInput;
     }
 
     public setDefaultMemberPermissions(permissions: PermissionFlagsBitsResolvable) {

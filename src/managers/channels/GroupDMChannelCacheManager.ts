@@ -3,7 +3,7 @@ import { type Client, GroupDMChannelRecipientManager, GroupDMChannel } from '../
 import { TextBasedChannelCacheManager } from './TextBasedChannelCacheManager';
 
 export class GroupDMChannelCacheManager extends TextBasedChannelCacheManager {
-    public override channel: GroupDMChannel;
+    public declare channel: GroupDMChannel;
     public recipients: GroupDMChannelRecipientManager;
 
     public constructor(client: Client, channel: GroupDMChannel) {

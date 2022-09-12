@@ -2,14 +2,14 @@
     "compileOnSave": true,
     "compilerOptions": {
         "allowSyntheticDefaultImports": true,
-        "alwaysStrict": true,
+        "alwaysStrict": false,
         "declaration": true,
         "emitDecoratorMetadata": true,
         "esModuleInterop": true,
         "experimentalDecorators": true,
         "importHelpers": true,
         "importsNotUsedAsValues": "error",
-        "lib": ["ES2021"],
+        "lib": ["ES2022"],
         "module": "CommonJS",
         "moduleResolution": "Node",
         "newLine": "lf",
@@ -20,15 +20,15 @@
         "pretty": true,
         "removeComments": false,
         "resolveJsonModule": true,
-        "strict": true,
+        "strict": false,
         "target": "ES2022",
         "useDefineForClassFields": true,
         "rootDir": "src",
         "outDir": "dist",
         "noUnusedLocals": false,
         "noUnusedParameters": false,
-        "declarationDir": "dist"
+        "declarationDir": "dist/@types"
     },
-    "include": ["src/**/*", "dist/x.js"],
-    "exclude": ["node_modules/**/*", "test/**/*"]
+    "include": ["src"],
+    "exclude": ["node_modules", "test"]
 }

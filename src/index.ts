@@ -23,6 +23,7 @@ export { ButtonBuilder } from './builders/ButtonBuilder';
 export { TextInputBuilder } from './builders/TextInputBuilder';
 export { SelectMenuBuilder } from './builders/SelectMenuBuilder';
 export { EmbedBuilder } from './builders/EmbedBuilder';
+export { ModalBuilder } from './builders/ModalBuilder';
 export { ApplicationCommandBuilder } from './builders/ApplicationCommandBuilder';
 export { ApplicationCommandBaseOptionBuilder } from './builders/ApplicationCommandOptionBuilders/BaseOptionBuilder';
 export { ApplicationCommandStringOptionBuilder } from './builders/ApplicationCommandOptionBuilders/StringBuilder';
@@ -97,6 +98,12 @@ export { GuildMemberRoleManager } from './managers/members/GuildMemberRoleManage
 export { WebhookCacheManager } from './managers/webhooks/WebhookCacheManager';
 export { WebhookMessageManager } from './managers/webhooks/WebhookMessageManager';
 
+// - INTERACTIONS
+export { ModalValueManager } from './managers/interactions/ModalValueManager';
+export { InteractionWebhookMessageManager } from './managers/interactions/InteractionWebhookMessageManager';
+export { InteractionWebhookCacheManager } from './managers/interactions/InteractionWebhookCacheManager';
+export { ChatInputCommandInteractionOptionManager } from './managers/interactions/ChatInputCommandInteractionOptionManager';
+
 // #STRUCTURES
 
 // - BASE
@@ -111,6 +118,9 @@ export { BaseGuildTextChannel } from './structures/base/BaseGuildTextChannel';
 export { BaseVoiceChannel } from './structures/base/BaseVoiceChannel';
 export { BaseApplication } from './structures/base/BaseApplication';
 export { BaseInteraction } from './structures/base/BaseInteraction';
+export { BaseCommandInteraction } from './structures/base/BaseCommandInteraction';
+export { BaseContextMenuInteraction } from './structures/base/BaseContextMenuInteraction';
+export { BaseMessageComponentInteraction } from './structures/base/BaseMessageComponentInteraction';
 
 // - APPLICATION
 export { ApplicationCommand } from './structures/application/ApplicationCommand';
@@ -119,10 +129,14 @@ export { ApplicationCommandPermissionsChild } from './structures/application/App
 
 // - INTERACTIONS
 export { AutocompleteInteraction } from './structures/interactions/AutocompleteInteraction';
-export { CommandInteraction } from './structures/interactions/CommandInteraction';
 export { ModalSubmitInteraction } from './structures/interactions/ModalSubmitInteraction';
 export { ButtonInteraction } from './structures/interactions/ButtonInteraction';
 export { SelectMenuInteraction } from './structures/interactions/SelectMenuInteraction';
+export { ChatInputCommandInteraction } from './structures/interactions/ChatInputCommandInteraction';
+export { MessageCommandInteraction } from './structures/interactions/MessageCommandInteraction';
+export { UserCommandInteraction } from './structures/interactions/UserCommandInteraction';
+export { InteractionWebhook } from './structures/interactions/InteractionWebhook';
+export { InteractionDataResolvedChannel } from './structures/interactions/InteractionDataResolvedChannel';
 
 // - BITFIELD
 export { ThreadMemberFlagsBitField } from './structures/bitfield/ThreadMemberFlagsBitField';
@@ -210,6 +224,7 @@ export { AutoModerationRuleDataResolver } from './utils/resolvers/AutoModeration
 export * from './utils/resolvers/EmojiResolver';
 export * from './utils/resolvers/RoleDataResolver';
 export * from './utils/resolvers/ChannelDataResolver';
+export * from './utils/resolvers/ChatInputCommandOptionResolver';
 
 // - TIMES
 export { Sleep } from './utils/times/Sleep';

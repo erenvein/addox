@@ -49,6 +49,7 @@ import {
     FetchCommandOptions,
     ApplicationCommandPermissions,
     ApplicationCommandPermissionType,
+    ApplicationCommandBuilder,
 } from '../../index';
 
 import { BaseManager } from '../base/BaseManager';
@@ -357,7 +358,7 @@ export class ClientGuildManager extends BaseManager {
         }
     }
 
-    public async createCommand(id: Snowflake, data: CreateCommandData) {
+    public async createCommand(id: Snowflake, data: CreateCommandData | ApplicationCommandBuilder) {
         if (data.default_member_permissions) {
             //@ts-ignore
             data.default_member_permissions = PermissionFlagsBitsResolver(
@@ -373,7 +374,11 @@ export class ClientGuildManager extends BaseManager {
         return new ApplicationCommand(this.client, command);
     }
 
-    public async editCommand(guildId: Snowflake, commandId: Snowflake, data: EditCommandData) {
+    public async editCommand(
+        guildId: Snowflake,
+        commandId: Snowflake,
+        data: EditCommandData | ApplicationCommandBuilder
+    ) {
         const command = await this.client.rest.patch<APIApplicationCommand>(
             `/applications/${this.client.user!.id}/guilds/${guildId}/commands/${commandId}`,
             { body: data }
@@ -388,7 +393,10 @@ export class ClientGuildManager extends BaseManager {
         );
     }
 
-    public async setCommands(guildId: Snowflake, commands: CreateCommandData[]) {
+    public async setCommands(
+        guildId: Snowflake,
+        commands: (CreateCommandData | ApplicationCommandBuilder)[]
+    ) {
         const result = await this.client.rest.put<APIApplicationCommand[]>(
             `/applications/${this.client.user!.id}/guilds/${guildId}/commands`,
             { body: commands }

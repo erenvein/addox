@@ -25,7 +25,7 @@ export class HTTPError extends Error {
         this.message = message;
         this.body = {
             files: data.files,
-            json: data.body,
+            json: JSON.parse(data.body),
         };
     }
 }

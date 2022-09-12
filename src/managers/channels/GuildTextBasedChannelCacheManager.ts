@@ -9,7 +9,7 @@ import {
 import { GuildChannelCacheManager } from './GuildChannelCacheManager';
 
 export class GuildTextBasedChannelCacheManager extends GuildChannelCacheManager {
-    public override channel: GuildTextBasedNonThreadChannelResolvable;
+    public declare channel: GuildTextBasedNonThreadChannelResolvable;
     public messages: ChannelMessageManager;
     public pins: ChannelPinManager;
     public threads: ChannelThreadManager;

@@ -6,6 +6,10 @@ import {
     CollectionLike,
     ApplicationCommand,
     Collection,
+    ApplicationCommandBuilder,
+    ApplicationCommandType,
+    CreateCommandData,
+    EditCommandData,
 } from '../../index';
 
 import { CachedManager } from '../base/CachedManager';
@@ -65,16 +69,22 @@ export class ClientCommandManager extends CachedManager<Snowflake, ApplicationCo
         }
     }
 
-    public async create(data: any) {
+    public async create(data: CreateCommandData | ApplicationCommandBuilder) {
+        if (typeof data.type !== 'number') {
+            data.type = ApplicationCommandType[
+                data.type
+            ] as unknown as keyof typeof ApplicationCommandType;
+        }
+
         const command = await this.client.rest.post<APIApplicationCommand>(
             `/applications/${this.client.user!.id}/commands`,
-            data
+            { body: data }
         );
 
         return this.cache._add(command.id, new ApplicationCommand(this.client, command));
     }
 
-    public async edit(id: Snowflake, data: any) {
+    public async edit(id: Snowflake, data: EditCommandData | ApplicationCommandBuilder) {
         const command = await this.client.rest.patch<APIApplicationCommand>(
             `/applications/${this.client.user!.id}/commands/${id}`,
             { body: data }
@@ -91,7 +101,15 @@ export class ClientCommandManager extends CachedManager<Snowflake, ApplicationCo
         );
     }
 
-    public async set(commands: APIApplicationCommand[]) {
+    public async set(commands: (CreateCommandData | ApplicationCommandBuilder)[]) {
+        for (const command of commands) {
+            if (typeof command.type !== 'number') {
+                command.type = ApplicationCommandType[
+                    command.type
+                ] as unknown as keyof typeof ApplicationCommandType;
+            }
+        }
+
         const result = await this.client.rest.put<APIApplicationCommand[]>(
             `/applications/${this.client.user!.id}/commands`,
             { body: commands }

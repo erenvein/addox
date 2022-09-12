@@ -109,12 +109,22 @@ import type {
     ThreadType,
     AutocompleteInteraction,
     ButtonInteraction,
-    CommandInteraction,
+    ChatInputCommandInteraction,
+    UserCommandInteraction,
+    MessageCommandInteraction,
     SelectMenuInteraction,
     APIApplicationCommandAutocompleteInteraction,
     APIMessageComponentButtonInteraction,
-    APIApplicationCommandInteraction,
+    APIChatInputApplicationCommandInteraction,
+    APIUserApplicationCommandInteraction,
     APIMessageComponentSelectMenuInteraction,
+    ComponentType,
+    ModalSubmitInteraction,
+    APIModalSubmitInteraction,
+    InteractionDataResolvedChannel,
+    APIApplicationCommandInteractionDataOption,
+    Attachment,
+    ApplicationCommandOptionType,
 } from './index';
 
 import type { BodyInit } from 'node-fetch';
@@ -710,7 +720,7 @@ export interface EditWebhookMessageData {
     embeds?: (EmbedData | EmbedBuilder)[];
     allowed_mentions?: APIAllowedMentions;
     files?: (Buffer | string)[];
-    attachments: APIAttachment[];
+    attachments?: APIAttachment[];
 }
 
 export interface CreateWebhookMessageData extends EditWebhookMessageData {
@@ -875,6 +885,8 @@ export type GuildBasedChannelTypes =
     | ChannelType.GuildDirectory
     | ChannelType.GuildForum;
 
+export type GuildBasedChannelTypesResolvable = keyof typeof ChannelType | GuildBasedChannelTypes;
+
 export interface CreateCommandData {
     name: string;
     name_localizations?: LocalizationMap;
@@ -913,14 +925,82 @@ export interface StartThreadData extends RESTPostAPIChannelThreadsJSONBody {
 export type AnyInteraction =
     | AutocompleteInteraction
     | ButtonInteraction
-    | CommandInteraction
-    | SelectMenuInteraction;
+    | ChatInputCommandInteraction
+    | UserCommandInteraction
+    | MessageCommandInteraction
+    | SelectMenuInteraction
+    | ModalSubmitInteraction;
 
 export type APIAnyInteraction =
     | APIApplicationCommandAutocompleteInteraction
     | APIMessageComponentButtonInteraction
-    | APIApplicationCommandInteraction
-    | APIMessageComponentSelectMenuInteraction;
+    | APIChatInputApplicationCommandInteraction
+    | APIUserApplicationCommandInteraction
+    | APIMessageComponentSelectMenuInteraction
+    | APIMessageComponentSelectMenuInteraction
+    | APIModalSubmitInteraction;
+
+export interface ModalSubmitComponentData {
+    customId: string;
+    type: keyof typeof ComponentType;
+    value: string;
+}
+
+export interface ModalSubmitComponentsData {
+    type: keyof typeof ComponentType;
+    components: ModalSubmitComponentData[];
+}
+
+export interface InteractionWebhookData {
+    id: Snowflake;
+    token: string;
+}
+
+export interface ReplyInteractionData {
+    tts?: boolean;
+    content?: string;
+    embeds?: (EmbedData | EmbedBuilder)[];
+    allowed_mentions?: APIAllowedMentions[];
+    flags?: MessageFlagsBitsResolvable;
+    components?: (AnyComponent | APIAnyComponent)[];
+    attachments?: any[];
+}
+
+export interface CallbackInteractionOptions {
+    fetchReply?: boolean;
+}
+
+export interface DeferReplyOptions extends CallbackInteractionOptions {
+    flags?: MessageFlagsBitsResolvable;
+}
+
+export interface ChatInputCommandResolvedOptionsData {
+    resolved: {
+        attachments: Collection<string, Attachment>;
+        channels: Collection<string, InteractionDataResolvedChannel>;
+        members: Collection<string, GuildMember>;
+        roles: Collection<string, Role>;
+        users: Collection<string, User>;
+    };
+    options: Collection<string, ChatInputCommandResolvedOptionData>;
+}
+
+export interface ChatInputCommandResolvedOptionResolvedData {
+    attachment?: Attachment;
+    channel?: InteractionDataResolvedChannel;
+    member?: GuildMember;
+    role?: Role;
+    user?: User;
+}
+
+export interface ChatInputCommandResolvedOptionData {
+    name: string;
+    type: keyof typeof ApplicationCommandOptionType;
+    value: number | string | boolean;
+    options?: ChatInputCommandResolvedOptionData[];
+    focusted?: boolean;
+    resolved?: ChatInputCommandResolvedOptionResolvedData;
+}
 
 export interface WebSocketEvents {
     ready: [client: Client];

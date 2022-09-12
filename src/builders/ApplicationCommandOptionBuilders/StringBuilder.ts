@@ -1,44 +1,29 @@
-import type { LocalizationMap, APIApplicationCommandStringOption } from '../../index';
+import type {
+    APIApplicationCommandStringOption,
+    APIApplicationCommandOptionChoice,
+} from '../../index';
 
 import { ApplicationCommandBaseOptionBuilder } from './BaseOptionBuilder';
 
 export class ApplicationCommandStringOptionBuilder extends ApplicationCommandBaseOptionBuilder {
     public autocomplete: boolean;
-    public description!: string;
-    public description_localizations?: LocalizationMap;
     public max_length?: number;
     public min_length?: number;
-    public name!: string;
-    public name_localizations?: LocalizationMap;
-    public required: boolean;
+    public choices!: APIApplicationCommandOptionChoice<string>[];
 
     public constructor(data?: APIApplicationCommandStringOption) {
-        super('String');
+        super('String', data);
 
         this.autocomplete = data?.autocomplete ?? false;
-        //@ts-ignore
-        this.description = data?.description;
-        //@ts-ignore
-        this.description_localizations = data?.description_localizations;
         this.max_length = data?.max_length;
         this.min_length = data?.min_length;
-        //@ts-ignore
-        this.name = data?.name;
-        //@ts-ignore
-        this.name_localizations = data?.name_localizations;
         this.required = data?.required ?? false;
+        //@ts-ignore
+        this.choices = data?.choices ?? [];
     }
 
     public setAutocomplete(autocomplete: boolean) {
         return this.set('autocomplete', autocomplete);
-    }
-
-    public setDescription(description: string) {
-        return this.set('description', description);
-    }
-
-    public setDescriptionLocalizations(localizations: LocalizationMap) {
-        return this.set('description_localizations', localizations);
     }
 
     public setMaxLength(maxLength: number) {
@@ -49,15 +34,7 @@ export class ApplicationCommandStringOptionBuilder extends ApplicationCommandBas
         return this.set('min_length', minLength);
     }
 
-    public setName(name: string) {
-        return this.set('name', name);
-    }
-
-    public setNameLocalizations(localizations: LocalizationMap) {
-        return this.set('name_localizations', localizations);
-    }
-
-    public setRequired(required: boolean) {
-        return this.set('required', required);
+    public setChoices(choices: APIApplicationCommandOptionChoice<string>[]) {
+        return this.set('choices', choices);
     }
 }

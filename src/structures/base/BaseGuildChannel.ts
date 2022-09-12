@@ -33,6 +33,10 @@ export class BaseGuildChannel extends BaseChannel {
         return this;
     }
 
+    public get url() {
+        return `https://discordapp.com/channels/${this.guild.id}/${this.id}`;
+    }
+
     public get position() {
         return this.guild.caches.channels.cache.keyArray().indexOf(this.id);
     }

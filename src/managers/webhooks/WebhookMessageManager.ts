@@ -56,7 +56,8 @@ export class WebhookMessageManager extends CachedManager<Snowflake, Message> {
         const message = await this.client.caches.webhooks.createMessage(
             this.webhook.id,
             this.webhook.token!,
-            data
+            data,
+            options
         );
 
         return this.cache._add(message.id, message);

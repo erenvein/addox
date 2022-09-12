@@ -1,5 +1,3 @@
-import { ChannelType } from './index';
-
 export const DiscordGatewayURL = 'wss://gateway.discord.gg';
 export const DiscordGatewayVersion = '10';
 export const DiscordAPIURL = 'https://discord.com/api';
@@ -72,7 +70,7 @@ export enum AutoModerationRuleActionTypes {
 }
 
 export enum ThreadType {
-    Public = ChannelType.GuildPublicThread,
-    Private = ChannelType.GuildPrivateThread,
-    News = ChannelType.GuildNewsThread,
+    Public = 11,
+    Private = 12,
+    News = 10,
 }

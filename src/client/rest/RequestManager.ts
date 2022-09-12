@@ -72,7 +72,6 @@ export class RequestManager {
         if (!options.appendBodyToFormData) options.appendBodyToFormData = false;
 
         options.headers = { ...options.headers, ...this.baseHeaders };
-
         options.method ||= 'Get';
 
         if (this.#token && !options.headers['Authorization']) {
@@ -90,7 +89,8 @@ export class RequestManager {
         if (options.query) {
             route +=
                 '?' +
-                Object.entries(options.query!)
+                Object.entries(options.query)
+                    .filter(([, value]) => value !== undefined)
                     .map(([key, value]) => `${key}=${value}`)
                     .join('&');
         }
@@ -120,7 +120,7 @@ export class RequestManager {
             }
 
             options.headers = formData.getHeaders(options.headers);
-            options.body = formData;
+            options.body = formData.getBuffer();
         } else if (options.body) {
             options.body = JSON.stringify(options.body);
             options.headers['content-type'] = 'application/json';

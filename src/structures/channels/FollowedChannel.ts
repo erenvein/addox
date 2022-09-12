@@ -23,7 +23,6 @@ export class FollowedChannel extends BaseStructure {
     }
 
     public get webhook() {
-        // TODO
-        return void 0;
+        return this.client.caches.webhooks.cache.get(this.webhookId);
     }
 }

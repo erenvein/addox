@@ -41,7 +41,7 @@ export class BaseChannel extends BaseStructure {
     }
 
     public get url() {
-        return `https://discordapp.com/channels/${this.id}`;
+        return `https://discordapp.com/channels/@me/${this.id}`;
     }
 
     public async delete(reason?: string) {

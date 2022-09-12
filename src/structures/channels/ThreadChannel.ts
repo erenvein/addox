@@ -6,6 +6,7 @@ import {
     type EditChannelData,
     type Snowflake,
     type GatewayThreadCreateDispatchData,
+    type CreateMessageData,
     ThreadMember,
     ThreadMetadata,
     ThreadChannelCacheManager,
@@ -85,5 +86,9 @@ export class ThreadChannel extends BaseGuildTextChannel {
 
     public async leave() {
         return await this.guild.caches.channels.leaveThread(this.id);
+    }
+
+    public async send(data: CreateMessageData) {
+        return await this.caches.messages.create(data);
     }
 }

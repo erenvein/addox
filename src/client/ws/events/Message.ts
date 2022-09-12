@@ -41,14 +41,15 @@ export default class WebSocketMessageEvent extends BaseWebSocketEvent {
                 try {
                     this.shard.manager.emit('raw', t, d);
 
-                    const mod = await import(`../handlers/${t}.ts`).then((mod) => mod.default);
-
-                    const handler: BaseWebSocketHandler = new mod();
+                    const handler: BaseWebSocketHandler =
+                        new (require(`../handlers/${t}.js`).default)();
 
                     handler.shard = this.shard;
 
                     handler.handle({ op, d, t, s });
-                } catch {}
+                } catch (err) {
+                    console.error(err);
+                }
                 break;
         }
     }

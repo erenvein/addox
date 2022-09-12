@@ -5,6 +5,7 @@ import {
     EditChannelData,
     FetchOptions,
     GuildTextBasedChannelCacheManager,
+    CreateMessageData,
 } from '../../index';
 
 import { BaseGuildTextChannel } from '../base/BaseGuildTextChannel';
@@ -48,5 +49,9 @@ export class TextChannel extends BaseGuildTextChannel {
 
     public get lastMessage() {
         return this.caches.messages.cache.get(this.lastMessageId!);
+    }
+
+    public async send(data: CreateMessageData) {
+        return await this.caches.messages.create(data);
     }
 }

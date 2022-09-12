@@ -7,7 +7,7 @@ import {
 import { GuildChannelCacheManager } from './GuildChannelCacheManager';
 
 export class VoiceChannelCacheManager extends GuildChannelCacheManager {
-    public override channel: VoiceChannel;
+    public declare channel: VoiceChannel;
     public messages: ChannelMessageManager;
 
     public constructor(client: Client, channel: VoiceChannel) {
