@@ -168,6 +168,8 @@ export { GuildIntegration } from './structures/guild/GuildIntegration';
 export { GuildIntegrationApplication } from './structures/guild/GuildIntegrationApplication';
 export { VoiceState } from './structures/guild/VoiceState';
 export { AutoModerationRule } from './structures/guild/AutoModerationRule';
+export { AuditLog } from './structures/guild/AuditLog';
+export { AuditLogEntry } from './structures/guild/AuditLogEntry';
 
 // - INVITES
 export { Invite } from './structures/invites/Invite';

@@ -29,6 +29,7 @@ import {
     GuildScheduledEvent,
     GuildWelcomeScreen,
     VoiceState,
+    AuditLog,
 } from '../../index';
 
 import { BaseGuild } from '../base/BaseGuild';
@@ -383,5 +384,9 @@ export class Guild extends BaseGuild {
 
     public async fetchWebhooks() {
         return await this.client.caches.guilds.fetchWebhooks(this.id);
+    }
+
+    public async fetchAuditLogs() {
+        return (await this.client.caches.guilds.fetchAuditLogs(this.id)) as AuditLog;
     }
 }

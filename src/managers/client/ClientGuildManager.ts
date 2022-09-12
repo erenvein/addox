@@ -50,6 +50,8 @@ import {
     ApplicationCommandPermissions,
     ApplicationCommandPermissionType,
     ApplicationCommandBuilder,
+    APIAuditLog,
+    AuditLog,
 } from '../../index';
 
 import { BaseManager } from '../base/BaseManager';
@@ -480,5 +482,16 @@ export class ClientGuildManager extends BaseManager {
             );
 
         return new ApplicationCommandPermissions(permissions);
+    }
+
+    public async fetchAuditLogs(id: Snowflake): Promise<AuditLog | void> {
+        const guild = this.cache.get(id);
+
+        if (!guild) {
+            return undefined;
+        }
+
+        const auditLogs = await this.client.rest.get<APIAuditLog>(`/guilds/${id}/audit-logs`);
+        return new AuditLog(this.client, guild, auditLogs);
     }
 }

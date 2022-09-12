@@ -1,0 +1,124 @@
+import {
+    Client,
+    APIAuditLog,
+    ApplicationCommand,
+    Snowflake,
+    Collection,
+    GuildScheduledEvent,
+    GuildIntegration,
+    ThreadChannel,
+    Guild,
+    APIThreadChannel,
+    User,
+    Webhook,
+    AuditLogEntry,
+    APIAutoModerationRuleData,
+    AutoModerationRule,
+} from '../../index';
+
+import { BaseStructure } from '../base/BaseStructure';
+
+export class AuditLog extends BaseStructure {
+    public applicationCommands!: Collection<Snowflake, ApplicationCommand>;
+    public guildScheduledEvents!: Collection<Snowflake, GuildScheduledEvent>;
+    public integrations!: Collection<Snowflake, GuildIntegration>;
+    public threads!: Collection<Snowflake, ThreadChannel>;
+    public users!: Collection<Snowflake, User>;
+    public webhooks!: Collection<Snowflake, Webhook>;
+    public autoModerationRules!: Collection<Snowflake, AutoModerationRule>;
+    public entries!: Collection<Snowflake, AuditLogEntry>;
+    public guild!: Guild;
+
+    public constructor(client: Client, guild: Guild, data: APIAuditLog) {
+        super(client);
+
+        this.guild = guild;
+
+        this._patch(data);
+    }
+
+    public override _patch(data: APIAuditLog) {
+        this.applicationCommands = new Collection(
+            data.application_commands.map((command) => [
+                command.id,
+                this.guild.caches.commands.cache._add(
+                    command.id,
+                    new ApplicationCommand(this.client, command)
+                ),
+            ])
+        );
+
+        this.guildScheduledEvents = new Collection(
+            data.guild_scheduled_events.map((event) => [
+                event.id,
+                this.guild.caches.scheduledEvents.cache._add(
+                    event.id,
+                    new GuildScheduledEvent(this.client, event)
+                ),
+            ])
+        );
+
+        this.integrations = new Collection(
+            data.integrations.map((integration) => [
+                integration.id,
+                this.guild.caches.integrations.cache._add(
+                    integration.id,
+                    new GuildIntegration(this.client, this.guild, integration)
+                ),
+            ])
+        );
+
+        this.threads = new Collection(
+            data.threads.map((thread) => [
+                thread.id,
+                this.guild.caches.channels.cache._add(
+                    thread.id,
+                    this.client.caches.channels.cache._add(
+                        thread.id,
+                        new ThreadChannel(this.client, this.guild, thread as APIThreadChannel)
+                    ) as ThreadChannel
+                ) as ThreadChannel,
+            ])
+        );
+
+        this.users = new Collection(
+            data.users.map((user) => [
+                user.id,
+                this.client.caches.users.cache._add(user.id, new User(this.client, user)),
+            ])
+        );
+
+        this.webhooks = new Collection(
+            data.webhooks.map((webhook) => [
+                webhook.id,
+                this.client.caches.webhooks.cache._add(
+                    webhook.id,
+                    new Webhook(this.client, webhook)
+                ),
+            ])
+        );
+
+        this.autoModerationRules = new Collection(
+            ((data as any).auto_moderation_rules as APIAutoModerationRuleData[]).map((webhook) => [
+                webhook.id,
+                this.guild.caches.autoModerationRules.cache._add(
+                    webhook.id,
+                    new AutoModerationRule(this.client, webhook)
+                ),
+            ])
+        );
+
+        this.entries = new Collection(
+            data.audit_log_entries.map((entry) => [
+                entry.id,
+                new AuditLogEntry(this.client, this.guild, entry),
+            ])
+        );
+
+        return this;
+    }
+
+    public async fetch() {
+        // TODO
+    }
+}

@@ -122,9 +122,12 @@ import type {
     ModalSubmitInteraction,
     APIModalSubmitInteraction,
     InteractionDataResolvedChannel,
-    APIApplicationCommandInteractionDataOption,
     Attachment,
     ApplicationCommandOptionType,
+    AuditLogOptionsType,
+    APIAuditLogChange,
+    PermissionFlagsBitField,
+    OverwriteType,
 } from './index';
 
 import type { BodyInit } from 'node-fetch';
@@ -392,9 +395,16 @@ export type ChannelTypeResolvable = keyof typeof ChannelType | number;
 
 export type VoiceQualityModeResolvable = keyof typeof VideoQualityMode | number;
 
-export type ChannelOverwriteTypeResolvable = 'Role' | 'Member' | number;
+export type ChannelOverwriteTypeResolvable = keyof typeof OverwriteType | number;
 
 export interface ChannelOverwriteData {
+    id: Snowflake;
+    type: keyof typeof OverwriteType;
+    allow?: PermissionFlagsBitField;
+    deny?: PermissionFlagsBitField;
+}
+
+export interface CreateChannelOverwriteData {
     id: Snowflake;
     type: ChannelOverwriteTypeResolvable;
     allow?: PermissionFlagsBitsResolvable;
@@ -409,7 +419,7 @@ export interface EditGuildChannelData {
     user_limit?: number;
     rate_limit_per_user?: number;
     position?: number;
-    permission_overwrites?: ChannelOverwriteData[];
+    permission_overwrites?: CreateChannelOverwriteData[];
     parent_id?: Snowflake;
     nsfw?: boolean;
     rtc_region?: string;
@@ -1000,6 +1010,24 @@ export interface ChatInputCommandResolvedOptionData {
     options?: ChatInputCommandResolvedOptionData[];
     focusted?: boolean;
     resolved?: ChatInputCommandResolvedOptionResolvedData;
+}
+
+export interface AuditLogEntryInfoData {
+    applicationId: Snowflake | null;
+    channelId: Snowflake | null;
+    count: number | null;
+    deleteMemberDays: number | null;
+    id: Snowflake | null;
+    membersRemoved: number | null;
+    messageId: Snowflake | null;
+    roleName: string | null;
+    type: keyof typeof AuditLogOptionsType;
+}
+
+export interface AuditLogChangeData {
+    key: APIAuditLogChange['key'];
+    old: string | number | boolean | Role[] | ChannelOverwriteData[] | null;
+    new: string | number | boolean | Role[] | ChannelOverwriteData[] | null;
 }
 
 export interface WebSocketEvents {
