@@ -14,7 +14,7 @@ export default class WebSocketCloseEvent extends BaseWebSocketEvent {
         switch (code) {
             // by owner
             case 1000:
-                this.shard.emit('close', this.shard, code, 'Performed By Owner');
+                this.shard.emit('close', this.shard, code, 'Requested By Owner');
                 break;
 
             //reconnectable errors

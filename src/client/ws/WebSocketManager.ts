@@ -270,9 +270,7 @@ export class WebSocketManager extends EventEmitter {
     }
 
     public async respawnAll() {
-        const token = this.#token;
-
         this.destroy();
-        return await this.connect(token!);
+        return await this.connect(this.#token!);
     }
 }
