@@ -11,7 +11,7 @@ import {
 
 import { BaseGuildTextChannel } from '../base/BaseGuildTextChannel';
 
-export class NewsChannel extends BaseGuildTextChannel {
+export class AnnouncementChannel extends BaseGuildTextChannel {
     public defaultAutoArchiveDuration!: number | null;
     public lastPinTimestamp!: number | null;
     public topic!: string | null;
@@ -42,15 +42,15 @@ export class NewsChannel extends BaseGuildTextChannel {
     }
 
     public async follow(webhookId: Snowflake) {
-        return await this.guild.caches.channels.followNewsChannel(this.id, webhookId);
+        return await this.guild.caches.channels.followAnnouncementChannel(this.id, webhookId);
     }
 
     public override async fetch(options?: FetchOptions) {
-        return (await super.fetch(options)) as NewsChannel;
+        return (await super.fetch(options)) as AnnouncementChannel;
     }
 
     public override async edit(data: EditChannelData, reason?: string) {
-        return (await super.edit(data, reason)) as NewsChannel;
+        return (await super.edit(data, reason)) as AnnouncementChannel;
     }
 
     public async send(data: CreateMessageData) {

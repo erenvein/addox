@@ -1,13 +1,14 @@
 import { WebSocket } from 'ws';
 import {
-    DiscordGatewayURL,
-    DiscordGatewayVersion,
-    GatewayOpcodes,
-    WebSocketShardEvents,
     type WebSocketManager,
     type GatewayCloseCodesResolvable,
     type PresenceData,
     type Guild,
+    type GatewayRequestGuildMembersData,
+    DiscordGatewayURL,
+    DiscordGatewayVersion,
+    GatewayOpcodes,
+    WebSocketShardEvents,
     BaseWebSocketEvent,
     GatewayCloseCodes,
     Collection,
@@ -313,5 +314,12 @@ export class WebSocketShard extends EventEmitter {
 
     public eval<T>(script: string): T {
         return eval(script);
+    }
+
+    public requestGuildMembers(data: GatewayRequestGuildMembersData) {
+        this.send({
+            op: GatewayOpcodes.RequestGuildMembers,
+            d: data,
+        });
     }
 }

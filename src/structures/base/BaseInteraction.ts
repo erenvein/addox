@@ -22,6 +22,9 @@ import {
     SnowflakeUtil,
     APIModalInteractionResponseCallbackData,
     ModalBuilder,
+    DataResolver,
+    ColorResolver,
+    deleteProperty,
 } from '../../index';
 
 import { BaseStructure } from './BaseStructure';
@@ -113,24 +116,44 @@ export class BaseInteraction extends BaseStructure {
         });
     }
 
-    public async callback<T>(type: keyof typeof InteractionResponseType, data?: any) {
-        return await this.client.rest.post<T>(`/interactions/${this.id}/${this.token}/callback`, {
-            body: {
-                type: InteractionResponseType[type],
-                data,
-            },
-        });
-    }
-
     public async reply(
         data: ReplyInteractionData,
-        { fetchReply }: CallbackInteractionOptions = { fetchReply: true }
+        { fetchReply }: CallbackInteractionOptions = { fetchReply: false }
     ): Promise<Message | void> {
-        if (data?.flags) {
+        let files;
+
+        if (data.files) {
+            files = await Promise.all(data.files.map((file) => DataResolver.resolveFile(file)));
+        }
+
+        if (data.embeds) {
+            for (const embed of data.embeds) {
+                embed.color &&= ColorResolver(embed.color);
+            }
+        }
+
+        if (data.flags) {
             data.flags = MessageFlagsBitsResolver(data.flags);
         }
 
-        await this.callback<void>('ChannelMessageWithSource', data);
+        if (data.attachments) {
+            data.attachments = data.attachments.map((attachment) => {
+                return {
+                    filename: attachment.filename,
+                    description: attachment.description,
+                };
+            });
+        }
+
+        data = deleteProperty(data, 'files');
+
+        await this.client.rest.post(`/interactions/${this.id}/${this.token}/callback`, {
+            body: {
+                type: InteractionResponseType.ChannelMessageWithSource,
+                data,
+            },
+            files,
+        });
 
         if (fetchReply) {
             return await this.fetchReply();
@@ -140,14 +163,19 @@ export class BaseInteraction extends BaseStructure {
     }
 
     public async deferReply(
-        options: DeferReplyOptions = { fetchReply: true }
+        options: DeferReplyOptions = { fetchReply: false }
     ): Promise<Message | void> {
-        if (options?.flags) {
+        if (options.flags) {
             options.flags = MessageFlagsBitsResolver(options.flags);
         }
 
-        await this.callback<void>('DeferredChannelMessageWithSource', {
-            flags: MessageFlagsBitsResolver(options?.flags),
+        await this.client.rest.post(`/interactions/${this.id}/${this.token}/callback`, {
+            body: {
+                type: InteractionResponseType.DeferredChannelMessageWithSource,
+                data: {
+                    flags: MessageFlagsBitsResolver(options?.flags),
+                },
+            },
         });
 
         if (options.fetchReply) {
@@ -158,9 +186,13 @@ export class BaseInteraction extends BaseStructure {
     }
 
     public async deferUpdate(
-        { fetchReply }: CallbackInteractionOptions = { fetchReply: true }
+        { fetchReply }: CallbackInteractionOptions = { fetchReply: false }
     ): Promise<Message | void> {
-        await this.callback<void>('DeferredMessageUpdate');
+        await this.client.rest.post(`/interactions/${this.id}/${this.token}/callback`, {
+            body: {
+                type: InteractionResponseType.DeferredMessageUpdate,
+            },
+        });
 
         if (fetchReply) {
             return await this.fetchReply();
@@ -171,13 +203,42 @@ export class BaseInteraction extends BaseStructure {
 
     public async update(
         data: ReplyInteractionData,
-        { fetchReply }: CallbackInteractionOptions = { fetchReply: true }
+        { fetchReply }: CallbackInteractionOptions = { fetchReply: false }
     ): Promise<Message | void> {
-        if (data?.flags) {
+        let files;
+
+        if (data.files) {
+            files = await Promise.all(data.files.map((file) => DataResolver.resolveFile(file)));
+        }
+
+        if (data.embeds) {
+            for (const embed of data.embeds) {
+                embed.color &&= ColorResolver(embed.color);
+            }
+        }
+
+        if (data.flags) {
             data.flags = MessageFlagsBitsResolver(data.flags);
         }
 
-        await this.callback<void>('UpdateMessage', data);
+        if (data.attachments) {
+            data.attachments = data.attachments.map((attachment) => {
+                return {
+                    filename: attachment.filename,
+                    description: attachment.description,
+                };
+            });
+        }
+
+        data = deleteProperty(data, 'files');
+
+        await this.client.rest.post(`/interactions/${this.id}/${this.token}/callback`, {
+            body: {
+                type: InteractionResponseType.UpdateMessage,
+                data,
+            },
+            files,
+        });
 
         if (fetchReply) {
             return await this.fetchReply();
@@ -187,6 +248,14 @@ export class BaseInteraction extends BaseStructure {
     }
 
     public async showModal(data: APIModalInteractionResponseCallbackData | ModalBuilder) {
-        return await this.callback<void>('Modal', data);
+        return await this.client.rest.post<void>(
+            `/interactions/${this.id}/${this.token}/callback`,
+            {
+                body: {
+                    type: InteractionResponseType.Modal,
+                    data,
+                },
+            }
+        );
     }
 }

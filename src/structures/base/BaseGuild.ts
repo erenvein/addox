@@ -8,6 +8,7 @@ import {
     GuildFeature,
     SnowflakeUtil,
     APIInviteGuild,
+    OAuth2Guild,
 } from '../../index';
 
 import { BaseStructure } from './BaseStructure';
@@ -53,7 +54,7 @@ export class BaseGuild extends BaseStructure {
             : null;
     }
 
-    public async fetch(options?: FetchGuildOptions): Promise<Guild> {
-        return (await this.client.caches.guilds.fetch(this.id, options)) as unknown as Guild;
+    public async fetch(options?: FetchGuildOptions): Promise<Guild | OAuth2Guild> {
+        return (await this.client.caches.guilds.fetch(this.id, options)) as Guild | OAuth2Guild;
     }
 }

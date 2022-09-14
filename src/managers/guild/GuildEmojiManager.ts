@@ -71,7 +71,7 @@ export class GuildEmojiManager extends CachedManager<Snowflake, GuildEmoji> {
     }
 
     public async create(data: CreateEmojiData, reason?: string) {
-        const resolvedImage = await DataResolver.resolveImage(data.image, 'image/jpeg');
+        const resolvedImage = await DataResolver.resolveImage(data.image);
 
         data.image = resolvedImage;
 

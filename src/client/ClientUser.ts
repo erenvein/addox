@@ -3,15 +3,17 @@ import type { PresenceData, ClientUserEditData, APIUser } from '../index';
 import { User } from '../structures/User';
 
 export class ClientUser extends User {
-    public setPresence(data: PresenceData, shardId?: number): null | void {
+    public setPresence(data: PresenceData, shardId?: number): void {
         if (shardId !== undefined) {
             const shard = this.client.ws.shards.get(shardId);
-
-            if (!shard) return null;
+            if (!shard) return undefined;
 
             shard.setPresence(data);
         } else {
-            this.client.ws.broadcastEval(`this.setPresence(${JSON.stringify(data)})`);
+            this.client.ws.shards.forEach((shard) => shard.setPresence(data));
+            for (const shard of this.client.ws.shards.values()) {
+                shard.setPresence(data);
+            }
         }
     }
 

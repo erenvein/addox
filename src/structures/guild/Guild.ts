@@ -389,4 +389,8 @@ export class Guild extends BaseGuild {
     public async fetchAuditLogs() {
         return (await this.client.caches.guilds.fetchAuditLogs(this.id)) as AuditLog;
     }
+
+    public override async fetch() {
+        return (await super.fetch()) as Guild;
+    }
 }

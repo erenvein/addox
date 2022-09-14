@@ -17,4 +17,8 @@ export class OAuth2Guild extends BaseGuild {
         this.permissions = new PermissionFlagsBitField(+data.permissions);
         this.owner = data.owner;
     }
+
+    public override async fetch() {
+        return (await super.fetch()) as OAuth2Guild;
+    }
 }

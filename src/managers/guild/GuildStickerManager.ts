@@ -87,7 +87,6 @@ export class GuildStickerManager extends CachedManager<Snowflake, Sticker> {
                         key: 'file',
                         name: resolvedFile.name,
                         data: resolvedFile.data,
-                        type: resolvedFile.type as string,
                     },
                 ],
                 appendBodyToFormData: true,

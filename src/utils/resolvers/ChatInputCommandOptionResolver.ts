@@ -108,7 +108,13 @@ export function ChatInputCommandOptionResolver(
     }
 
     if ('options' in option) {
-        res.options = option.options.map((opt) => ChatInputCommandOptionResolver(opt, resolved));
+        res.options = new Collection(
+            //@ts-ignore
+            option.options.map((opt: APIApplicationCommandInteractionDataOption) => [
+                opt.name,
+                ChatInputCommandOptionResolver(opt, resolved),
+            ])
+        );
     }
 
     if ('focused' in option) {
@@ -121,25 +127,11 @@ export function ChatInputCommandOptionResolver(
     const role = resolved.roles.get(res.value as Snowflake);
     const user = resolved.users.get(res.value as Snowflake);
 
-    if (attachment) {
-        res.resolved.attachment = attachment;
-    }
-
-    if (channel) {
-        res.resolved.channel = channel;
-    }
-
-    if (member) {
-        res.resolved.member = member;
-    }
-
-    if (role) {
-        res.resolved.role = role;
-    }
-
-    if (user) {
-        res.resolved.user = user;
-    }
+    attachment && (res.resolved.attachment = attachment);
+    channel && (res.resolved.channel = channel);
+    member && (res.resolved.member = member);
+    role && (res.resolved.role = role);
+    user && (res.resolved.user = user);
 
     return res;
 }

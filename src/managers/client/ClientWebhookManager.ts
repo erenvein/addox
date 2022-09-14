@@ -16,6 +16,7 @@ import {
     MessageFlagsBitField,
     MessageFlagsBitsResolver,
     Collection,
+    deleteProperty,
 } from '../../index';
 
 import { CachedManager } from '../base/CachedManager';
@@ -27,7 +28,7 @@ export class ClientWebhookManager extends CachedManager<Snowflake, Webhook> {
 
     public async create(id: Snowflake, data: CreateWebhookData, reason?: string) {
         if (data.avatar) {
-            const resolvedImage = await DataResolver.resolveImage(data.avatar, 'image/jpeg');
+            const resolvedImage = await DataResolver.resolveImage(data.avatar);
 
             data.avatar = resolvedImage;
         }
@@ -65,7 +66,7 @@ export class ClientWebhookManager extends CachedManager<Snowflake, Webhook> {
 
     public async edit(id: Snowflake, data: EditWebhookData, reason?: string) {
         if (data.avatar) {
-            const resolvedImage = await DataResolver.resolveImage(data.avatar, 'image/jpeg');
+            const resolvedImage = await DataResolver.resolveImage(data.avatar);
 
             data.avatar = resolvedImage;
         }
@@ -90,15 +91,10 @@ export class ClientWebhookManager extends CachedManager<Snowflake, Webhook> {
         data: CreateWebhookMessageData,
         { wait, thread_id }: CreateWebhookMessageOptions = { wait: false }
     ) {
+        let files;
+
         if (data.files) {
-            const files = [];
-
-            for await (const file of data.files) {
-                files.push(await DataResolver.resolveFile(file));
-            }
-
-            //@ts-ignore
-            data.files = files;
+            files = await Promise.all(data.files.map((file) => DataResolver.resolveFile(file)));
         }
 
         if (data.embeds) {
@@ -107,15 +103,24 @@ export class ClientWebhookManager extends CachedManager<Snowflake, Webhook> {
             }
         }
 
-        if ('flags' in data) {
+        if (data.flags) {
             data.flags = new MessageFlagsBitField().set(MessageFlagsBitsResolver(data.flags!));
         }
 
+        if (data.attachments) {
+            data.attachments = data.attachments.map((attachment) => {
+                return {
+                    filename: attachment.filename,
+                    description: attachment.description,
+                };
+            });
+        }
+
+        data = deleteProperty(data, 'files');
+
         const message = await this.client.rest.post<APIMessage>(`/webhooks/${id}/${token}`, {
             body: data,
-            appendBodyToFormData: true,
-            // @ts-ignore
-            files: data.files,
+            files,
             query: { thread_id, wait },
         });
 
@@ -145,15 +150,10 @@ export class ClientWebhookManager extends CachedManager<Snowflake, Webhook> {
         data: EditWebhookMessageData,
         threadId?: Snowflake
     ) {
+        let files;
+
         if (data.files) {
-            const files = [];
-
-            for await (const file of data.files) {
-                files.push(await DataResolver.resolveFile(file));
-            }
-
-            //@ts-ignore
-            data.files = files;
+            files = await Promise.all(data.files.map((file) => DataResolver.resolveFile(file)));
         }
 
         if (data.embeds) {
@@ -162,14 +162,23 @@ export class ClientWebhookManager extends CachedManager<Snowflake, Webhook> {
             }
         }
 
+        if (data.attachments) {
+            data.attachments = data.attachments.map((attachment) => {
+                return {
+                    filename: attachment.filename,
+                    description: attachment.description,
+                };
+            });
+        }
+
+        data = deleteProperty(data, 'files');
+
         const message = await this.client.rest.patch<APIMessage>(
             `/webhooks/${webhookId}/${token}/messages/${messageId}`,
             {
                 body: data,
                 query: { thread_id: threadId },
-                appendBodyToFormData: true,
-                // @ts-ignore
-                files: data.files,
+                files,
             }
         );
 

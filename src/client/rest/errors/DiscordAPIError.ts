@@ -1,4 +1,4 @@
-import type { RequestMethods } from '../../../index';
+import { RequestMethods, deleteProperty } from '../../../index';
 
 export class DiscordAPIError extends Error {
     public status: number;
@@ -21,6 +21,8 @@ export class DiscordAPIError extends Error {
     ) {
         super(message);
 
+        deleteProperty(data, 'files');
+
         this.status = status;
         this.code = code;
         this.method = method;
@@ -28,7 +30,7 @@ export class DiscordAPIError extends Error {
         this.message = message;
         this.body = {
             files: data.files,
-            json: JSON.parse(data.body),
+            json: data.body,
         };
     }
 }

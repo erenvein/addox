@@ -10,7 +10,7 @@ export class ApplicationCommandSubcommandGroupOptionBuilder extends ApplicationC
     public options!: APIApplicationCommandSubcommandOption[];
 
     public constructor(data?: APIApplicationCommandSubcommandGroupOption) {
-        super('Subcommand', data);
+        super('SubcommandGroup', data);
 
         this.options = data?.options ?? [];
     }

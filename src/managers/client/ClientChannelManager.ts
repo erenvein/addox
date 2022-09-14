@@ -27,7 +27,7 @@ import {
     CategoryChannel,
     StageChannel,
     ThreadChannel,
-    NewsChannel,
+    AnnouncementChannel,
     TextBasedChannelCacheManager,
 } from '../../index';
 
@@ -55,12 +55,12 @@ export class ClientChannelManager extends CachedManager<Snowflake, AnyChannel> {
                 case ChannelType.GuildCategory:
                     channel = new CategoryChannel(this.client, guild, data);
                     break;
-                case ChannelType.GuildNews:
-                    channel = new NewsChannel(this.client, guild, data);
+                case ChannelType.GuildAnnouncement:
+                    channel = new AnnouncementChannel(this.client, guild, data);
                     break;
-                case ChannelType.GuildNewsThread:
-                case ChannelType.GuildPrivateThread:
-                case ChannelType.GuildPublicThread:
+                case ChannelType.AnnouncementThread:
+                case ChannelType.PrivateThread:
+                case ChannelType.PublicThread:
                     channel = new ThreadChannel(this.client, guild, data);
                     break;
                 case ChannelType.GuildStageVoice:
@@ -176,15 +176,10 @@ export class ClientChannelManager extends CachedManager<Snowflake, AnyChannel> {
         messageId: Snowflake,
         data: EditMessageData
     ): Promise<Message> {
+        let files;
+
         if (data.files) {
-            const files = [];
-
-            for await (const file of data.files) {
-                files.push(await DataResolver.resolveFile(file));
-            }
-
-            //@ts-ignore
-            data.files = files;
+            files = await Promise.all(data.files.map((file) => DataResolver.resolveFile(file)));
         }
 
         if (data.embeds) {
@@ -193,17 +188,26 @@ export class ClientChannelManager extends CachedManager<Snowflake, AnyChannel> {
             }
         }
 
-        if ('flags' in data) {
+        if (data.flags) {
             data.flags = new MessageFlagsBitField().set(MessageFlagsBitsResolver(data.flags!));
         }
+
+        if (data.attachments) {
+            data.attachments = data.attachments.map((attachment) => {
+                return {
+                    filename: attachment.filename,
+                    description: attachment.description,
+                };
+            });
+        }
+
+        data = deleteProperty(data, 'files');
 
         const message = await this.client.rest.patch<APIMessage>(
             `/channels/${channelId}/messages/${messageId}`,
             {
                 body: data,
-                appendBodyToFormData: true,
-                // @ts-ignore
-                files: data.files,
+                files,
             }
         );
 
@@ -226,15 +230,10 @@ export class ClientChannelManager extends CachedManager<Snowflake, AnyChannel> {
     }
 
     public async createMessage(channelId: Snowflake, data: CreateMessageData) {
+        let files;
+
         if (data.files) {
-            const files = [];
-
-            for await (const file of data.files) {
-                files.push(await DataResolver.resolveFile(file));
-            }
-
-            //@ts-ignore
-            data.files = files;
+            files = await Promise.all(data.files.map((file) => DataResolver.resolveFile(file)));
         }
 
         if (data.embeds) {
@@ -243,24 +242,32 @@ export class ClientChannelManager extends CachedManager<Snowflake, AnyChannel> {
             }
         }
 
-        if ('flags' in data) {
-            data.flags = new MessageFlagsBitField().set(MessageFlagsBitsResolver(data.flags!));
+        if (data.flags) {
+            data.flags = MessageFlagsBitsResolver(data.flags!);
         }
 
         if (data.message_reference) {
             data.message_reference.fail_if_not_exists ??= this.client.failIfNotExists;
         }
 
+        if (data.attachments) {
+            data.attachments = data.attachments.map((attachment) => {
+                return {
+                    filename: attachment.filename,
+                    description: attachment.description,
+                };
+            });
+        }
+
         // @ts-ignore
         data.sticker_ids = data.stickers;
 
         data = deleteProperty(data, 'stickers');
+        data = deleteProperty(data, 'files');
 
         const message = await this.client.rest.post<APIMessage>(`/channels/${channelId}/messages`, {
             body: data,
-            appendBodyToFormData: true,
-            // @ts-ignore
-            files: data.files,
+            files,
         });
 
         const _message = new Message(this.client, message);

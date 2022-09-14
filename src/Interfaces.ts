@@ -57,7 +57,7 @@ import type {
     DMChannel,
     GroupDMChannel,
     ThreadChannel,
-    NewsChannel,
+    AnnouncementChannel,
     TextChannel,
     CategoryChannel,
     StageChannel,
@@ -128,6 +128,8 @@ import type {
     APIAuditLogChange,
     PermissionFlagsBitField,
     OverwriteType,
+    APIGuildForumChannel,
+    ForumChannel,
 } from './index';
 
 import type { BodyInit } from 'node-fetch';
@@ -461,20 +463,29 @@ export type TextBasedChannelResolvable =
     | TextChannel
     | DMChannel
     | GroupDMChannel
-    | NewsChannel
-    | ThreadChannel;
+    | AnnouncementChannel
+    | ThreadChannel
+    | ForumChannel;
 
 export type TextBasedNonThreadChannelResolvable =
     | TextChannel
     | DMChannel
     | GroupDMChannel
-    | NewsChannel;
+    | AnnouncementChannel
+    | ForumChannel;
 
-export type GuildTextBasedNonThreadChannelResolvable = TextChannel | NewsChannel;
+export type GuildTextBasedNonThreadChannelResolvable =
+    | TextChannel
+    | AnnouncementChannel
+    | ForumChannel;
 
 export type DMBasedChannelResolvable = DMChannel | GroupDMChannel;
 
-export type GuildTextBasedChannelResolvable = TextChannel | NewsChannel | ThreadChannel;
+export type GuildTextBasedChannelResolvable =
+    | TextChannel
+    | AnnouncementChannel
+    | ThreadChannel
+    | ForumChannel;
 
 export type VoiceBasedChannelResolvable = VoiceChannel | StageChannel;
 
@@ -490,50 +501,71 @@ export type GuildBasedNonCategoryChannelResolvable =
 export type GuildBasedNonThreadChannelResolvable =
     | VoiceBasedChannelResolvable
     | TextChannel
-    | NewsChannel;
+    | AnnouncementChannel
+    | ForumChannel;
 
 export type GuildBasedInvitableChannelResolvable =
     | VoiceBasedChannelResolvable
     | TextChannel
-    | NewsChannel;
+    | AnnouncementChannel
+    | ForumChannel;
 
 export type GuildBasedPermissionOverwritableChannelResolvable =
     | VoiceBasedChannelResolvable
     | TextChannel
     | CategoryChannel
-    | NewsChannel;
+    | AnnouncementChannel
+    | ForumChannel;
 
 export type AnyChannel = GuildBasedChannelResolvable | DMBasedChannelResolvable;
 
-export type PinnableChannelResolvable = DMBasedChannelResolvable | TextChannel | NewsChannel;
+export type PinnableChannelResolvable =
+    | DMBasedChannelResolvable
+    | TextChannel
+    | AnnouncementChannel
+    | ForumChannel;
 
 export type MessageableChannelResolvable =
     | DMBasedChannelResolvable
     | GuildTextBasedChannelResolvable
-    | VoiceChannel;
+    | VoiceChannel
+    | ForumChannel;
 
-export type WebhookableChannelResolvable = TextChannel | NewsChannel | VoiceChannel;
+export type WebhookableChannelResolvable =
+    | TextChannel
+    | AnnouncementChannel
+    | VoiceChannel
+    | ForumChannel;
 
-export type ThreadableChannelResolvable = TextChannel | NewsChannel;
+export type ThreadableChannelResolvable = TextChannel | AnnouncementChannel;
 
 export type APITextBasedChannelResolvable =
     | APITextChannel
     | APINewsChannel
     | APIThreadChannel
     | APIDMChannel
-    | APIGroupDMChannel;
+    | APIGroupDMChannel
+    | APIGuildForumChannel;
 
 export type APITextBasedNonThreadChannelResolvable =
     | APITextChannel
     | APIDMChannel
     | APIGroupDMChannel
-    | APINewsChannel;
+    | APINewsChannel
+    | APIGuildForumChannel;
 
-export type APIGuildTextBasedNonThreadChannelResolvable = APITextChannel | APINewsChannel;
+export type APIGuildTextBasedNonThreadChannelResolvable =
+    | APITextChannel
+    | APINewsChannel
+    | APIGuildForumChannel;
 
 export type APIDMBasedChannelResolvable = APIDMChannel | APIGroupDMChannel;
 
-export type APIGuildTextBasedChannelResolvable = APITextChannel | APINewsChannel | APIThreadChannel;
+export type APIGuildTextBasedChannelResolvable =
+    | APITextChannel
+    | APINewsChannel
+    | APIThreadChannel
+    | APIGuildForumChannel;
 
 export type APIVoiceBasedChannelResolvable = APIGuildVoiceChannel | APIGuildStageVoiceChannel;
 
@@ -549,35 +581,41 @@ export type APIGuildBasedNonCategoryChannelResolvable =
 export type APIGuildBasedNonThreadChannelResolvable =
     | APIVoiceBasedChannelResolvable
     | APITextChannel
-    | APINewsChannel;
+    | APINewsChannel
+    | APIGuildForumChannel;
 
 export type APIGuildBasedInvitableChannelResolvable =
     | APIVoiceBasedChannelResolvable
     | APITextChannel
-    | APINewsChannel;
+    | APINewsChannel
+    | APIGuildForumChannel;
 
 export type APIGuildBasedPermissionOverwritableChannelResolvable =
     | APIVoiceBasedChannelResolvable
     | APITextChannel
     | APIGuildCategoryChannel
-    | NewsChannel;
+    | AnnouncementChannel
+    | APIGuildForumChannel;
 
 export type APIAnyChannel = APIGuildBasedChannelResolvable | APIDMBasedChannelResolvable;
 
 export type APIPinnableChannelResolvable =
     | APIDMBasedChannelResolvable
     | APITextChannel
-    | APINewsChannel;
+    | APINewsChannel
+    | APIGuildForumChannel;
 
 export type APIMessageableChannelResolvable =
     | APIDMBasedChannelResolvable
     | APIGuildTextBasedChannelResolvable
-    | APIVoiceBasedChannelResolvable;
+    | APIVoiceBasedChannelResolvable
+    | APIGuildForumChannel;
 
 export type APIWebhookableChannelResolvable =
     | APITextChannel
     | APINewsChannel
-    | APIGuildVoiceChannel;
+    | APIGuildVoiceChannel
+    | APIGuildForumChannel;
 
 export type APIThreadableChannelResolvable = APITextChannel | APINewsChannel;
 
@@ -597,12 +635,18 @@ export interface EmbedData extends APIEmbed {
     color?: ColorResolvable;
 }
 
+export interface MessageAttachmentData {
+    filename: string;
+    description: string;
+}
+
 //@ts-ignore
 export interface EditMessageData extends RESTPatchAPIChannelMessageJSONBody {
     files?: (Buffer | string)[];
     flags?: MessageFlagsBitsResolvable;
     embeds: (EmbedData | EmbedBuilder)[];
     components?: (APIAnyComponent | AnyComponent)[];
+    attachments?: (MessageAttachmentData | Attachment)[];
 }
 
 //@ts-ignore
@@ -730,7 +774,7 @@ export interface EditWebhookMessageData {
     embeds?: (EmbedData | EmbedBuilder)[];
     allowed_mentions?: APIAllowedMentions;
     files?: (Buffer | string)[];
-    attachments?: APIAttachment[];
+    attachments?: (MessageAttachmentData | Attachment)[];
 }
 
 export interface CreateWebhookMessageData extends EditWebhookMessageData {
@@ -973,7 +1017,8 @@ export interface ReplyInteractionData {
     allowed_mentions?: APIAllowedMentions[];
     flags?: MessageFlagsBitsResolvable;
     components?: (AnyComponent | APIAnyComponent)[];
-    attachments?: any[];
+    attachments?: (MessageAttachmentData | Attachment)[];
+    files?: (string | Buffer)[];
 }
 
 export interface CallbackInteractionOptions {
@@ -1007,7 +1052,7 @@ export interface ChatInputCommandResolvedOptionData {
     name: string;
     type: keyof typeof ApplicationCommandOptionType;
     value: number | string | boolean;
-    options?: ChatInputCommandResolvedOptionData[];
+    options?: Collection<string, ChatInputCommandResolvedOptionData>;
     focusted?: boolean;
     resolved?: ChatInputCommandResolvedOptionResolvedData;
 }

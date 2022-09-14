@@ -1,11 +1,13 @@
 import { EventEmitter } from 'node:events';
 import {
-    WebSocketShard,
-    Collection,
     type Client,
     type PresenceData,
     type WebSocketProperties,
     type Guild,
+    type WebSocketEvents,
+    type GatewayRequestGuildMembersData,
+    WebSocketShard,
+    Collection,
     BitField,
     GatewayIntentBitsResolver,
     WebSocketOptions,
@@ -13,7 +15,6 @@ import {
     APIGatewayBotInfo,
     ReconnectableWebSocketCloseCodes,
     Sleep,
-    type WebSocketEvents,
     DiscordSocketError,
 } from '../../index';
 
@@ -272,5 +273,20 @@ export class WebSocketManager extends EventEmitter {
     public async respawnAll() {
         this.destroy();
         return await this.connect(this.#token!);
+    }
+
+    public async requestGuildMembers(data: GatewayRequestGuildMembersData, shardId?: number) {
+        if (shardId) {
+            const shard = this.#shards.get(shardId);
+            if (!shard) return;
+
+            shard.requestGuildMembers(data);
+        } else {
+            for (const shard of this.#shards.values()) {
+                shard.requestGuildMembers(data);
+            }
+        }
+
+        return;
     }
 }

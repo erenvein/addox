@@ -9,7 +9,6 @@ import {
     type FetchOptions,
     type EditGuildChannelPositionsData,
     type CollectionLike,
-    type ChannelOverwriteData,
     Collection,
     ChannelDataResolver,
     PermissionFlagsBitField,
@@ -33,6 +32,7 @@ import {
     FetchArchivedThreadOptions,
     EditChannelData,
     ThreadType,
+    CreateChannelOverwriteData,
 } from '../../index';
 
 import { CachedManager } from '../base/CachedManager';
@@ -138,7 +138,7 @@ export class GuildChannelManager extends CachedManager<Snowflake, GuildBasedChan
 
     public async editOverwrite(
         id: Snowflake,
-        data: ChannelOverwriteData,
+        data: CreateChannelOverwriteData,
         reason?: string
     ): Promise<void> {
         if ('allow' in data) {
@@ -161,7 +161,7 @@ export class GuildChannelManager extends CachedManager<Snowflake, GuildBasedChan
         });
     }
 
-    public async createOverwrite(id: Snowflake, data: ChannelOverwriteData, reason?: string) {
+    public async createOverwrite(id: Snowflake, data: CreateChannelOverwriteData, reason?: string) {
         return await this.editOverwrite(id, data, reason);
     }
 
@@ -303,7 +303,7 @@ export class GuildChannelManager extends CachedManager<Snowflake, GuildBasedChan
         this.cache.delete(code);
     }
 
-    public async followNewsChannel(id: Snowflake, webhookId: Snowflake) {
+    public async followAnnouncementChannel(id: Snowflake, webhookId: Snowflake) {
         const data = await this.client.rest.post<RESTPostAPIChannelFollowersResult>(
             `/channels/${id}/followers`,
             {
@@ -342,7 +342,7 @@ export class GuildChannelManager extends CachedManager<Snowflake, GuildBasedChan
 
             const resolvedType =
                 _channel && !data.type
-                    ? _channel.type === 'GuildNews'
+                    ? _channel.type === 'GuildAnnouncement'
                         ? ThreadType.News
                         : ThreadType.Private
                     : data.type;

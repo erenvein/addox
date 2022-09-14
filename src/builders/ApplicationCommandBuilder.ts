@@ -122,14 +122,14 @@ export class ApplicationCommandBuilder extends BaseBuilder {
         return this;
     }
 
-    public addSubcommandOption(
+    public addSubcommand(
         callbackfn: (builder: ApplicationCommandSubcommandOptionBuilder) => void
     ) {
         this._optionAdapterCreator(new ApplicationCommandSubcommandOptionBuilder(), callbackfn);
         return this;
     }
 
-    public addSubcommandGroupOption(
+    public addSubcommandGroup(
         callbackfn: (builder: ApplicationCommandSubcommandGroupOptionBuilder) => void
     ) {
         this._optionAdapterCreator(

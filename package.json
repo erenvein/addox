@@ -18,6 +18,7 @@
         "@typescript-eslint/eslint-plugin": "^5.30.6",
         "colorette": "^2.0.19",
         "dotenv": "^16.0.1",
+        "erax.db": "^4.1.3",
         "erlpack": "^0.1.4",
         "eslint": "^8.20.0",
         "prettier": "^2.7.1",
@@ -37,6 +38,6 @@
     },
     "scripts": {
         "build": "tsc",
-        "test": "tsc && node test/index.js"
+        "test": "tsc && node example/index.js"
     }
 }

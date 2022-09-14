@@ -3,6 +3,7 @@ import {
     APIApplicationCommandAutocompleteInteraction,
     ChatInputCommandInteractionOptionManager,
     APIApplicationCommandOptionChoice,
+    InteractionResponseType,
 } from '../../index';
 
 import { BaseInteraction } from '../base/BaseInteraction';
@@ -30,8 +31,14 @@ export class AutocompleteInteraction extends BaseInteraction {
     }
 
     public async result(choices: APIApplicationCommandOptionChoice[]) {
-        return await this.callback('ApplicationCommandAutocompleteResult', {
-            choices,
-        });
+        return await this.client.rest.post<void>(
+            `/interactions/${this.id}/${this.token}/callback`,
+            {
+                body: {
+                    type: InteractionResponseType.ApplicationCommandAutocompleteResult,
+                    choices,
+                },
+            }
+        );
     }
 }

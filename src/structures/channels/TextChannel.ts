@@ -6,6 +6,7 @@ import {
     FetchOptions,
     GuildTextBasedChannelCacheManager,
     CreateMessageData,
+    APIGuildForumChannel,
 } from '../../index';
 
 import { BaseGuildTextChannel } from '../base/BaseGuildTextChannel';

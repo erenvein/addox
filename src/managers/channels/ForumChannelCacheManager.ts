@@ -1,27 +1,23 @@
 import {
     type Client,
-    type GuildTextBasedNonThreadChannelResolvable,
+    ForumChannel,
     ChannelMessageManager,
     ChannelPinManager,
-    ChannelThreadManager,
 } from '../../index';
 
 import { GuildChannelCacheManager } from './GuildChannelCacheManager';
 
-export class GuildTextBasedChannelCacheManager extends GuildChannelCacheManager {
-    public declare channel: GuildTextBasedNonThreadChannelResolvable;
+export class ForumChannelCacheManager extends GuildChannelCacheManager {
+    public declare channel: ForumChannel;
     public messages: ChannelMessageManager;
     public pins: ChannelPinManager;
-    public threads: ChannelThreadManager;
 
-    public constructor(client: Client, channel: GuildTextBasedNonThreadChannelResolvable) {
+    public constructor(client: Client, channel: ForumChannel) {
         super(client, channel);
 
         this.channel = channel;
 
         this.messages = new ChannelMessageManager(client, channel);
         this.pins = new ChannelPinManager(client, channel);
-        //@ts-ignore
-        this.threads = new ChannelThreadManager(client, channel);
     }
 }

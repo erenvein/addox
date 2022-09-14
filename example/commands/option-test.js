@@ -19,7 +19,8 @@ module.exports = {
         )
         .addUserOption((option) =>
             option.setName('user').setDescription('User option').setRequired(true)
-        ),
+        )
+        .setDmPermission(false),
     /**
      *
      * @param {ChatInputCommandInteraction} interaction
@@ -37,7 +38,6 @@ Integer: **${integer}**
 Role: **${role.name}**
 Channel: **${channel.name}**
 User: **${user.tag}**`,
-            flags: 'Ephemeral',
         });
     },
 };

@@ -1,15 +1,15 @@
 import {
     type RequestManagerOptions,
     type RateLimitData,
-    HTTPError,
     DiscordAPIError,
     RateLimitError,
     Collection,
     RequestOptions,
     Sleep,
+    deleteProperty,
 } from '../../index';
 import { AsyncQueue } from '@sapphire/async-queue';
-import fetch, { type Response } from 'node-fetch';
+import fetch, { Response } from 'node-fetch';
 import FormData from 'form-data';
 
 export class RequestManager {
@@ -87,13 +87,16 @@ export class RequestManager {
         }
 
         if (options.query) {
-            route +=
-                '?' +
-                Object.entries(options.query)
-                    .filter(([, value]) => value !== undefined)
-                    .map(([key, value]) => `${key}=${value}`)
-                    .join('&');
+            const parsedQuery = Object.entries(options.query)
+                .filter(([, value]) => value !== undefined)
+                .map(([key, value]) => `${key}=${value}`)
+                .join('&');
+
+            route += parsedQuery.length ? `?${parsedQuery}` : '';
         }
+
+        const oldBody = options.body;
+        const oldFiles = options.files;
 
         if (options.files?.length) {
             const formData = new FormData();
@@ -103,8 +106,8 @@ export class RequestManager {
                     const file = options.files[i]!;
 
                     formData.append(file.key ?? `files[${i}]`, file.data, {
-                        filename: file.name,
                         contentType: file.type,
+                        filename: file.name,
                     });
                 }
             }
@@ -112,15 +115,17 @@ export class RequestManager {
             if (options.body) {
                 if (options.appendBodyToFormData) {
                     for (const [key, value] of Object.entries(options.body)) {
-                        formData.append(key, value);
+                        let resolvedValue = value;
+
+                        formData.append(key, resolvedValue);
                     }
                 } else {
                     formData.append('payload_json', JSON.stringify(options.body));
                 }
             }
 
-            options.headers = formData.getHeaders(options.headers);
-            options.body = formData.getBuffer();
+            options.body = formData;
+            deleteProperty(options.headers, 'content-type');
         } else if (options.body) {
             options.body = JSON.stringify(options.body);
             options.headers['content-type'] = 'application/json';
@@ -152,49 +157,12 @@ export class RequestManager {
             const data = (await this._parseResponse(response)) as T;
             const status = response.status;
 
+            if (status === 403) {
+                this.#token = null;
+            }
+
             if (status >= 200 && status < 300) {
                 return data;
-            } else if (status === 400) {
-                throw new DiscordAPIError(
-                    status,
-                    //@ts-ignore
-                    data.code,
-                    options.method,
-                    fullRoute,
-                    //@ts-ignore
-                    data.message,
-                    {
-                        files: options.files,
-                        body: options.body,
-                    }
-                );
-            } else if (status === 401) {
-                this.#token = null;
-
-                throw new HTTPError(status, options.method, fullRoute, 'Unauthorized', {
-                    files: options.files,
-                    body: options.body,
-                });
-            } else if (status === 402) {
-                throw new HTTPError(status, options.method, fullRoute, 'Gateway Unvailable', {
-                    files: options.files,
-                    body: options.body,
-                });
-            } else if (status === 403) {
-                throw new HTTPError(status, options.method, fullRoute, 'Forbidden', {
-                    files: options.files,
-                    body: options.body,
-                });
-            } else if (status === 404) {
-                throw new HTTPError(status, options.method, fullRoute, 'Not Found', {
-                    files: options.files,
-                    body: options.body,
-                });
-            } else if (status === 405) {
-                throw new HTTPError(status, options.method, fullRoute, 'Method Not Allowed', {
-                    files: options.files,
-                    body: options.body,
-                });
             } else if (status === 429) {
                 const scope = response.headers.get('x-ratelimit-scope');
                 const limit = response.headers.get('x-ratelimit-limit');
@@ -250,7 +218,7 @@ export class RequestManager {
                 await Sleep(rateLimitRetry!);
 
                 return this.request(route, options);
-            } else if (status >= 400 && status < 500) {
+            } else if ((status >= 400 && status < 500) || (status >= 500 && status < 600)) {
                 throw new DiscordAPIError(
                     status,
                     //@ts-ignore
@@ -260,22 +228,17 @@ export class RequestManager {
                     //@ts-ignore
                     data.message,
                     {
-                        files: options.files,
-                        body: options.body,
+                        files: oldFiles,
+                        body: oldBody,
                     }
                 );
-            } else if (status >= 500 && status < 600) {
-                throw new HTTPError(status, options.method, fullRoute, 'Internal Server Error', {
-                    files: options.files,
-                    body: options.body,
-                });
             } else {
                 return data;
             }
         } catch (error) {
             let retries = this.retrys.get(route) || 0;
 
-            if (error instanceof Error && error.name === 'AbortError' && retries !== this.retries) {
+            if (error instanceof Error && error.name === 'AbortError' && retries < this.retries) {
                 this.retrys.set(route, ++retries);
                 return this.request(route, options);
             }

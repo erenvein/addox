@@ -4,7 +4,7 @@ import {
     type ThreadableChannelResolvable,
     type Snowflake,
     BaseWebSocketHandler,
-    NewsChannel,
+    AnnouncementChannel,
     TextChannel,
     Collection,
     ThreadChannel,
@@ -34,7 +34,8 @@ export default class ThreadListSyncHandler extends BaseWebSocketHandler {
                 }
             } else {
                 for (const channel of guild.caches.channels.cache.values()) {
-                    if (channel instanceof TextChannel || channel instanceof NewsChannel) {
+                    if (channel instanceof TextChannel || channel instanceof AnnouncementChannel) {
+                        //@ts-ignore
                         for (const thread of channel.caches.threads.cache.values()) {
                             this.removeChannelFromEveryting(thread.id, guild);
                         }

@@ -3,6 +3,7 @@ const { resolve } = require('node:path');
 const { readdirSync } = require('node:fs');
 const { gray, green, magenta } = require('colorette');
 const { Client, GatewayIntentBits, Collection } = require('../dist/index.js');
+const { JsonDatabase } = require('erax.db');
 
 config({ path: resolve(__dirname, '.env') });
 
@@ -25,6 +26,14 @@ const client = new Client({
 
 client.events = new Collection();
 client.commands = new Collection();
+
+client.db = new JsonDatabase({
+    filePath: resolve(__dirname, 'db.json'),
+    space: 4,
+    backup: {
+        enabled: false,
+    },
+});
 
 for (const file of readdirSync(resolve(__dirname, 'events'))) {
     const event = require(`./events/${file}`);

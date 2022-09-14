@@ -39,8 +39,11 @@ export class DataResolver {
         }
     }
 
-    public static async resolveImage(data: Buffer | string, type: ImageMimes): Promise<string> {
+    public static async resolveImage(data: Buffer | string, type?: ImageMimes): Promise<string> {
         if (Buffer.isBuffer(data)) {
+            if (!DataResolver.ImageMimesArray.includes(type))
+                type = (await fromBuffer(data)).mime as ImageMimes;
+
             return `data:${type};base64,${data.toString('base64')}`;
         } else {
             const resolved = await DataResolver.resolveFile(data);

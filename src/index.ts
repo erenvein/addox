@@ -12,7 +12,6 @@ export { DiscordSocketError } from './client/ws/DiscordSocketError';
 
 // - REST
 export { RequestManager } from './client/rest/RequestManager';
-export { HTTPError } from './client/rest/errors/HTTPError';
 export { DiscordAPIError } from './client/rest/errors/DiscordAPIError';
 export { RateLimitError } from './client/rest/errors/RateLimitError';
 
@@ -89,6 +88,7 @@ export { ChannelPermissionOverwriteManager } from './managers/channels/ChannelPe
 export { CategoryChannelCacheManager } from './managers/channels/CategoryChannelCacheManager';
 export { VoiceChannelCacheManager } from './managers/channels/VoiceChannelCacheManager';
 export { ChannelThreadManager } from './managers/channels/ChannelThreadManager';
+export { ForumChannelCacheManager } from './managers/channels/ForumChannelCacheManager';
 
 // - MEMBERS
 export { GuildMemberCacheManager } from './managers/members/GuildMemberCacheManager';
@@ -181,7 +181,7 @@ export { CategoryChannel } from './structures/channels/CategoryChannel';
 export { VoiceChannel } from './structures/channels/VoiceChannel';
 export { TextChannel } from './structures/channels/TextChannel';
 export { ThreadChannel } from './structures/channels/ThreadChannel';
-export { NewsChannel } from './structures/channels/NewsChannel';
+export { AnnouncementChannel } from './structures/channels/AnnouncementChannel';
 export { StageChannel } from './structures/channels/StageChannel';
 export { DMChannel } from './structures/channels/DMChannel';
 export { FollowedChannel } from './structures/channels/FollowedChannel';
@@ -190,6 +190,7 @@ export { MessageInteraction } from './structures/channels/MessageInteraction';
 export { GroupDMChannel } from './structures/channels/GroupDMChannel';
 export { ThreadMember } from './structures/channels/ThreadMember';
 export { ThreadMetadata } from './structures/channels/ThreadMetadata';
+export { ForumChannel } from './structures/channels/ForumChannel';
 
 // - ANY
 export { Sticker } from './structures/Sticker';

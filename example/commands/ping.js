@@ -12,7 +12,6 @@ module.exports = {
     async execute(interaction) {
         await interaction.reply({
             content: `Pong! :ping_pong: **${interaction.client.ws.ping}**ms`,
-            flags: 'Ephemeral',
         });
     },
 };
