@@ -72,7 +72,7 @@ export class BaseInteraction extends BaseStructure {
         this.user = data.user
             ? this.client.caches.users.cache._add(data.user.id, new User(this.client, data.user))
             : this.member
-            ? this.member.user
+            ? this.member.user ?? null
             : null;
         this.version = data.version;
         this.webhook = new InteractionWebhook(this.client, {
