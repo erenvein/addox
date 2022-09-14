@@ -17,7 +17,7 @@ module.exports = {
 
         const attachment = interaction.options.pickAttachment('file');
 
-        await interaction.editReply({
+        await interaction.followUp({
             content: `Uploaded file: **${attachment.filename}**`,
             files: [attachment.url],
         });
