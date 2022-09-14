@@ -29,6 +29,7 @@ import {
     ThreadChannel,
     AnnouncementChannel,
     TextBasedChannelCacheManager,
+    ForumChannel,
 } from '../../index';
 
 import { CachedManager } from '../base/CachedManager';
@@ -71,6 +72,9 @@ export class ClientChannelManager extends CachedManager<Snowflake, AnyChannel> {
                     break;
                 case ChannelType.GuildVoice:
                     channel = new VoiceChannel(this.client, guild, data);
+                    break;
+                case ChannelType.GuildForum:
+                    channel = new ForumChannel(this.client, guild, data);
                     break;
             }
         }
