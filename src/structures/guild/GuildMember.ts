@@ -8,6 +8,7 @@ import {
     type ImageOptions,
     GuildMemberCacheManager,
     PermissionFlagsBitField,
+    User,
 } from '../../index';
 
 import { BaseStructure } from '../base/BaseStructure';
@@ -22,11 +23,12 @@ export class GuildMember extends BaseStructure {
     public nick!: string | null;
     public pending!: boolean;
     public premiumSinceTimestamp!: number;
+    public user!: User;
     public caches!: GuildMemberCacheManager;
-    #permissions!: number | null;
     public guild: Guild;
+    #permissions!: number | null;
 
-    public constructor(client: Client, guild: Guild, data: APIGuildMember ) {
+    public constructor(client: Client, guild: Guild, data: APIGuildMember) {
         super(client);
 
         this.guild = guild;
@@ -49,6 +51,9 @@ export class GuildMember extends BaseStructure {
             ? new Date(data.premium_since).getTime()
             : 0;
         this.caches ??= new GuildMemberCacheManager(this.client, this.guild, this);
+        this.user = data.user
+            ? this.client.caches.users.cache._add(data.user.id, new User(this.client, data.user))
+            : this.client.caches.users.cache.get(this.id);
 
         //@ts-ignore
         this.#permissions = data.permissions ?? null;
@@ -62,10 +67,6 @@ export class GuildMember extends BaseStructure {
 
     public get joinedTimestamp() {
         return this.joinedAt.getTime();
-    }
-
-    public get user() {
-        return this.client.caches.users.cache.get(this.id);
     }
 
     public async edit(data: EditGuildMemberData, reason?: string) {

@@ -25,7 +25,6 @@ import {
     DataResolver,
     ColorResolver,
     deleteProperty,
-    APIUser,
 } from '../../index';
 
 import { BaseStructure } from './BaseStructure';
@@ -41,7 +40,7 @@ export class BaseInteraction extends BaseStructure {
     public message!: Message | APIMessage | null;
     public token!: string;
     public type!: keyof typeof InteractionType;
-    public user!: APIUser | User | null;
+    public user!: User | null;
     public version!: number;
     public webhook!: InteractionWebhook;
 
@@ -62,18 +61,13 @@ export class BaseInteraction extends BaseStructure {
         this.guildId = data.guild_id ?? null;
         this.guildLocale = (data.guild_locale as LocalizationMap) ?? null;
         this.id = data.id;
-        this.member =
-            this.guild && data.member
-                ? new GuildMember(this.client, this.guild, data.member)
-                : data.member ?? null;
+        this.member = data.member ? new GuildMember(this.client, this.guild, data.member) : null;
         this.message = data.message ?? null;
         this.token = data.token;
         this.type = InteractionType[data.type] as keyof typeof InteractionType;
         this.user = data.user
             ? this.client.caches.users.cache._add(data.user.id, new User(this.client, data.user))
-            : this.member
-            ? this.member.user ?? null
-            : null;
+            : this.member.user ?? null;
         this.version = data.version;
         this.webhook = new InteractionWebhook(this.client, {
             id: this.applicationId,
