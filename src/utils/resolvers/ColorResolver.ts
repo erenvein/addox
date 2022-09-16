@@ -5,7 +5,7 @@ export function ColorResolver(color: ColorResolvable): number {
 
     if (typeof color === 'string') {
         if (color.startsWith('#')) {
-            res = HexToHexDecimal(color);
+            res = HexToHexDecimal(color as `#${string}`);
         } else {
             res = Colors[color as keyof typeof Colors];
         }
