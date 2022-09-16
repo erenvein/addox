@@ -6,7 +6,6 @@ import {
     FetchOptions,
     GuildTextBasedChannelCacheManager,
     CreateMessageData,
-    APIGuildForumChannel,
 } from '../../index';
 
 import { BaseGuildTextChannel } from '../base/BaseGuildTextChannel';
@@ -16,6 +15,7 @@ export class TextChannel extends BaseGuildTextChannel {
     public lastPinTimestamp!: number | null;
     public rateLimitPerUser!: number;
     public topic!: string | null;
+    public defaultThreadRateLimitPerUser!: number;
     public caches!: GuildTextBasedChannelCacheManager;
 
     public constructor(client: Client, guild: Guild, data: APITextChannel) {
@@ -34,6 +34,8 @@ export class TextChannel extends BaseGuildTextChannel {
         this.nsfw = data.nsfw ?? false;
         this.rateLimitPerUser = data.rate_limit_per_user ?? 0;
         this.topic = data.topic ?? null;
+        //@ts-ignore
+        this.defaultThreadRateLimitPerUser = data.default_thread_rate_limit_per_user ?? 0;
 
         this.caches = new GuildTextBasedChannelCacheManager(this.client, this);
 

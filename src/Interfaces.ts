@@ -89,7 +89,6 @@ import type {
     APIAllowedMentions,
     APIActionRowComponent,
     ActionRowBuilder,
-    APIAttachment,
     GuildScheduledEvent,
     AutoModerationRuleEventTypes,
     AutoModerationRuleTriggerTypes,
@@ -428,6 +427,9 @@ export interface EditGuildChannelData {
     rtc_region?: string;
     video_quality_mode?: VoiceQualityModeResolvable;
     default_auto_archive_duration?: number;
+    available_tags?: APIGuildForumChannelTagData[];
+    default_reaction_emoji?: APIGuildForumChannelDefaultReactionEmojiData;
+    default_thread_rate_limit_per_user?: number;
 }
 
 export type EditChannelData = EditGuildChannelData | EditGroupDMChannelData;
@@ -1073,6 +1075,32 @@ export interface AuditLogChangeData {
     key: APIAuditLogChange['key'];
     old: string | number | boolean | Role[] | ChannelOverwriteData[] | null;
     new: string | number | boolean | Role[] | ChannelOverwriteData[] | null;
+}
+
+export interface APIGuildForumChannelTagData {
+    id: Snowflake;
+    name: string;
+    moderated: boolean;
+    emoji_id: Snowflake;
+    emoji_name?: string;
+}
+
+export interface GuildForumChannelTagData {
+    id: Snowflake;
+    name: string;
+    moderated: boolean;
+    emojiId: Snowflake;
+    emojiName: string | null;
+}
+
+export interface APIGuildForumChannelDefaultReactionEmojiData {
+    emoji_id: Snowflake;
+    emoji_name?: string;
+}
+
+export interface GuildForumChannelDefaultReactionEmojiData {
+    emojiId: Snowflake;
+    emojiName: string | null;
 }
 
 export interface WebSocketEvents {
