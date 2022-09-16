@@ -1106,7 +1106,14 @@ export interface GuildForumChannelDefaultReactionEmojiData {
 }
 
 export interface GuildForumChannelThreadMessageParamsData {
-    // TODO
+    content?: string;
+    embeds?: (EmbedData | EmbedBuilder)[];
+    allowed_mentions?: APIAllowedMentions;
+    components?: (APIAnyComponent | AnyComponent)[];
+    stickers?: Snowflake[];
+    files?: (string | Buffer)[];
+    attachments?: (MessageAttachmentData | Attachment)[];
+    flags?: MessageFlagsBitsResolvable;
 }
 
 export interface WebSocketEvents {

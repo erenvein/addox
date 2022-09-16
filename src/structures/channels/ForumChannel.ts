@@ -61,11 +61,11 @@ export class ForumChannel extends TextChannel {
         return this;
     }
 
-    public fetchDefaultReactionEmoji(options?: FetchOptions) {
-        const emoji = this.guild.caches.emojis.fetch(
+    public async fetchDefaultReactionEmoji(options?: FetchOptions) {
+        const emoji = (await this.guild.caches.emojis.fetch(
             this.defaultReactionEmoji!.emojiId,
             options
-        ) as unknown as GuildEmoji;
+        )) as GuildEmoji;
 
         this.defaultReactionEmoji = {
             emojiId: emoji.id,

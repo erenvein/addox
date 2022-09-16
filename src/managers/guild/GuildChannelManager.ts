@@ -33,6 +33,10 @@ import {
     EditChannelData,
     ThreadType,
     CreateChannelOverwriteData,
+    ColorResolver,
+    MessageFlagsBitsResolver,
+    DataResolver,
+    deleteProperty,
 } from '../../index';
 
 import { CachedManager } from '../base/CachedManager';
@@ -320,12 +324,48 @@ export class GuildChannelManager extends CachedManager<Snowflake, GuildBasedChan
         reason?: string | null,
         messageId?: Snowflake
     ) {
+        let files;
+
+        if ('message' in data) {
+            if (data.message.files) {
+                files = await Promise.all(
+                    data.message.files.map((file) => DataResolver.resolveFile(file))
+                );
+            }
+
+            if (data.message.embeds) {
+                for (const embed of data.message.embeds) {
+                    embed.color &&= ColorResolver(embed.color);
+                }
+            }
+
+            if (data.message.flags) {
+                data.message.flags = MessageFlagsBitsResolver(data.message.flags!);
+            }
+
+            if (data.message.attachments) {
+                data.message.attachments = data.message.attachments.map((attachment) => {
+                    return {
+                        filename: attachment.filename,
+                        description: attachment.description,
+                    };
+                });
+            }
+
+            // @ts-ignore
+            data.message.sticker_ids = data.stickers;
+
+            data.message = deleteProperty(data.message, 'stickers');
+            data.message = deleteProperty(data.message, 'files');
+        }
+
         if (messageId) {
             const channel = await this.client.rest.post<APIThreadChannel>(
                 `/channels/${channelId}/messages/threads/${messageId}`,
                 {
                     body: data,
                     reason: reason as string,
+                    files,
                 }
             );
 
@@ -359,6 +399,7 @@ export class GuildChannelManager extends CachedManager<Snowflake, GuildBasedChan
                                 : resolvedType === ThreadType.Private,
                     },
                     reason: reason as string,
+                    files,
                 }
             );
 
