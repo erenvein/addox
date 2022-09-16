@@ -976,6 +976,8 @@ export type ThreadTypeResolvable = keyof typeof ThreadType | number;
 //@ts-ignore
 export interface StartThreadData extends RESTPostAPIChannelThreadsJSONBody {
     type?: ThreadTypeResolvable;
+    applied_tags?: Snowflake[];
+    message?: GuildForumChannelThreadMessageParamsData;
 }
 
 export type AnyInteraction =
@@ -1101,6 +1103,10 @@ export interface APIGuildForumChannelDefaultReactionEmojiData {
 export interface GuildForumChannelDefaultReactionEmojiData {
     emojiId: Snowflake;
     emojiName: string | null;
+}
+
+export interface GuildForumChannelThreadMessageParamsData {
+    // TODO
 }
 
 export interface WebSocketEvents {

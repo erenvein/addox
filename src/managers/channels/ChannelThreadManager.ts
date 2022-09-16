@@ -19,6 +19,7 @@ export class ChannelThreadManager extends CachedManager<Snowflake, ThreadableCha
     }
 
     public async start(data: StartThreadData, reason?: string | null, messageId?: Snowflake) {
+   
         return await this.channel.guild.caches.channels.startThread(
             this.channel.id,
             data,
