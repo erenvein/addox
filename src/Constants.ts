@@ -74,3 +74,9 @@ export enum ThreadType {
     Private = 12,
     News = 10,
 }
+
+export enum GuildIntegrationType {
+    Twitch = 1,
+    YouTube = 2,
+    Discord = 3,
+}

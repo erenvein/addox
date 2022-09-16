@@ -8,6 +8,7 @@ import {
     SnowflakeUtil,
     User,
     Guild,
+    GuildIntegrationType,
 } from '../../index';
 
 import { BaseStructure } from '../base/BaseStructure';
@@ -26,7 +27,7 @@ export class GuildIntegration extends BaseStructure {
     public subscriberCount!: number;
     public syncedTimestamp!: number | null;
     public syncing!: boolean;
-    public type!: 'Twitch' | 'YouTube' | 'Discord';
+    public type!: keyof typeof GuildIntegrationType;
     public user!: User | null;
     public guild!: Guild;
 
@@ -59,16 +60,7 @@ export class GuildIntegration extends BaseStructure {
         this.user = data.user
             ? this.client.caches.users.cache._add(data.user?.id, new User(this.client, data.user))
             : null;
-
-        switch (data.type) {
-            case 'youtube':
-                this.type = 'YouTube';
-                break;
-            default:
-                // @ts-ignore
-                this.type = data.type.charAt(0).toUpperCase() + data.type.slice(1);
-                break;
-        }
+        this.type = GuildIntegrationType[data.type] as keyof typeof GuildIntegrationType;
 
         return this;
     }
