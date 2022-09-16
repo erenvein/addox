@@ -1,7 +1,7 @@
 {
-    "name": "discord-api-wrapper",
+    "name": "adox",
     "version": "1.0.0",
-    "description": "A Discord API Wrapper",
+    "description": "A powerful, easy-to-use library that allows you to interact with the Discord API.",
     "main": "dist/index.js",
     "types": "dist/@types/index.d.ts",
     "repository": {
@@ -10,7 +10,6 @@
     },
     "author": "deliever42",
     "license": "GPL-3.0",
-    "private": false,
     "devDependencies": {
         "@types/node": "^18.0.6",
         "@types/node-fetch": "^2.6.2",
@@ -39,5 +38,16 @@
     "scripts": {
         "build": "tsc",
         "test": "tsc && node example/index.js"
-    }
+    },
+    "keywords": [
+        "discord",
+        "api",
+        "wrapper",
+        "discord-api-wrapper",
+        "discord-api",
+        "discordapp",
+        "bot",
+        "wrapper",
+        "node"
+    ]
 }
