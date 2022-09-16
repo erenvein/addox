@@ -9,6 +9,7 @@ import {
     User,
     Guild,
     GuildIntegrationType,
+    OAuth2Scopes,
 } from '../../index';
 
 import { BaseStructure } from '../base/BaseStructure';
@@ -28,6 +29,7 @@ export class GuildIntegration extends BaseStructure {
     public syncedTimestamp!: number | null;
     public syncing!: boolean;
     public type!: keyof typeof GuildIntegrationType;
+    public scopes!: (keyof typeof OAuth2Scopes)[];
     public user!: User | null;
     public guild!: Guild;
 
@@ -61,6 +63,7 @@ export class GuildIntegration extends BaseStructure {
             ? this.client.caches.users.cache._add(data.user?.id, new User(this.client, data.user))
             : null;
         this.type = GuildIntegrationType[data.type] as keyof typeof GuildIntegrationType;
+        this.scopes = data.scopes ? data.scopes.map((scope) => OAuth2Scopes[scope]) : [];
 
         return this;
     }

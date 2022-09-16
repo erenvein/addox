@@ -1099,8 +1099,8 @@ export interface WebSocketEvents {
         guild: Guild,
         members: Collection<Snowflake, GuildMember>,
         data: {
-            chunkIndex: number | null;
-            chunkCount: number | null;
+            chunkIndex: number;
+            chunkCount: number;
             notFound: unknown[];
             nonce: string | null;
         }
