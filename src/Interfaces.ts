@@ -540,7 +540,7 @@ export type WebhookableChannelResolvable =
     | VoiceChannel
     | ForumChannel;
 
-export type ThreadableChannelResolvable = TextChannel | AnnouncementChannel;
+export type ThreadableChannelResolvable = TextChannel | AnnouncementChannel | ForumChannel;
 
 export type APITextBasedChannelResolvable =
     | APITextChannel

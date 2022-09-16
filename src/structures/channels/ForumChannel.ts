@@ -6,7 +6,6 @@ import {
     type GuildForumChannelTagData,
     type GuildForumChannelDefaultReactionEmojiData,
     type FetchOptions,
-    ForumChannelCacheManager,
     Collection,
     GuildEmoji,
 } from '../../index';
@@ -17,8 +16,6 @@ export class ForumChannel extends TextChannel {
     public availableTags!: Collection<Snowflake, GuildForumChannelTagData>;
     public appliedTags!: Snowflake[];
     public defaultReactionEmoji!: GuildForumChannelDefaultReactionEmojiData | null;
-    //@ts-ignore
-    public declare caches: ForumChannelCacheManager;
 
     public constructor(client: Client, guild: Guild, data: APIGuildForumChannel) {
         //@ts-ignore
@@ -60,7 +57,6 @@ export class ForumChannel extends TextChannel {
                   emoji_name: data.default_reaction_emoji.emoji_name ?? null,
               }
             : null;
-        this.caches = new ForumChannelCacheManager(this.client, this);
 
         return this;
     }

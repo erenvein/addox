@@ -21,7 +21,6 @@ export class GuildTextBasedChannelCacheManager extends GuildChannelCacheManager 
 
         this.messages = new ChannelMessageManager(client, channel);
         this.pins = new ChannelPinManager(client, channel);
-        //@ts-ignore
         this.threads = new ChannelThreadManager(client, channel);
     }
 }
