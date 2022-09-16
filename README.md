@@ -1,4 +1,4 @@
-## Discord API Wrapper
+# ADOX
 
 ### About
 
