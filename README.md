@@ -68,7 +68,11 @@ client.ws.connect('Your super secret token');
 -   [Discord API](https://discord.com/developers/docs/)
 -   [Github](https://github.com/deliever42/adox)
 -   [NPM](https://www.npmjs.com/package/adox)
--   [Documentation] Soon!
+-   Documentation: Soon!
+
+### Contributing
+
+If you want to contribute to adox, you can do so by forking the repository and submitting a pull request.
 
 ### License
 
