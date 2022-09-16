@@ -17,6 +17,7 @@ import {
     ApplicationCommandUserOptionBuilder,
     ApplicationCommandSubcommandOptionBuilder,
     ApplicationCommandSubcommandGroupOptionBuilder,
+    PermissionFlagsBitField,
 } from '../index';
 
 import { BaseBuilder } from './BaseBuilder';
@@ -47,7 +48,10 @@ export class ApplicationCommandBuilder extends BaseBuilder {
     }
 
     public setDefaultMemberPermissions(permissions: PermissionFlagsBitsResolvable) {
-        return this.set('default_member_permissions', PermissionFlagsBitsResolver(permissions));
+        return this.set(
+            'default_member_permissions',
+            String(new PermissionFlagsBitField().set(permissions))
+        );
     }
 
     public setDescription(description: string) {
@@ -122,9 +126,7 @@ export class ApplicationCommandBuilder extends BaseBuilder {
         return this;
     }
 
-    public addSubcommand(
-        callbackfn: (builder: ApplicationCommandSubcommandOptionBuilder) => void
-    ) {
+    public addSubcommand(callbackfn: (builder: ApplicationCommandSubcommandOptionBuilder) => void) {
         this._optionAdapterCreator(new ApplicationCommandSubcommandOptionBuilder(), callbackfn);
         return this;
     }

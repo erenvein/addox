@@ -26,7 +26,8 @@ module.exports = {
         .addSubcommand((builder) =>
             builder.setName('off').setDescription('Disable the autorole for this server')
         )
-        .setDmPermission(false),
+        .setDmPermission(false)
+        .setDefaultMemberPermissions('Administrator'),
 
     /**
      *

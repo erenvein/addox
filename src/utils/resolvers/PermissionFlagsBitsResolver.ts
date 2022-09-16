@@ -6,10 +6,10 @@ export function PermissionFlagsBitsResolver(
     let res = permissions;
 
     if (typeof permissions === 'string') {
-        res = PermissionFlagsBits[permissions] as unknown as number;
+        res = Number(PermissionFlagsBits[permissions]) as unknown as number;
     } else if (Array.isArray(permissions)) {
         res = permissions.map((permission) =>
-            typeof permission === 'string' ? PermissionFlagsBits[permission] : permission
+            typeof permission === 'string' ? Number(PermissionFlagsBits[permission]) : permission
         ) as number[];
     }
 
