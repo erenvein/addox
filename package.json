@@ -4,6 +4,7 @@
     "description": "A powerful, easy-to-use library that allows you to interact with the Discord API.",
     "main": "dist/index.js",
     "types": "dist/@types/index.d.ts",
+    "private": true,
     "repository": {
         "url": "https://github.com/deliever42/discord-api-wrapper.git",
         "type": "git"
@@ -49,5 +50,12 @@
         "bot",
         "wrapper",
         "node"
-    ]
+    ],
+    "engines": {
+        "node": ">=16.6.0"
+    },
+    "bugs": {
+        "url": "https://github.com/deliever42/adox/issues"
+    },
+    "homepage": "https://github.com/deliever42/adox#readme"
 }

@@ -2,6 +2,7 @@ node_modules
 example/
 src/
 .prettierrc.json
+tsconfig.json
 .eslintrc.js
 .gitignore
 .npmignore

@@ -117,7 +117,9 @@ export class WebSocketManager extends EventEmitter {
     }
 
     public async connect(token: string) {
-        token = token.replace(/^(Bot|Bearer)\s/iu, '');
+        if (typeof token === 'string') {
+            token = token.replace(/^(Bot|Bearer)\s/iu, '');
+        }
 
         this.#token = token;
         this.client.rest.setToken(token);
