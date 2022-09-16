@@ -2,7 +2,7 @@
 
 ### About
 
-adox is an easy-to-use [Nodejs](https://nodejs.org/) library for interacting with the [Discord API](https://discord.com/developers/docs/)'s.
+adox is an easy-to-use [Node.js](https://nodejs.org/) library for interacting with the [Discord API](https://discord.com/developers/docs/)'s.
 
 ### Installation
 
