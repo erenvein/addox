@@ -130,6 +130,7 @@ import type {
     OverwriteType,
     APIGuildForumChannel,
     ForumChannel,
+    RESTPutAPIGuildBanJSONBody,
 } from './index';
 
 import type { BodyInit } from 'node-fetch';
@@ -790,8 +791,7 @@ export interface CreateWebhookMessageOptions {
     thread_id?: Snowflake;
 }
 
-export interface CreateBanOptions {
-    delete_message_days?: number;
+export interface CreateBanOptions extends RESTPutAPIGuildBanJSONBody {
     reason?: string;
 }
 
