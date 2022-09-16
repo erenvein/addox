@@ -13,11 +13,13 @@ module.exports = {
      * @param {ChatInputCommandInteraction} interaction
      */
     async execute(interaction) {
-        await interaction.deferReply();
+        await interaction.reply({
+            content: 'File uploading...',
+        });
 
         const attachment = interaction.options.pickAttachment('file');
 
-        await interaction.followUp({
+        await interaction.editReply({
             content: `Uploaded file: **${attachment.filename}**`,
             files: [attachment.url],
         });
