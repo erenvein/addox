@@ -73,9 +73,12 @@ export class GuildBanManager extends CachedManager<Snowflake, GuildBan> {
         }
     }
 
-    public async create(id: Snowflake, { delete_message_days, reason }: CreateBanOptions = {}) {
+    public async create(
+        id: Snowflake,
+        { delete_message_days, delete_message_seconds, reason }: CreateBanOptions = {}
+    ) {
         const ban = await this.client.rest.put<APIBan>(`/guilds/${this.guild.id}/bans/${id}`, {
-            body: { delete_message_days },
+            body: { delete_message_days, delete_message_seconds },
             reason: reason as string,
         });
 
