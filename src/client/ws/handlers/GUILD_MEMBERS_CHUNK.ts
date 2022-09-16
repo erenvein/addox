@@ -32,7 +32,7 @@ export default class GuildMembersChunkHandler extends BaseWebSocketHandler {
                         new Presence(this.shard.manager.client, presence)
                     );
                 }
-            };
+            }
 
             this.shard.manager.emit('guildMembersChunk', guild, members, {
                 chunkIndex: d.chunk_index,
