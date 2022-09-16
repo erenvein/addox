@@ -58,14 +58,14 @@ export class InteractionDataResolvedChannel extends BaseStructure {
     }
 
     public async fetch(options?: FetchOptions) {
-        return this.guild.caches.channels.fetch(this.id, options);
+        return await this.guild.caches.channels.fetch(this.id, options);
     }
 
     public async delete(reason?: string) {
-        return this.guild.caches.channels.delete(this.id, reason);
+        return await this.guild.caches.channels.delete(this.id, reason);
     }
 
     public async edit(data: EditChannelData, reason?: string) {
-        return this.guild.caches.channels.edit(this.id, data, reason);
+        return await this.guild.caches.channels.edit(this.id, data, reason);
     }
 }
