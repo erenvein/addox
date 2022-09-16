@@ -80,3 +80,5 @@ export enum GuildIntegrationType {
     YouTube = 2,
     Discord = 3,
 }
+
+export const SlashCommandPattern = /<\/(\w+):(\d{17,19})>/;
