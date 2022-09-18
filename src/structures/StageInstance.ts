@@ -3,6 +3,7 @@ import {
     type Client,
     type Snowflake,
     type EditStageInstanceData,
+    type FetchOptions,
     StageInstancePrivacyLevel,
 } from '../index';
 
@@ -46,15 +47,15 @@ export class StageInstance extends BaseStructure {
         return this.guild!.caches.scheduledEvents.cache.get(this.scheduledEventId!);
     }
 
-    public async delete() {
-        return await this.client.caches.stageInstances.delete(this.id);
+    public async delete(reason?: string) {
+        return await this.client.caches.stageInstances.delete(this.id, reason);
     }
 
-    public async edit(data: EditStageInstanceData) {
-        return await this.client.caches.stageInstances.edit(this.id, data);
+    public async edit(data: EditStageInstanceData, reason?: string) {
+        return await this.client.caches.stageInstances.edit(this.id, data, reason);
     }
 
-    public async fetch() {
-        return await this.client.caches.stageInstances.fetch(this.id);
+    public async fetch(options?: FetchOptions) {
+        return await this.client.caches.stageInstances.fetch(this.id, options);
     }
 }
