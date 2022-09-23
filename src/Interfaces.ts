@@ -131,6 +131,7 @@ import type {
     ForumChannel,
     RESTPutAPIGuildBanJSONBody,
     CacheStaler,
+    ForumChannelDefaultShortOrderTypes,
 } from './index';
 
 import type { BodyInit } from 'node-fetch';
@@ -415,6 +416,8 @@ export interface CreateChannelOverwriteData {
     deny?: PermissionFlagsBitsResolvable;
 }
 
+export type ForumChannelDefaultShortOrderTypeResolvable = keyof typeof ForumChannelDefaultShortOrderTypes | number;
+
 export interface EditGuildChannelData {
     name?: string;
     type?: ChannelTypeResolvable;
@@ -432,6 +435,7 @@ export interface EditGuildChannelData {
     available_tags?: APIGuildForumChannelTagData[];
     default_reaction_emoji?: APIGuildForumChannelDefaultReactionEmojiData;
     default_thread_rate_limit_per_user?: number;
+    default_sort_order?: ForumChannelDefaultShortOrderTypeResolvable;
 }
 
 export type EditChannelData = EditGuildChannelData | EditGroupDMChannelData;

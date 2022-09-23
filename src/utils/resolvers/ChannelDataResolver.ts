@@ -6,6 +6,7 @@ import {
     VideoQualityMode,
     CreateGuildChannelData,
     OverwriteType,
+    ForumChannelDefaultShortOrderTypes,
 } from '../../index';
 
 export const ChannelPattern = /<#(!)?(\d{17,19})>/;
@@ -45,6 +46,11 @@ export async function ChannelDataResolver(channel: EditChannelData | CreateGuild
 
     if ('type' in res) {
         if (typeof res.type === 'string') res.type = ChannelType[res.type!];
+    }
+
+    if ('default_sort_order' in res) {
+        if (typeof res.default_sort_order === 'string')
+            res.default_sort_order = ForumChannelDefaultShortOrderTypes[res.default_sort_order!];
     }
 
     return res;
