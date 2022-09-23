@@ -4,6 +4,7 @@ import {
     BaseClient,
     ClientUser,
     ClientCacheManager,
+    CacheStaler,
 } from '../index';
 
 export class Client extends BaseClient {
@@ -13,7 +14,7 @@ export class Client extends BaseClient {
     public caches: ClientCacheManager;
     public failIfNotExists: boolean;
 
-    public constructor({ ws, rest, failIfNotExists }: ClientOptions) {
+    public constructor({ ws, rest, failIfNotExists, cache }: ClientOptions) {
         super(rest!);
 
         this.user = null;
@@ -22,6 +23,8 @@ export class Client extends BaseClient {
 
         this.ws = new WebSocketManager(this, ws);
         this.caches = new ClientCacheManager(this);
+
+        cache(this, CacheStaler);
     }
 
     public destroy() {

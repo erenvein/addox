@@ -130,6 +130,7 @@ import type {
     APIGuildForumChannel,
     ForumChannel,
     RESTPutAPIGuildBanJSONBody,
+    CacheStaler,
 } from './index';
 
 import type { BodyInit } from 'node-fetch';
@@ -141,6 +142,7 @@ export type CollectionLike<K, V> = V | Collection<K, V>;
 export interface ClientOptions {
     ws: WebSocketOptions;
     rest?: PartialRequestManagerOptions;
+    cache?: (client: Client, stale: typeof CacheStaler) => void;
     failIfNotExists?: boolean;
 }
 

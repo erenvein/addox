@@ -22,6 +22,27 @@ const client = new Client({
     rest: {
         offset: 100,
     },
+    cache: (client, stale) => {
+        client.caches.channels.cache.forEach((channel) => {
+            stale(channel.caches.messages?.cache, 10);
+            stale(channel.caches.threads?.cache, 1000 * 60 * 60 * 24);
+        });
+
+        client.caches.guilds.cache.forEach((guild) => {
+            stale(guild.caches.bans.cache, 1000 * 60 * 60 * 24 * 3);
+            stale(guild.caches.scheduledEvents.cache, 1000 * 60 * 60 * 7);
+            stale(guild.caches.stageInstances.cache, 1000 * 60 * 60 * 7);
+            stale(guild.caches.invites.cache, 1000 * 60 * 60 * 24 * 2);
+            stale(guild.caches.autoModerationRules.cache, 1000 * 60 * 60);
+            stale(guild.caches.presences, 1000 * 60 * 60 * 24);
+
+            guild.caches.channels.cache.forEach((channel) => {
+                stale(channel.caches.messages?.cache, 1000 * 60 * 60 * 2);
+                stale(channel.caches.threads?.cache, 1000 * 60 * 60 * 24);
+                stale(channel.caches.invites.cache, 1000 * 60 * 60);
+            });
+        });
+    },
 });
 
 client.events = new Collection();

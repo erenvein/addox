@@ -236,6 +236,9 @@ export { HexDecimalToHex } from './utils/colors/HexDecimalToHex';
 export { HexToHexDecimal } from './utils/colors/HexToHexDecimal';
 export { RGBToHex } from './utils/colors/RGBToHex';
 
+// - CACHING
+export { CacheStaler } from './utils/caching/CacheStaler';
+
 // - BASE
 export * from './utils/Base';
 
