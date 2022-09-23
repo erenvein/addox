@@ -81,4 +81,9 @@ export enum GuildIntegrationType {
     Discord = 3,
 }
 
+export enum ForumChannelDefaultShortOrderTypes {
+    LatestActivity = 0,
+    CreationDate = 1,
+}
+
 export const SlashCommandPattern = /<\/(\w+):(\d{17,19})>/;

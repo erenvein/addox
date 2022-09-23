@@ -8,6 +8,7 @@ import {
     type FetchOptions,
     Collection,
     GuildEmoji,
+    ForumChannelDefaultShortOrderTypes,
 } from '../../index';
 
 import { TextChannel } from './TextChannel';
@@ -16,6 +17,7 @@ export class ForumChannel extends TextChannel {
     public availableTags!: Collection<Snowflake, GuildForumChannelTagData>;
     public appliedTags!: Snowflake[];
     public defaultReactionEmoji!: GuildForumChannelDefaultReactionEmojiData | null;
+    public defaultShortOrder!: keyof typeof ForumChannelDefaultShortOrderTypes;
 
     public constructor(client: Client, guild: Guild, data: APIGuildForumChannel) {
         //@ts-ignore
@@ -57,6 +59,11 @@ export class ForumChannel extends TextChannel {
                   emoji_name: data.default_reaction_emoji.emoji_name ?? null,
               }
             : null;
+
+        this.defaultShortOrder = ForumChannelDefaultShortOrderTypes[
+            //@ts-ignore
+            data.default_short_order ?? 'LatestActivity'
+        ] as keyof typeof ForumChannelDefaultShortOrderTypes;
 
         return this;
     }
