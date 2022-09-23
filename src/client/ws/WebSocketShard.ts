@@ -65,6 +65,7 @@ export class WebSocketShard extends EventEmitter {
     public status: WebSocketShardStatus = 'Idle';
     public packetQueue: number = 0;
     public guilds = new Collection<string, Guild>();
+    public resumeURL: string | null;
 
     public constructor(manager: WebSocketManager, id: number) {
         super();
@@ -286,7 +287,7 @@ export class WebSocketShard extends EventEmitter {
     }
 
     public get endpoint() {
-        let baseEndpoint = DiscordGatewayURL;
+        let baseEndpoint = this.resumeURL || DiscordGatewayURL;
 
         baseEndpoint += `?v=${DiscordGatewayVersion}`;
         baseEndpoint += `&encoding=${this.encoding}`;

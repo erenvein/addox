@@ -14,6 +14,7 @@ export default class ReadyHandler extends BaseWebSocketHandler {
         this.shard.uptime = Date.now();
         this.shard.sessionId = d.session_id;
         this.shard.status = 'Ready';
+        this.shard.resumeURL = d.resume_gateway_url;
 
         if (this.shard.manager.client.user) {
             this.shard.manager.client.user._patch(d.user);

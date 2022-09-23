@@ -26,7 +26,6 @@ Node.js v16.6.0 or higher is required.
 ### Optional Dependencies
 
 -   [zlib-sync](https://www.npmjs.com/package/zlib-sync) for WebSocket data compression and decompression
--   [pako](https://www.npmjs.com/package/pako) alternative zlib library
 -   [erlpack](https://www.npmjs.com/package/erlpack) for WebSocket data serialization and deserialization
 
 ### Example ping-pong
