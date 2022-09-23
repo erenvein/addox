@@ -131,7 +131,6 @@ export class Collection<K, V> extends Map<K, V> {
 
         return Array.from(
             { length: amount },
-            //@ts-ignore
             (): V => values[Math.floor(Math.random() * this.size)]
         );
     }

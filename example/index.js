@@ -24,8 +24,9 @@ const client = new Client({
     },
     cache: (client, stale) => {
         client.caches.channels.cache.forEach((channel) => {
-            stale(channel.caches.messages?.cache, 10);
+            stale(channel.caches.messages?.cache, 1000 * 60 * 60 * 2);
             stale(channel.caches.threads?.cache, 1000 * 60 * 60 * 24);
+            stale(channel.caches.invites.cache, 1000 * 60 * 60);
         });
 
         client.caches.guilds.cache.forEach((guild) => {
