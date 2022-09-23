@@ -24,7 +24,9 @@ export class Client extends BaseClient {
         this.ws = new WebSocketManager(this, ws);
         this.caches = new ClientCacheManager(this);
 
-        cache(this, CacheStaler);
+        if (typeof cache === 'function') {
+            cache(this, CacheStaler);
+        }
     }
 
     public destroy() {
