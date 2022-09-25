@@ -28,10 +28,16 @@ Node.js v16.6.0 or higher is required.
 -   [zlib-sync](https://www.npmjs.com/package/zlib-sync) for WebSocket data compression and decompression
 -   [erlpack](https://www.npmjs.com/package/erlpack) for WebSocket data serialization and deserialization
 
-### Example ping-pong
+### Example ping-pong, buttons and embeds
 
 ```js
-const { Client, ApplicationCommandBuilder } = require('addox');
+const {
+    Client,
+    ApplicationCommandBuilder,
+    EmbedBuilder,
+    ButtonBuilder,
+    ActionRowBuilder,
+} = require('../dist/index.js');
 const client = new Client({
     ws: {
         intents: ['Guilds'],
@@ -41,6 +47,10 @@ const client = new Client({
 client.ws.on('ready', () => {
     const commands = [
         new ApplicationCommandBuilder().setName('ping').setDescription('Replies with pong!'),
+        new ApplicationCommandBuilder()
+            .setName('select-color')
+            .setDescription('You choose your favorite color!'),
+        new ApplicationCommandBuilder().setName('embed').setDescription('Replies with embed!'),
     ];
 
     client.caches.commands
@@ -52,11 +62,65 @@ client.ws.on('ready', () => {
 });
 
 client.ws.on('interactionCreate', async (interaction) => {
-    if (interaction.commandType === 'ChatInput' && interaction.commandName === 'ping') {
-        await interaction.reply({
-            content: `Pong! **${client.ws.ping}**ms`,
-            flags: 'Ephemeral',
-        });
+    if (interaction.type === 'ApplicationCommand' && interaction.commandType === 'ChatInput') {
+        switch (interaction.commandName) {
+            case 'ping':
+                await interaction.reply({
+                    content: `Pong! **${client.ws.ping}**ms`,
+                });
+                break;
+            case 'select-color':
+                await interaction.reply({
+                    content: `**Please Select Your Favorite Color!**`,
+                    flags: 'Ephemeral',
+                    components: [
+                        new ActionRowBuilder().addComponents(
+                            new ButtonBuilder()
+                                .setCustomId('color_red')
+                                .setLabel('Red')
+                                .setStyle('Danger'),
+                            new ButtonBuilder()
+                                .setCustomId('color_green')
+                                .setLabel('Green')
+                                .setStyle('Success'),
+                            new ButtonBuilder()
+                                .setCustomId('color_blue')
+                                .setLabel('Blue')
+                                .setStyle('Primary')
+                        ),
+                    ],
+                });
+                break;
+            case 'embed':
+                await interaction.reply({
+                    embeds: [
+                        new EmbedBuilder()
+                            .setTitle('Embed')
+                            .setDescription('This is an embed!')
+                            .setColor('Blue')
+                            .setFooter({
+                                text: 'Addox',
+                                icon_url: client.user.avatarURL(),
+                            })
+                            .setTimestamp(),
+                    ],
+                });
+                break;
+        }
+    } else if (interaction.type === 'MessageComponent') {
+        if (interaction.customId.startsWith('color_')) {
+            const selectedColor = interaction.customId.split('_')[1];
+            const color = {
+                red: '🔴',
+                green: '🟢',
+                blue: '🔵',
+            }[selectedColor];
+
+            await interaction.update({
+                content: `**Your favorite color is ${color} ${selectedColor}!**`,
+                components: [],
+            });
+        }
     }
 });
 
