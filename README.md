@@ -37,7 +37,7 @@ const {
     EmbedBuilder,
     ButtonBuilder,
     ActionRowBuilder,
-} = require('../dist/index.js');
+} = require('addox');
 const client = new Client({
     ws: {
         intents: ['Guilds'],
