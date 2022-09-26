@@ -80,7 +80,7 @@ export class Message extends BaseStructure {
         this.attachments = data.attachments
             ? data.attachments.map((attachment) => new Attachment(attachment))
             : [];
-        this.author = this.client.caches.users.cache._add(
+        this.author ??= this.client.caches.users.cache._add(
             // @ts-ignore
             data.author.id,
             // @ts-ignore
