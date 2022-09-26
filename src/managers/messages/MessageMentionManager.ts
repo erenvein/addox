@@ -21,30 +21,32 @@ export class MessageMentionManager extends BaseManager {
 
     public constructor(
         client: Client,
-        userMentions: APIUser[],
-        roleMentions: Snowflake[],
-        channelMentions: APIChannelMention[],
-        everyoneMention: boolean,
-        guild: Guild | null
+        userMentions?: APIUser[],
+        roleMentions?: Snowflake[],
+        channelMentions?: APIChannelMention[],
+        everyoneMention?: boolean,
+        guild?: Guild
     ) {
         super(client);
 
-        this.users = new Collection(userMentions.map((user) => [user.id, new User(client, user)]));
+        this.users = new Collection(
+            (userMentions ?? []).map((user) => [user.id, new User(client, user)])
+        );
         this.members = new Collection();
         this.roles = new Collection();
         this.channels = new Collection();
-        this.everyone = everyoneMention;
+        this.everyone = everyoneMention ?? false;
 
         if (guild) {
-            for (const user of userMentions) {
+            for (const user of userMentions ?? []) {
                 const member = guild.caches.members.cache.get(user.id);
-               
+
                 if (member) {
                     this.members.set(user.id, member);
                 }
             }
 
-            for (const role of roleMentions) {
+            for (const role of roleMentions ?? []) {
                 const _role = guild.caches.roles.cache.get(role);
 
                 if (_role) {
@@ -52,7 +54,7 @@ export class MessageMentionManager extends BaseManager {
                 }
             }
 
-            for (const channel of channelMentions) {
+            for (const channel of channelMentions ?? []) {
                 const _channel = guild.caches.channels.cache.get(channel.id);
 
                 if (_channel) {

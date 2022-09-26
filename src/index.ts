@@ -190,6 +190,7 @@ export { GroupDMChannel } from './structures/channels/GroupDMChannel';
 export { ThreadMember } from './structures/channels/ThreadMember';
 export { ThreadMetadata } from './structures/channels/ThreadMetadata';
 export { ForumChannel } from './structures/channels/ForumChannel';
+export { MessageApplication } from './structures/channels/MessageApplication';
 
 // - ANY
 export { Sticker } from './structures/Sticker';
