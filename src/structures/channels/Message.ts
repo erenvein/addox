@@ -237,15 +237,23 @@ export class Message extends BaseStructure {
 
         if ('member' in data) {
             if (this.guild) {
-                this.member = this.guild.caches.members.cache._add(
-                    this.author.id,
-                    new GuildMember(this.client, this.guild, data.member as APIGuildMember)
-                );
+                let _member = this.guild.caches.members.cache.get(this.author.id);
+
+                if (_member) {
+                    _member = _member._patch(data.member);
+                } else {
+                    _member = this.guild.caches.members.cache._add(
+                        this.author.id,
+                        new GuildMember(this.client, this.guild, data.member as APIGuildMember)
+                    );
+                }
+
+                this.member = _member;
             } else {
                 this.member ??= null;
             }
-        } else {
-            this.member ??= null;
+        } else if (this.guild) {
+            this.member ??= this.guild.caches.members.cache.get(this.author.id) ?? null;
         }
 
         return this;
