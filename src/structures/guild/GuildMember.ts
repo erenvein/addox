@@ -37,7 +37,6 @@ export class GuildMember extends BaseStructure {
     }
 
     public override _patch(data: APIGuildMember) {
-        this.id = data.user?.id!;
         this.avatar = data.avatar ?? null;
         this.communicationDisabledUntilTimestamp = data.communication_disabled_until
             ? new Date(data.communication_disabled_until).getTime()
@@ -51,12 +50,22 @@ export class GuildMember extends BaseStructure {
             ? new Date(data.premium_since).getTime()
             : 0;
         this.caches ??= new GuildMemberCacheManager(this.client, this.guild, this);
-        this.user = data.user
-            ? this.client.caches.users.cache._add(data.user.id, new User(this.client, data.user))
-            : this.client.caches.users.cache.get(this.id);
 
         //@ts-ignore
         this.#permissions = data.permissions ?? null;
+
+        if ('user' in data) {
+            this.id ??= data.user?.id;
+
+            if (data.user) {
+                this.user = this.client.caches.users.cache._add(
+                    data.user.id,
+                    new User(this.client, data.user)
+                );
+            }
+        }
+
+        this.user ??= this.client.caches.users.cache.get(this.id);
 
         return this;
     }
