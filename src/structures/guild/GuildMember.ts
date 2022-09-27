@@ -135,7 +135,7 @@ export class GuildMember extends BaseStructure {
         this.rawRoles = data.roles;
         this.user ??= this.client.caches.users.cache.get(this.id);
         this.dm ??= new GuildMemberDMManager(this.client, this);
-        this.caches ??= new GuildMemberCacheManager(this.client, this.guild, this);
+        this.caches = new GuildMemberCacheManager(this.client, this.guild, this);
 
         return this;
     }

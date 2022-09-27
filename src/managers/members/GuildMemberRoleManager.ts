@@ -5,7 +5,6 @@ import {
     type Role,
     type GuildMember,
     PermissionFlagsBitField,
-    UserFlags,
 } from '../../index';
 
 import { CachedManager } from '../base/CachedManager';
