@@ -139,8 +139,14 @@ export class RequestManager {
         if (this.#globalRateLimitData.limited) {
             await Sleep(this.#globalRateLimitData.retry!);
 
-            this.#rateLimits.clear();
             this.#globalRateLimitData = { limited: false };
+        }
+
+        const _rateLimitData = this.#rateLimits.get(route);
+
+        if (_rateLimitData?.limited) {
+            await Sleep(_rateLimitData.retry!);
+            this.#rateLimits.delete(route);
         }
 
         const controller = new AbortController();
@@ -157,7 +163,7 @@ export class RequestManager {
             const data = (await this._parseResponse(response)) as T;
             const status = response.status;
 
-            if (status === 403) {
+            if (status === 401) {
                 this.#token = null;
             }
 
