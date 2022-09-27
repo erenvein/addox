@@ -26,7 +26,7 @@ export class GuildMemberRoleManager extends CachedManager<Snowflake, Role> {
     }
 
     public get highest() {
-        return this.cache.sort((a, b) => b.position - a.position).first() as Role;
+        return this.cache.sorted((a, b) => a.position - b.position).first() as Role;
     }
 
     public get permissions() {
