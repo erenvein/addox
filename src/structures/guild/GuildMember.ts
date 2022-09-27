@@ -7,6 +7,8 @@ import {
     type CreateBanOptions,
     type ImageOptions,
     type FetchMemberOptions,
+    type GatewayGuildMemberAddDispatchData,
+    type GatewayGuildMemberUpdateDispatchData,
     GuildMemberCacheManager,
     PermissionFlagsBitField,
     User,
@@ -31,7 +33,14 @@ export class GuildMember extends BaseStructure {
     public dm!: GuildMemberDMManager;
     #permissions!: number | null;
 
-    public constructor(client: Client, guild: Guild, data: APIGuildMember) {
+    public constructor(
+        client: Client,
+        guild: Guild,
+        data:
+            | APIGuildMember
+            | GatewayGuildMemberAddDispatchData
+            | GatewayGuildMemberUpdateDispatchData
+    ) {
         super(client);
 
         this.guild = guild;
@@ -39,32 +48,88 @@ export class GuildMember extends BaseStructure {
         this._patch(data);
     }
 
-    public override _patch(data: APIGuildMember) {
-        this.avatar = data.avatar ?? null;
-        this.communicationDisabledUntilTimestamp = data.communication_disabled_until
-            ? new Date(data.communication_disabled_until).getTime()
-            : 0;
-        this.deaf = data.deaf;
+    public override _patch(
+        data:
+            | APIGuildMember
+            | GatewayGuildMemberAddDispatchData
+            | GatewayGuildMemberUpdateDispatchData
+    ) {
         this.joinedAt = new Date(data.joined_at);
-        this.mute = data.mute;
-        this.nick = data.nick ?? null;
-        this.pending = data.pending ?? false;
-        this.premiumSinceTimestamp = data.premium_since
-            ? new Date(data.premium_since).getTime()
-            : 0;
         this.caches ??= new GuildMemberCacheManager(this.client, this.guild, this);
-        //@ts-ignore
-        this.#permissions = data.permissions ?? null;
+
+        if ('avatar' in data) {
+            this.avatar = data.avatar ?? null;
+        } else {
+            this.avatar ??= null;
+        }
+
+        if ('communication_disabled_until' in data) {
+            this.communicationDisabledUntilTimestamp = data.communication_disabled_until
+                ? new Date(data.communication_disabled_until).getTime()
+                : 0;
+        } else {
+            this.communicationDisabledUntilTimestamp ??= 0;
+        }
+
+        if ('deaf' in data) {
+            this.deaf = data.deaf ?? false;
+        } else {
+            this.deaf ??= false;
+        }
+
+        if ('mute' in data) {
+            this.mute = data.mute ?? false;
+        } else {
+            this.mute ??= false;
+        }
+
+        if ('nick' in data) {
+            this.nick = data.nick ?? null;
+        } else {
+            this.nick ??= null;
+        }
+
+        if ('pending' in data) {
+            this.pending = data.pending ?? false;
+        } else {
+            this.pending ??= false;
+        }
+
+        if ('permissions' in data) {
+            //@ts-ignore
+            this.#permissions = data.permissions ?? null;
+        } else {
+            this.#permissions ??= null;
+        }
+
+        if ('premium_since' in data) {
+            this.premiumSinceTimestamp = data.premium_since
+                ? new Date(data.premium_since).getTime()
+                : 0;
+        } else {
+            this.premiumSinceTimestamp ??= 0;
+        }
 
         if ('user' in data) {
-            this.id ??= data.user?.id;
-
             if (data.user) {
-                this.user = this.client.caches.users.cache._add(
-                    data.user.id,
-                    new User(this.client, data.user)
-                );
+                let _user = this.client.caches.users.cache.get(data.user.id);
+
+                if (_user) {
+                    _user = _user._patch(data.user);
+                } else {
+                    _user = this.client.caches.users.cache._add(
+                        data.user.id,
+                        new User(this.client, data.user)
+                    );
+                }
+
+                this.user = _user;
+                this.id = _user.id;
+            } else {
+                this.user ??= this.client.caches.users.cache.get(this.id);
             }
+        } else {
+            this.user ??= this.client.caches.users.cache.get(this.id);
         }
 
         this.user ??= this.client.caches.users.cache.get(this.id);
