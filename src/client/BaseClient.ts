@@ -15,7 +15,9 @@ export class BaseClient {
         this.rest = new RequestManager({
             ...requestManagerOptions,
             baseURL: `${DiscordAPIURL}/v${DiscordAPIVersion}`,
-            agent: `Addox (https://github.com/deliever42/addox, 1.0.0)`,
+            agent: `Addox (https://github.com/deliever42/addox, ${
+                require('../../package.json').version
+            })`,
         });
     }
 }
