@@ -76,6 +76,14 @@ export class GuildMember extends BaseStructure {
         return new Date(this.communicationDisabledUntilTimestamp);
     }
 
+    public get communicationDisabledUntilHasExpired() {
+        return this.communicationDisabledUntilTimestamp < Date.now();
+    }
+
+    public get premiumSinceAt() {
+        return new Date(this.premiumSinceTimestamp);
+    }
+
     public get joinedTimestamp() {
         return this.joinedAt.getTime();
     }
