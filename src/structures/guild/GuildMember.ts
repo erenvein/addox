@@ -6,6 +6,7 @@ import {
     type Snowflake,
     type CreateBanOptions,
     type ImageOptions,
+    type FetchMemberOptions,
     GuildMemberCacheManager,
     PermissionFlagsBitField,
     User,
@@ -90,6 +91,10 @@ export class GuildMember extends BaseStructure {
 
     public async edit(data: EditGuildMemberData, reason?: string) {
         return await this.guild.caches.members.edit(this.id, data, reason);
+    }
+
+    public async fetch(options?: FetchMemberOptions) {
+        return await this.guild.caches.members.fetch(this.id, options);
     }
 
     public async kick(reason?: string) {
