@@ -19,6 +19,11 @@ export class GuildMemberRoleManager extends CachedManager<Snowflake, Role> {
 
         this.guild = guild;
         this.member = member;
+
+        for (const roleId of member.rawRoles) {
+            const role = guild.caches.roles.cache.get(roleId);
+            role && this.cache.set(roleId, role);
+        }
     }
 
     public get highest() {

@@ -31,6 +31,7 @@ export class GuildMember extends BaseStructure {
     public caches!: GuildMemberCacheManager;
     public guild: Guild;
     public dm!: GuildMemberDMManager;
+    public rawRoles!: Snowflake[];
     #permissions!: number | null;
 
     public constructor(
@@ -55,7 +56,6 @@ export class GuildMember extends BaseStructure {
             | GatewayGuildMemberUpdateDispatchData
     ) {
         this.joinedAt = new Date(data.joined_at);
-        this.caches ??= new GuildMemberCacheManager(this.client, this.guild, this);
 
         if ('avatar' in data) {
             this.avatar = data.avatar ?? null;
@@ -132,8 +132,10 @@ export class GuildMember extends BaseStructure {
             this.user ??= this.client.caches.users.cache.get(this.id);
         }
 
+        this.rawRoles = data.roles;
         this.user ??= this.client.caches.users.cache.get(this.id);
         this.dm ??= new GuildMemberDMManager(this.client, this);
+        this.caches ??= new GuildMemberCacheManager(this.client, this.guild, this);
 
         return this;
     }
