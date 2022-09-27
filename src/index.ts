@@ -92,6 +92,7 @@ export { ChannelThreadManager } from './managers/channels/ChannelThreadManager';
 // - MEMBERS
 export { GuildMemberCacheManager } from './managers/members/GuildMemberCacheManager';
 export { GuildMemberRoleManager } from './managers/members/GuildMemberRoleManager';
+export { GuildMemberDMManager } from "./managers/members/GuildMemberDMManager";
 
 // - WEBHOOKS
 export { WebhookCacheManager } from './managers/webhooks/WebhookCacheManager';
