@@ -99,7 +99,7 @@ export class GuildMemberManager extends CachedManager<Snowflake, GuildMember> {
     public async edit(id: Snowflake, data: EditGuildMemberData, reason?: string) {
         if (data.communication_disabled_until) {
             data.communication_disabled_until = new Date(
-                data.communication_disabled_until
+                Date.now() + data.communication_disabled_until
             ).toISOString() as unknown as number;
         }
 
